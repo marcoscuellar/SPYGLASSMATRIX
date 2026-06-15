@@ -173,7 +173,7 @@ export function AdminView({ initial, settings, persistent }: { initial: StoredCa
         <div style={{ marginBottom: 28, padding: '20px 22px', borderRadius: 'var(--r-5)', border: '1px solid var(--line)', background: 'var(--bg-card)' }}>
           <div className="t-mono-xs t-section-label" style={{ marginBottom: 4 }}>PREPARED FOR</div>
           <p className="t-body" style={{ color: 'var(--ink-3)', fontSize: 13.5, margin: '0 0 14px' }}>Personalize the portal header so it reads as built for this client.</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 14 }}>
             <Field label="Client name"><input style={inputStyle} value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="ProCare HR" /></Field>
             <Field label="Role / title (optional)"><input style={inputStyle} value={roleLabel} onChange={(e) => setRoleLabel(e.target.value)} placeholder="VP of HR" /></Field>
           </div>
@@ -213,7 +213,7 @@ export function AdminView({ initial, settings, persistent }: { initial: StoredCa
             {draftErr && <div style={{ color: '#b42318', fontSize: 14, marginTop: 10 }}>{draftErr}</div>}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginBottom: 14 }}>
             <Field label="Name *"><input style={inputStyle} value={f.name} onChange={(e) => set('name', e.target.value)} placeholder="Eleanor Pace" /></Field>
             <Field label="Current title"><input style={inputStyle} value={f.role} onChange={(e) => set('role', e.target.value)} placeholder="Tax Manager" /></Field>
             <Field label="Company"><input style={inputStyle} value={f.company} onChange={(e) => set('company', e.target.value)} placeholder="Beacon Private Wealth" /></Field>

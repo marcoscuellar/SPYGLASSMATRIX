@@ -40,8 +40,8 @@ function Shortlist({ cands, settings, onOpen }: { cands: StoredCandidate[]; sett
   const headline = role && client ? `${role} for ${client}` : client ? `${firstName}, your shortlist.` : 'Your shortlist.';
   return (
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
-      <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 40px 110px' }}>
-        <header style={{ padding: '64px 0 40px', borderBottom: '1px solid var(--line)', marginBottom: 48 }}>
+      <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 clamp(20px, 5vw, 40px) 110px' }}>
+        <header style={{ padding: 'clamp(40px, 8vw, 64px) 0 40px', borderBottom: '1px solid var(--line)', marginBottom: 48 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 30, flexWrap: 'wrap' }}>
             <Mark variant="navy" size={26} />
             <span className="t-mono-tag" style={{ color: 'var(--navy)' }}>PREPARED BY SPYGLASS</span>
@@ -68,7 +68,7 @@ function Shortlist({ cands, settings, onOpen }: { cands: StoredCandidate[]; sett
             <p className="t-body" style={{ color: 'var(--ink-3)', maxWidth: '40ch', margin: '0 auto' }}>No candidates presented yet. Check back shortly.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 22 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 22 }}>
             {sorted.map((c, i) => <PortalCard key={c.id} c={c} rank={i + 1} onOpen={() => onOpen(c.id)} />)}
           </div>
         )}
@@ -162,7 +162,7 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
-      <div style={{ maxWidth: 880, margin: '0 auto', padding: '36px 40px 110px' }}>
+      <div style={{ maxWidth: 880, margin: '0 auto', padding: '36px clamp(18px, 5vw, 40px) 110px' }}>
         <button onClick={onBack} className="t-mono-xs" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)', display: 'inline-flex', alignItems: 'center', gap: 7, marginBottom: 28, padding: 0 }}>
           <span style={{ transform: 'rotate(180deg)', display: 'inline-flex' }}><Arrow s={12} /></span> BACK TO SHORTLIST
         </button>
@@ -171,7 +171,7 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
           <Avatar initials={initialsOf(c.name)} size={62} accent={accent} />
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-              <h1 style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 36.5, letterSpacing: '-0.035em', margin: 0 }}>{c.name}</h1>
+              <h1 style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 'clamp(28px, 7vw, 36.5px)', letterSpacing: '-0.035em', margin: 0 }}>{c.name}</h1>
               <FitChip fit={c.fit} size="lg" />
             </div>
             {(c.role || c.company) && <div className="t-body" style={{ color: 'var(--ink-2)', fontSize: 16.5, marginTop: 4 }}>{[c.role, c.company].filter(Boolean).join(' · ')}</div>}
@@ -196,8 +196,8 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
               <SparkIcon c={accent} />
               <span className="t-mono-tag" style={{ color: accent }}>SPYGLASS · CANDIDATE BRIEF</span>
             </div>
-            <div style={{ padding: '26px 30px 30px' }}>
-              {c.headline && <h3 style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 27, letterSpacing: '-0.03em', lineHeight: 1.16, margin: '0 0 14px' }}>{c.headline}</h3>}
+            <div style={{ padding: 'clamp(20px, 5vw, 30px)' }}>
+              {c.headline && <h3 style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 'clamp(21px, 5vw, 27px)', letterSpacing: '-0.03em', lineHeight: 1.16, margin: '0 0 14px' }}>{c.headline}</h3>}
               {c.intro && <p className="t-body" style={{ color: 'var(--ink-2)', fontSize: 18.5, margin: '0 0 28px', maxWidth: '62ch' }}>{c.intro}</p>}
               {c.fitBullets.length > 0 && (
                 <>
@@ -246,13 +246,13 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
         )}
 
         {/* Decision */}
-        <div id="decision-panel" style={{ marginTop: 48, padding: 32, borderRadius: 'var(--r-7)', background: 'var(--navy)', color: '#fff' }}>
+        <div id="decision-panel" style={{ marginTop: 48, padding: 'clamp(22px, 5vw, 32px)', borderRadius: 'var(--r-7)', background: 'var(--navy)', color: '#fff' }}>
           {!submitted ? (
             <>
               <Eyebrow style={{ color: 'var(--navy-fade)', marginBottom: 14 }}>YOUR CALL</Eyebrow>
               <h3 style={{ fontFamily: 'var(--font)', fontWeight: 700, fontSize: 25.5, letterSpacing: '-0.03em', margin: '0 0 6px', color: '#fff' }}>Where should we take {first}?</h3>
               <p className="t-body" style={{ color: 'rgba(255,255,255,0.7)', margin: '0 0 24px' }}>Your decision routes straight back to the recruiter.</p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 20 }}>
                 {decisions.map((d) => {
                   const on = decision === d.k;
                   return (
