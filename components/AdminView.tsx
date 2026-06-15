@@ -6,7 +6,7 @@
    ============================================================ */
 import React from 'react';
 import { Button, FitChip, Mark, Tag } from './ui';
-import { Arrow } from './icons';
+import { Arrow, SparkIcon } from './icons';
 import type { ScoreKey, StoredCandidate } from '@/lib/types';
 
 const SCORES: ScoreKey[] = ['strong', 'solid', 'partial', 'gap'];
@@ -30,7 +30,51 @@ export function AdminView({ initial, persistent }: { initial: StoredCandidate[];
   const [f, setF] = React.useState(emptyForm());
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [brief, setBrief] = React.useState('');
+  const [drafting, setDrafting] = React.useState('');   // status text while drafting
+  const [draftErr, setDraftErr] = React.useState('');
+  const fileRef = React.useRef<HTMLInputElement>(null);
   const set = (k: string, v: any) => setF((s) => ({ ...s, [k]: v }));
+
+  const fillFromDraft = (c: any) => {
+    const sigs: SignalRow[] = (Array.isArray(c.signals) ? c.signals : []).slice(0, 4)
+      .map((s: any) => ({ signal: String(s.signal || ''), score: (s.score || 'solid') as ScoreKey }));
+    while (sigs.length < 4) sigs.push({ signal: '', score: 'solid' });
+    setF({
+      name: c.name || '', role: c.role || '', company: c.company || '',
+      years: c.years == null ? '' : String(c.years),
+      location: c.location || '', compExp: c.compExp || '', avail: c.avail || '',
+      tags: (c.tags || []).join(', '),
+      fit: c.fit == null ? '' : String(c.fit),
+      headline: c.headline || '', intro: c.intro || '',
+      fitBullets: (c.fitBullets || []).join('\n'),
+      cta: c.cta || '', signals: sigs,
+    });
+  };
+
+  const onResume = async (file: File) => {
+    setDraftErr(''); setError('');
+    try {
+      setDrafting('Reading résumé…');
+      const fd = new FormData(); fd.append('file', file);
+      const pres = await fetch('/api/parse-document', { method: 'POST', body: fd });
+      const pdata = await pres.json();
+      if (!pres.ok || !pdata.text) throw new Error(pdata?.error || 'Could not read that file.');
+
+      setDrafting('Writing the brief…');
+      const dres = await fetch('/api/draft-candidate', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ text: pdata.text, brief }),
+      });
+      const ddata = await dres.json();
+      if (!dres.ok || !ddata.candidate) throw new Error(ddata?.error || 'Could not draft from this résumé.');
+      fillFromDraft(ddata.candidate);
+    } catch (e: any) {
+      setDraftErr(e.message || 'Something went wrong.');
+    }
+    setDrafting('');
+    if (fileRef.current) fileRef.current.value = '';
+  };
   const setSig = (i: number, k: 'signal' | 'score', v: string) =>
     setF((s) => ({ ...s, signals: s.signals.map((r, j) => (j === i ? { ...r, [k]: v } : r)) }));
 
@@ -103,7 +147,28 @@ export function AdminView({ initial, persistent }: { initial: StoredCandidate[];
 
         {/* Add form */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-7)', boxShadow: 'var(--sh-card)', padding: '26px 28px', marginBottom: 32 }}>
-          <h2 style={{ fontFamily: 'var(--font)', fontWeight: 700, fontSize: 22, letterSpacing: '-0.02em', margin: '0 0 18px' }}>Add a candidate</h2>
+          <h2 style={{ fontFamily: 'var(--font)', fontWeight: 700, fontSize: 22, letterSpacing: '-0.02em', margin: '0 0 6px' }}>Add a candidate</h2>
+          <p className="t-body" style={{ color: 'var(--ink-3)', fontSize: 14.5, margin: '0 0 18px' }}>Drop a résumé and let Spyglass write the brief — or fill it in by hand. You can edit anything before adding.</p>
+
+          {/* Résumé → AI write-up */}
+          <div style={{ border: '1px dashed var(--gold-line)', background: 'var(--amber-bg)', borderRadius: 'var(--r-5)', padding: '18px 20px', marginBottom: 22 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+              <SparkIcon c="var(--amber-ddd)" />
+              <span className="t-mono-xs t-section-label" style={{ color: 'var(--amber-ddd)' }}>WRITE FROM A RÉSUMÉ</span>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelStyle}>Role / brief to tailor it to (optional)</label>
+              <textarea style={{ ...taStyle, minHeight: 56 }} value={brief} onChange={(e) => setBrief(e.target.value)} placeholder="Paste the role or a line about what the client wants — the write-up and fit score tailor to it." />
+            </div>
+            <input ref={fileRef} type="file" accept=".pdf,.docx,.txt,.md,.rtf" style={{ display: 'none' }} onChange={(e) => { const fl = e.target.files?.[0]; if (fl) onResume(fl); }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+              <Button kind="amber" icon={<SparkIcon c="#2a2008" />} onClick={() => fileRef.current?.click()} disabled={!!drafting}>
+                {drafting || 'Upload résumé & draft'}
+              </Button>
+              <span className="t-body" style={{ fontSize: 13.5, color: 'var(--ink-3)' }}>PDF, DOCX, or TXT</span>
+            </div>
+            {draftErr && <div style={{ color: '#b42318', fontSize: 14, marginTop: 10 }}>{draftErr}</div>}
+          </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
             <Field label="Name *"><input style={inputStyle} value={f.name} onChange={(e) => set('name', e.target.value)} placeholder="Eleanor Pace" /></Field>
