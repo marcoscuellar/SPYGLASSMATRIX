@@ -41,7 +41,9 @@ export function PortalView({ initial, settings }: { initial: StoredCandidate[]; 
 function Shortlist({ cands, settings, onOpen }: { cands: StoredCandidate[]; settings: PortalSettings; onOpen: (id: string) => void }) {
   const sorted = [...cands].sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0));
   const client = settings.clientName.trim();
+  const role = settings.roleLabel.trim();
   const firstName = client.split(/\s+/)[0];
+  const headline = role && client ? `${role} for ${client}` : client ? `${firstName}, your shortlist.` : 'Your shortlist.';
   return (
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
       <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 40px 110px' }}>
@@ -56,12 +58,12 @@ function Shortlist({ cands, settings, onOpen }: { cands: StoredCandidate[]; sett
             <span style={{ width: 18, height: 1, background: 'var(--line)' }} />
             <span className="t-mono-tag" style={{ color: 'var(--ink-3)' }}>CONFIDENTIAL</span>
           </div>
-          <h1 style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 'clamp(38px, 5.4vw, 64px)', letterSpacing: '-0.04em', lineHeight: 1.0, margin: '0 0 22px', maxWidth: '15ch' }}>
-            {client ? `${firstName}, your shortlist.` : 'Your shortlist.'}
+          <h1 style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 'clamp(38px, 5.4vw, 64px)', letterSpacing: '-0.04em', lineHeight: 1.02, margin: '0 0 22px', maxWidth: '18ch' }}>
+            {headline}
           </h1>
-          <p className="t-body" style={{ color: 'var(--ink-2)', fontSize: 19.5, maxWidth: '60ch', margin: 0 }}>
+          <p className="t-body" style={{ color: 'var(--ink-2)', fontSize: 19.5, maxWidth: '62ch', margin: 0 }}>
             {sorted.length > 0
-              ? `Hand-screened${settings.roleLabel.trim() ? ` for your ${settings.roleLabel.trim()}` : ''} against your brief — not just the job description. Open any dossier to review and tell us where to take it.`
+              ? 'Built against your real hiring needs — not just the job description. Review each candidate and move forward, pass, or give us direction in real time.'
               : 'Your shortlist is being prepared. Candidates will appear here as soon as they’re ready for your review.'}
           </p>
         </header>

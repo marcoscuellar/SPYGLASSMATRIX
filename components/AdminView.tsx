@@ -174,12 +174,12 @@ export function AdminView({ initial, settings, persistent }: { initial: StoredCa
           <div className="t-mono-xs t-section-label" style={{ marginBottom: 4 }}>PREPARED FOR</div>
           <p className="t-body" style={{ color: 'var(--ink-3)', fontSize: 13.5, margin: '0 0 14px' }}>Personalize the portal header so it reads as built for this client.</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
-            <Field label="Client name"><input style={inputStyle} value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="Procare HR" /></Field>
-            <Field label="Search / role (optional)"><input style={inputStyle} value={roleLabel} onChange={(e) => setRoleLabel(e.target.value)} placeholder="Director of Human Resources search" /></Field>
+            <Field label="Client name"><input style={inputStyle} value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="ProCare HR" /></Field>
+            <Field label="Role / title (optional)"><input style={inputStyle} value={roleLabel} onChange={(e) => setRoleLabel(e.target.value)} placeholder="VP of HR" /></Field>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <Button kind="secondary" onClick={saveClient} disabled={savingClient || (clientName === savedClient && roleLabel === settings.roleLabel)}>{savingClient ? 'Saving…' : 'Save'}</Button>
-            {clientName.trim() && <span className="t-body" style={{ fontSize: 13.5, color: 'var(--ink-3)' }}>Header will read: <b style={{ color: 'var(--ink-2)' }}>“{clientName.trim().split(/\s+/)[0]}, your shortlist.”</b></span>}
+            {clientName.trim() && <span className="t-body" style={{ fontSize: 13.5, color: 'var(--ink-3)' }}>Header will read: <b style={{ color: 'var(--ink-2)' }}>“{roleLabel.trim() ? `${roleLabel.trim()} for ${clientName.trim()}` : `${clientName.trim().split(/\s+/)[0]}, your shortlist.`}”</b></span>}
           </div>
         </div>
 
