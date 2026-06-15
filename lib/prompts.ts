@@ -108,23 +108,26 @@ export function parseFields(raw: string): ExtractedFields {
 }
 
 // ---- Résumé → client-portal candidate write-up -------------------------
-export function buildCandidatePrompt(resume: string, brief: string): string {
+export function buildCandidatePrompt(resume: string, brief: string, notes: string): string {
   return [
-    'You are Spyglass, an executive recruiter writing a client-facing candidate brief from a résumé.',
-    'Write for the hiring client (warm, confident, specific) — NOT for the candidate. Never invent facts; if something is not in the résumé, leave that field as an empty string ("") or omit the signal.',
+    'You are Spyglass, an executive recruiter writing a client-facing candidate brief.',
+    'Write for the hiring client (warm, confident, specific) — NOT for the candidate. Never invent facts; if something is in neither the résumé nor the recruiter notes, leave that field as an empty string ("") or omit the signal.',
     brief.trim()
       ? 'ROLE / BRIEF this candidate is being presented against (tailor the write-up and fit to it):\n' + brief.trim()
-      : 'No specific role brief was provided — write a strong general executive brief based on the résumé.',
+      : 'No specific role brief was provided — write a strong general executive brief based on the inputs.',
     '',
     'RÉSUMÉ:',
-    resume,
+    resume.trim() || '(none provided)',
+    '',
+    'RECRUITER NOTES (context the recruiter gathered — comp expectations, availability/notice, motivations, and other intel; trust these for facts not on the résumé):',
+    notes.trim() || '(none provided)',
     '',
     'Return STRICT minified JSON, exactly these keys, no markdown fences, no commentary:',
-    '{"name":"candidate full name","role":"current or most recent title","company":"current or most recent employer","years":number of years of experience or null,"location":"city, state if stated else \\"\\"","compExp":"","avail":"","tags":["3-5 very short credibility chips, e.g. \\"11 yrs\\", \\"CPA\\", \\"UHNW\\""],"fit":number 0-100 estimating fit'
+    '{"name":"candidate full name","role":"current or most recent title","company":"current or most recent employer","years":number of years of experience or null,"location":"city, state if stated else \\"\\"","compExp":"comp expectation from the notes else \\"\\"","avail":"availability/notice from the notes else \\"\\"","tags":["3-5 very short credibility chips, e.g. \\"11 yrs\\", \\"CPA\\", \\"UHNW\\""],"fit":number 0-100 estimating fit'
       + (brief.trim() ? ' against the brief' : ' as a general strength score')
-      + ',"headline":"one punchy sentence — who they are at a glance","intro":"2-3 sentence opening paragraph the client reads first","fitBullets":["3-4 concrete reasons they fit, each one sentence, drawn from the résumé"],"cta":"one closing line urging the client to meet them","signals":[{"signal":"2-4 word capability","score":"strong|solid|partial|gap"}]}',
+      + ',"headline":"one punchy sentence — who they are at a glance","intro":"2-3 sentence opening paragraph the client reads first","fitBullets":["3-4 concrete reasons they fit, each one sentence, drawn from the résumé AND notes"],"cta":"one closing line urging the client to meet them","signals":[{"signal":"2-4 word capability","score":"strong|solid|partial|gap"}]}',
     '',
-    'Rules: 3-5 tags, 3-4 fitBullets, 3-4 signals. Leave compExp and avail as "" (not on a résumé). Keep every string tight. Return ONLY the JSON.',
+    'Rules: 3-5 tags, 3-4 fitBullets, 3-4 signals. Pull compExp and avail from the recruiter notes when present. You may weave the recruiter notes (motivations, soft signals) into the intro and fitBullets. Keep every string tight. Return ONLY the JSON.',
   ].join('\n');
 }
 

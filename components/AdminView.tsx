@@ -31,6 +31,7 @@ export function AdminView({ initial, persistent }: { initial: StoredCandidate[];
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState('');
   const [brief, setBrief] = React.useState('');
+  const [notes, setNotes] = React.useState('');
   const [drafting, setDrafting] = React.useState('');   // status text while drafting
   const [draftErr, setDraftErr] = React.useState('');
   const fileRef = React.useRef<HTMLInputElement>(null);
@@ -52,22 +53,27 @@ export function AdminView({ initial, persistent }: { initial: StoredCandidate[];
     });
   };
 
-  const onResume = async (file: File) => {
+  const draft = async (file: File | null) => {
     setDraftErr(''); setError('');
     try {
-      setDrafting('Reading résumé…');
-      const fd = new FormData(); fd.append('file', file);
-      const pres = await fetch('/api/parse-document', { method: 'POST', body: fd });
-      const pdata = await pres.json();
-      if (!pres.ok || !pdata.text) throw new Error(pdata?.error || 'Could not read that file.');
+      let resumeText = '';
+      if (file) {
+        setDrafting('Reading résumé…');
+        const fd = new FormData(); fd.append('file', file);
+        const pres = await fetch('/api/parse-document', { method: 'POST', body: fd });
+        const pdata = await pres.json();
+        if (!pres.ok || !pdata.text) throw new Error(pdata?.error || 'Could not read that file.');
+        resumeText = pdata.text;
+      }
+      if (!resumeText && !notes.trim()) throw new Error('Add a résumé or some recruiter notes first.');
 
       setDrafting('Writing the brief…');
       const dres = await fetch('/api/draft-candidate', {
         method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ text: pdata.text, brief }),
+        body: JSON.stringify({ text: resumeText, brief, notes }),
       });
       const ddata = await dres.json();
-      if (!dres.ok || !ddata.candidate) throw new Error(ddata?.error || 'Could not draft from this résumé.');
+      if (!dres.ok || !ddata.candidate) throw new Error(ddata?.error || 'Could not draft this candidate.');
       fillFromDraft(ddata.candidate);
     } catch (e: any) {
       setDraftErr(e.message || 'Something went wrong.');
@@ -158,13 +164,18 @@ export function AdminView({ initial, persistent }: { initial: StoredCandidate[];
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={labelStyle}>Role / brief to tailor it to (optional)</label>
-              <textarea style={{ ...taStyle, minHeight: 56 }} value={brief} onChange={(e) => setBrief(e.target.value)} placeholder="Paste the role or a line about what the client wants — the write-up and fit score tailor to it." />
+              <textarea style={{ ...taStyle, minHeight: 52 }} value={brief} onChange={(e) => setBrief(e.target.value)} placeholder="Paste the role or a line about what the client wants — the write-up and fit score tailor to it." />
             </div>
-            <input ref={fileRef} type="file" accept=".pdf,.docx,.txt,.md,.rtf" style={{ display: 'none' }} onChange={(e) => { const fl = e.target.files?.[0]; if (fl) onResume(fl); }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+            <div style={{ marginBottom: 14 }}>
+              <label style={labelStyle}>Recruiter notes (optional — comp, availability, motivations, intel)</label>
+              <textarea style={{ ...taStyle, minHeight: 72 }} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Paste what the recruiter sent you: comp expectation, notice period, why they're looking, soft signals — the AI uses this with the résumé." />
+            </div>
+            <input ref={fileRef} type="file" accept=".pdf,.docx,.txt,.md,.rtf" style={{ display: 'none' }} onChange={(e) => { const fl = e.target.files?.[0]; if (fl) draft(fl); }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <Button kind="amber" icon={<SparkIcon c="#2a2008" />} onClick={() => fileRef.current?.click()} disabled={!!drafting}>
                 {drafting || 'Upload résumé & draft'}
               </Button>
+              <Button kind="secondary" onClick={() => draft(null)} disabled={!!drafting || !notes.trim()}>Draft from notes only</Button>
               <span className="t-body" style={{ fontSize: 13.5, color: 'var(--ink-3)' }}>PDF, DOCX, or TXT</span>
             </div>
             {draftErr && <div style={{ color: '#b42318', fontSize: 14, marginTop: 10 }}>{draftErr}</div>}
