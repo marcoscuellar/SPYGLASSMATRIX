@@ -110,7 +110,7 @@ function PortalCard({ c, rank, onOpen }: { c: StoredCandidate; rank: number; onO
       {c.headline && <p className="t-body" style={{ color: 'var(--ink)', fontSize: 17.5, fontWeight: 500, margin: '0 0 16px', letterSpacing: '-0.01em', minHeight: 48 }}>{c.headline}</p>}
       {c.tags.length > 0 && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 22 }}>
-          {c.tags.map((t, i) => <Tag key={i} tone="navy">{t}</Tag>)}
+          {c.tags.map((t, i) => <Tag key={i} tone="amber">{t}</Tag>)}
         </div>
       )}
       <div style={{ marginTop: 'auto', paddingTop: 18, borderTop: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
