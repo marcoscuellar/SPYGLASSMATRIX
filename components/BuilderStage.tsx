@@ -40,6 +40,7 @@ export function BuilderStage({ onBuild }: { onBuild: (p: BuilderPayload) => void
   const [notes, setNotes] = React.useState('');
   const [file, setFile] = React.useState<string | null>(null);
   const [fileHint, setFileHint] = React.useState(false);
+  const [parsing, setParsing] = React.useState(false);
   const [listening, setListening] = React.useState(false);
   const fileRef = React.useRef<HTMLInputElement>(null);
   const ready = !!jd.trim() && !!notes.trim();
@@ -79,21 +80,32 @@ export function BuilderStage({ onBuild }: { onBuild: (p: BuilderPayload) => void
     setExtracting(false);
   };
 
-  const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files && e.target.files[0];
     e.target.value = '';
     if (!f) return;
     setFile(f.name);
-    if (/\.(txt|md|markdown|csv|rtf|json)$/i.test(f.name)) {
-      const r = new FileReader();
-      r.onload = () => {
-        const t = String(r.result || '').trim();
-        if (t) { setJd(t); setFileHint(false); extractFields(t); }
-      };
-      r.readAsText(f);
-    } else {
+    setFileHint(false);
+    setParsing(true);
+    try {
+      // Read the document server-side (PDF / DOCX / text) → plain text.
+      const fd = new FormData();
+      fd.append('file', f);
+      const res = await fetch('/api/parse-document', { method: 'POST', body: fd });
+      const data = await res.json();
+      const t = String(data?.text || '').trim();
+      if (t) {
+        setJd(t);
+        setParsing(false);
+        // Pre-populate the engagement from the brief.
+        extractFields(t);
+        return;
+      }
+      setFileHint(true);
+    } catch {
       setFileHint(true);
     }
+    setParsing(false);
   };
 
   const loadSample = () => {
@@ -145,8 +157,8 @@ export function BuilderStage({ onBuild }: { onBuild: (p: BuilderPayload) => void
                 <div>
                   <span className="bld-drop-ic"><FileGlyph c="var(--navy)" s={18} /></span>
                   <div className="fn">{file}</div>
-                  <div className="fm">{fileHint ? 'Can’t read this here — paste it instead' : 'Loaded · read on submit'}</div>
-                  <button className="bld-ghost" onClick={(e) => { e.stopPropagation(); pick(); }}>Replace</button>
+                  <div className="fm">{parsing ? 'Reading the document…' : fileHint ? 'Couldn’t read this file — paste the text instead' : extracting ? 'Pre-filling the engagement…' : 'Loaded · brief read'}</div>
+                  <button className="bld-ghost" onClick={(e) => { e.stopPropagation(); pick(); }} disabled={parsing}>Replace</button>
                 </div>
               ) : (
                 <div>
