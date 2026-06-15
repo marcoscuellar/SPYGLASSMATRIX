@@ -1,20 +1,37 @@
 /* ============================================================
    Spyglass Matrix — client-portal storage
    Persists the candidates the recruiter adds so the client can
-   see them on their own device. Uses Postgres when POSTGRES_URL
-   is configured (provision Vercel Postgres / Neon in one click);
-   otherwise falls back to an in-memory store so the app still
-   runs locally. NOTE: the in-memory store does NOT persist across
-   serverless instances — set up Postgres for the real hand-off.
+   see them on their own device. Uses a Neon (serverless Postgres)
+   connection when one is configured; otherwise falls back to an
+   in-memory store so the app still runs locally.
+
+   We read the connection string from whichever standard variable
+   the database integration sets (POSTGRES_URL, DATABASE_URL, …),
+   so it works regardless of how the provider names it.
    ============================================================ */
 
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import type { Decision, StoredCandidate, StoredCandidateInput } from './types';
 
-const hasDb = !!(process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING);
+const CONN =
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL ||
+  process.env.DATABASE_URL_UNPOOLED ||
+  process.env.POSTGRES_URL_NON_POOLING ||
+  '';
+
+const hasDb = !!CONN;
 
 export function isPersistent(): boolean {
   return hasDb;
+}
+
+// Lazily-created Neon HTTP client (one per server instance).
+let _sql: ReturnType<typeof neon> | null = null;
+function db() {
+  if (!_sql) _sql = neon(CONN);
+  return _sql;
 }
 
 // ---- In-memory fallback (per server instance) ----------------
@@ -25,23 +42,24 @@ function newId(): string {
 }
 
 function rowToCandidate(id: string, createdAt: string, data: any, decision: string | null, note: string | null): StoredCandidate {
+  const d = typeof data === 'string' ? JSON.parse(data) : (data || {});
   return {
     id,
     createdAt,
-    name: data.name || '',
-    role: data.role || '',
-    company: data.company || '',
-    years: data.years ?? null,
-    location: data.location || '',
-    compExp: data.compExp || '',
-    avail: data.avail || '',
-    tags: Array.isArray(data.tags) ? data.tags : [],
-    fit: data.fit ?? null,
-    headline: data.headline || '',
-    intro: data.intro || '',
-    fitBullets: Array.isArray(data.fitBullets) ? data.fitBullets : [],
-    cta: data.cta || '',
-    signals: Array.isArray(data.signals) ? data.signals : [],
+    name: d.name || '',
+    role: d.role || '',
+    company: d.company || '',
+    years: d.years ?? null,
+    location: d.location || '',
+    compExp: d.compExp || '',
+    avail: d.avail || '',
+    tags: Array.isArray(d.tags) ? d.tags : [],
+    fit: d.fit ?? null,
+    headline: d.headline || '',
+    intro: d.intro || '',
+    fitBullets: Array.isArray(d.fitBullets) ? d.fitBullets : [],
+    cta: d.cta || '',
+    signals: Array.isArray(d.signals) ? d.signals : [],
     decision: (decision as Decision) || null,
     note: note || null,
   };
@@ -50,7 +68,7 @@ function rowToCandidate(id: string, createdAt: string, data: any, decision: stri
 let schemaReady = false;
 async function ensureSchema() {
   if (!hasDb || schemaReady) return;
-  await sql`CREATE TABLE IF NOT EXISTS portal_candidates (
+  await db()`CREATE TABLE IF NOT EXISTS portal_candidates (
     id          TEXT PRIMARY KEY,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     data        JSONB NOT NULL,
@@ -65,37 +83,36 @@ export async function listCandidates(): Promise<StoredCandidate[]> {
     return [...mem.values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   }
   await ensureSchema();
-  const { rows } = await sql`SELECT id, created_at, data, decision, note FROM portal_candidates ORDER BY created_at ASC`;
-  return rows.map((r: any) => rowToCandidate(r.id, new Date(r.created_at).toISOString(), r.data, r.decision, r.note));
+  const rows = (await db()`SELECT id, created_at, data, decision, note FROM portal_candidates ORDER BY created_at ASC`) as any[];
+  return rows.map((r) => rowToCandidate(r.id, new Date(r.created_at).toISOString(), r.data, r.decision, r.note));
 }
 
 export async function getCandidate(id: string): Promise<StoredCandidate | null> {
   if (!hasDb) return mem.get(id) || null;
   await ensureSchema();
-  const { rows } = await sql`SELECT id, created_at, data, decision, note FROM portal_candidates WHERE id = ${id}`;
+  const rows = (await db()`SELECT id, created_at, data, decision, note FROM portal_candidates WHERE id = ${id}`) as any[];
   if (!rows.length) return null;
-  const r: any = rows[0];
+  const r = rows[0];
   return rowToCandidate(r.id, new Date(r.created_at).toISOString(), r.data, r.decision, r.note);
 }
 
 export async function addCandidate(input: StoredCandidateInput): Promise<StoredCandidate> {
   const id = newId();
   const createdAt = new Date().toISOString();
-  const data = { ...input };
   if (!hasDb) {
     const cand: StoredCandidate = { id, createdAt, ...input, decision: null, note: null };
     mem.set(id, cand);
     return cand;
   }
   await ensureSchema();
-  await sql`INSERT INTO portal_candidates (id, created_at, data) VALUES (${id}, ${createdAt}, ${JSON.stringify(data)}::jsonb)`;
+  await db()`INSERT INTO portal_candidates (id, created_at, data) VALUES (${id}, ${createdAt}, ${JSON.stringify({ ...input })}::jsonb)`;
   return { id, createdAt, ...input, decision: null, note: null };
 }
 
 export async function deleteCandidate(id: string): Promise<void> {
   if (!hasDb) { mem.delete(id); return; }
   await ensureSchema();
-  await sql`DELETE FROM portal_candidates WHERE id = ${id}`;
+  await db()`DELETE FROM portal_candidates WHERE id = ${id}`;
 }
 
 export async function setFeedback(id: string, decision: Decision, note: string): Promise<void> {
@@ -105,5 +122,5 @@ export async function setFeedback(id: string, decision: Decision, note: string):
     return;
   }
   await ensureSchema();
-  await sql`UPDATE portal_candidates SET decision = ${decision}, note = ${note} WHERE id = ${id}`;
+  await db()`UPDATE portal_candidates SET decision = ${decision}, note = ${note} WHERE id = ${id}`;
 }
