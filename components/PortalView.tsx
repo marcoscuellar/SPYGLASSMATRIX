@@ -15,6 +15,15 @@ function initialsOf(name: string): string {
   return name.split(/\s+/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase() || '').join('') || '—';
 }
 
+// A small, refined accent palette — each candidate gets a stable color
+// so the shortlist has life without turning into confetti.
+const ACCENTS = ['var(--navy)', '#1f6f5c', '#6b3f8c', '#b05c34', '#2f5fa6', '#3f7a4f', '#8a4a5e'];
+function accentFor(id: string): string {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return ACCENTS[h % ACCENTS.length];
+}
+
 export function PortalView({ initial }: { initial: StoredCandidate[] }) {
   const [cands, setCands] = React.useState<StoredCandidate[]>(initial);
   const [openId, setOpenId] = React.useState<string | null>(null);
@@ -81,13 +90,15 @@ const fbMetaFor = (d: Decision) => ({
 function PortalCard({ c, rank, onOpen }: { c: StoredCandidate; rank: number; onOpen: () => void }) {
   const [hover, setHover] = React.useState(false);
   const fb = c.decision ? fbMetaFor(c.decision) : null;
+  const accent = accentFor(c.id);
   return (
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} onClick={onOpen}
-      style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-6)', padding: 30, cursor: 'pointer',
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-6)', padding: 30, cursor: 'pointer', position: 'relative', overflow: 'hidden',
         boxShadow: hover ? 'var(--sh-hover)' : 'var(--sh-card)', transform: hover ? 'translateY(-3px)' : 'none', transition: 'all .25s var(--ease)', display: 'flex', flexDirection: 'column' }}>
+      <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: accent }} />
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <Avatar initials={initialsOf(c.name)} size={50} accent="var(--navy)" />
+          <Avatar initials={initialsOf(c.name)} size={50} accent={accent} />
           <div>
             <div style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 22.5, letterSpacing: '-0.03em', lineHeight: 1.1 }}>{c.name}</div>
             <div className="t-body" style={{ color: 'var(--ink-3)', fontSize: 14.5 }}>{[c.role, c.years ? `${c.years} yrs` : ''].filter(Boolean).join(' · ')}</div>
@@ -103,7 +114,7 @@ function PortalCard({ c, rank, onOpen }: { c: StoredCandidate; rank: number; onO
       )}
       <div style={{ marginTop: 'auto', paddingTop: 18, borderTop: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {fb ? <Tag tone={fb.tone}>{fb.t}</Tag> : <FitChip fit={c.fit} size="lg" />}
-        <span className="t-mono-xs" style={{ color: hover ? 'var(--navy)' : 'var(--ink-3)', display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'color .2s' }}>
+        <span className="t-mono-xs" style={{ color: hover ? accent : 'var(--ink-3)', display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'color .2s' }}>
           OPEN DOSSIER <Arrow s={12} />
         </span>
       </div>
@@ -117,6 +128,7 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
   const [submitted, setSubmitted] = React.useState(!!c.decision);
   const [saving, setSaving] = React.useState(false);
   const first = c.name.split(' ')[0];
+  const accent = accentFor(c.id);
 
   const meta = [
     { l: 'Current', v: [c.role, c.company].filter(Boolean).join(', ') },
@@ -155,7 +167,7 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 30, paddingBottom: 28, borderBottom: '1px solid var(--line)' }}>
-          <Avatar initials={initialsOf(c.name)} size={62} accent="var(--navy)" />
+          <Avatar initials={initialsOf(c.name)} size={62} accent={accent} />
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
               <h1 style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 36.5, letterSpacing: '-0.035em', margin: 0 }}>{c.name}</h1>
@@ -179,9 +191,9 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
         {/* Brief */}
         {(c.headline || c.intro || c.fitBullets.length > 0) && (
           <div style={{ border: '1px solid var(--line)', borderRadius: 'var(--r-7)', overflow: 'hidden', background: 'var(--bg-card)', boxShadow: 'var(--sh-card)', marginBottom: 34 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '15px 22px', borderBottom: '1px solid var(--line)', background: 'var(--paper)' }}>
-              <SparkIcon c="var(--navy)" />
-              <span className="t-mono-tag" style={{ color: 'var(--navy)' }}>SPYGLASS · CANDIDATE BRIEF</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '15px 22px', borderBottom: '1px solid var(--line)', background: 'var(--paper)', borderTop: `3px solid ${accent}` }}>
+              <SparkIcon c={accent} />
+              <span className="t-mono-tag" style={{ color: accent }}>SPYGLASS · CANDIDATE BRIEF</span>
             </div>
             <div style={{ padding: '26px 30px 30px' }}>
               {c.headline && <h3 style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 27, letterSpacing: '-0.03em', lineHeight: 1.16, margin: '0 0 14px' }}>{c.headline}</h3>}
@@ -192,7 +204,7 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 13, marginBottom: c.cta ? 30 : 0 }}>
                     {c.fitBullets.map((b, i) => (
                       <div key={i} style={{ display: 'flex', gap: 13, alignItems: 'flex-start' }}>
-                        <span style={{ width: 25, height: 25, borderRadius: 99, background: 'var(--navy)', display: 'grid', placeItems: 'center', flexShrink: 0, marginTop: 1 }}><CheckIcon c="#fff" /></span>
+                        <span style={{ width: 25, height: 25, borderRadius: 99, background: accent, display: 'grid', placeItems: 'center', flexShrink: 0, marginTop: 1 }}><CheckIcon c="#fff" /></span>
                         <span className="t-body" style={{ fontSize: 17, color: 'var(--ink)', lineHeight: 1.5 }}>{b}</span>
                       </div>
                     ))}
@@ -200,7 +212,7 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
                 </>
               )}
               {c.cta && (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', padding: '22px 26px', borderRadius: 'var(--r-5)', background: 'var(--navy)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', padding: '22px 26px', borderRadius: 'var(--r-5)', background: accent }}>
                   <p style={{ margin: 0, fontFamily: 'var(--font)', fontWeight: 600, fontSize: 18, lineHeight: 1.45, letterSpacing: '-0.01em', color: '#fff', maxWidth: '46ch' }}>{c.cta}</p>
                   <Button onClick={() => { const el = document.getElementById('decision-panel'); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' }); }} icon={<Arrow />} style={{ background: 'var(--amber)', color: '#2a2008', borderColor: 'var(--amber)', flexShrink: 0 }}>Make your decision</Button>
                 </div>

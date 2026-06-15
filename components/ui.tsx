@@ -154,12 +154,15 @@ export function FitChip({ fit, size = 'sm' }: { fit: number | null; size?: 'sm' 
   if (fit == null) {
     return <span className="t-mono-xs" style={{ color: 'var(--ink-4)', border: '1px solid var(--line)', borderRadius: 99, padding: size === 'sm' ? '3px 8px' : '4px 10px', whiteSpace: 'nowrap' }}>NO FIT YET</span>;
   }
-  const color = fit >= 85 ? 'var(--navy)' : fit >= 70 ? 'var(--ink-2)' : 'var(--ink-3)';
-  const bg = fit >= 85 ? 'rgba(10,31,61,0.06)' : 'var(--paper)';
+  const tier = fit >= 85
+    ? { c: '#15795a', bg: 'rgba(21,121,90,0.09)', bd: 'rgba(21,121,90,0.30)' }
+    : fit >= 70
+      ? { c: '#9a6a12', bg: 'rgba(154,106,18,0.09)', bd: 'rgba(154,106,18,0.28)' }
+      : { c: '#9c4a25', bg: 'rgba(156,74,37,0.08)', bd: 'rgba(156,74,37,0.26)' };
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 2, padding: size === 'sm' ? '3px 8px' : '4px 10px', borderRadius: 99, background: bg, border: `1px solid ${fit >= 85 ? 'rgba(10,31,61,0.25)' : 'var(--line)'}` }}>
-      <span style={{ fontFamily: "'Geist', sans-serif", fontWeight: 800, fontSize: size === 'sm' ? 14.5 : 16.5, color, letterSpacing: '-0.02em' }}>{fit}</span>
-      <span className="t-mono-xs" style={{ color, fontSize: 10 }}>FIT</span>
+    <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 2, padding: size === 'sm' ? '3px 8px' : '4px 10px', borderRadius: 99, background: tier.bg, border: `1px solid ${tier.bd}` }}>
+      <span style={{ fontFamily: "'Geist', sans-serif", fontWeight: 800, fontSize: size === 'sm' ? 14.5 : 16.5, color: tier.c, letterSpacing: '-0.02em' }}>{fit}</span>
+      <span className="t-mono-xs" style={{ color: tier.c, fontSize: 10 }}>FIT</span>
     </span>
   );
 }
