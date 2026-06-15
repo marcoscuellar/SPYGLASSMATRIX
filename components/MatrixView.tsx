@@ -7,6 +7,7 @@
 import React from 'react';
 import { Card, Mark, Tag, MonoButton } from './ui';
 import { Arrow, LockIcon, CheckIcon, PrinterIcon, EyeIcon, FlagIcon } from './icons';
+import { JdDocument } from './JdDocument';
 import type { Matrix, Question } from '@/lib/types';
 
 type Mode = 'recruiter' | 'candidate';
@@ -112,7 +113,7 @@ function MatrixDoc({ mode, M }: { mode: Mode; M: Matrix }) {
           <section style={{ marginBottom: 40 }}>
             <SectionHead n="01" title="Job description" sub="Kept intact — the role exactly as it was submitted." />
             {M.jd.fullText ? (
-              <div className="t-body" style={{ fontSize: 15.5, color: 'var(--ink-2)', whiteSpace: 'pre-wrap', lineHeight: 1.65, marginTop: 6, padding: '20px 22px', background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 'var(--r-4)' }}>{M.jd.fullText}</div>
+              <JdDocument text={M.jd.fullText} />
             ) : (
               <>
                 <p className="t-body" style={{ fontSize: 17.5, color: 'var(--ink-2)', marginTop: 0, marginBottom: 14 }}>{M.jd.summary}</p>

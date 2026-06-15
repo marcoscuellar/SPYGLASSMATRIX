@@ -91,3 +91,30 @@ export type Candidate = {
 export type Decision = 'advance' | 'hold' | 'pass';
 export type Feedback = { decision: Decision; note: string };
 export type ClientView = { name: 'portal' | 'dossier' | 'placement'; candId: string | null };
+
+// ---- Persisted client-portal candidate (manually added by the recruiter) ----
+export type StoredSignal = { signal: string; score: ScoreKey };
+
+export type StoredCandidate = {
+  id: string;
+  createdAt: string;
+  name: string;
+  role: string;        // current title
+  company: string;
+  years: number | null;
+  location: string;
+  compExp: string;
+  avail: string;
+  tags: string[];
+  fit: number | null;
+  headline: string;
+  intro: string;       // the brief's opening paragraph
+  fitBullets: string[];// "why they fit the brief"
+  cta: string;
+  signals: StoredSignal[];
+  decision: Decision | null;
+  note: string | null;
+};
+
+// Everything the admin form submits (no id/createdAt/decision yet).
+export type StoredCandidateInput = Omit<StoredCandidate, 'id' | 'createdAt' | 'decision' | 'note'>;
