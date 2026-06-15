@@ -179,7 +179,7 @@ export function AdminView({ initial, settings, persistent }: { initial: StoredCa
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <Button kind="secondary" onClick={saveClient} disabled={savingClient || (clientName === savedClient && roleLabel === settings.roleLabel)}>{savingClient ? 'Saving…' : 'Save'}</Button>
-            {clientName.trim() && <span className="t-body" style={{ fontSize: 13.5, color: 'var(--ink-3)' }}>Header will read: <b style={{ color: 'var(--ink-2)' }}>“{roleLabel.trim() ? `${roleLabel.trim()} for ${clientName.trim()}` : `${clientName.trim().split(/\s+/)[0]}, your shortlist.`}”</b></span>}
+            {clientName.trim() && <span className="t-body" style={{ fontSize: 13.5, color: 'var(--ink-3)' }}>Header will read: <b style={{ color: 'var(--ink-2)' }}>“{roleLabel.trim() ? `${roleLabel.trim()} // ${clientName.trim()}` : `${clientName.trim().split(/\s+/)[0]}, your shortlist.`}”</b></span>}
           </div>
         </div>
 

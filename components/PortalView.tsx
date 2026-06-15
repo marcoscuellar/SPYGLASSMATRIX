@@ -37,7 +37,7 @@ function Shortlist({ cands, settings, onOpen }: { cands: StoredCandidate[]; sett
   const client = settings.clientName.trim();
   const role = settings.roleLabel.trim();
   const firstName = client.split(/\s+/)[0];
-  const headline = role && client ? `${role} for ${client}` : client ? `${firstName}, your shortlist.` : 'Your shortlist.';
+  const headline = role && client ? `${role} // ${client}` : client ? `${firstName}, your shortlist.` : 'Your shortlist.';
   return (
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
       <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 clamp(20px, 5vw, 40px) 110px' }}>
