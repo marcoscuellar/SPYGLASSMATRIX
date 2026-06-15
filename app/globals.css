@@ -1,0 +1,217 @@
+/* ============================================================
+   Spyglass Matrix — design tokens + base styles
+   Ported from the handoff brand/tokens.css and the connected-flow
+   re-skin in "Spyglass - Phases 2 & 4 (Designed).html".
+   The flow re-skins the palette to navy + black + white, with gold
+   kept strictly as a jewel accent (CTAs, ticks, success dots).
+   ============================================================ */
+
+:root {
+  /* === Surfaces ================================================ */
+  --bg:        #ffffff;
+  --bg-card:   #ffffff;
+  --paper:     #f5f5f4;
+
+  /* === Ink scale =============================================== */
+  --ink:       #0a0a0a;
+  --ink-2:     #525252;
+  --ink-3:     #a3a3a3;
+  --ink-4:     #d4d4d4;
+  --line:      #e7e5e4;
+  --line-soft: #ededeb;
+
+  /* === Gold · jewel accent only ================================ */
+  --amber:      #C2A24C;
+  --amber-d:    #A6862F;
+  /* Re-skin: amber-dd/ddd read as navy in the flow (gold is jewel-only) */
+  --amber-dd:   #0A1F3D;
+  --amber-ddd:  #0A1F3D;
+  --amber-pale: #ececea;
+  --amber-bg:   #f5f5f4;   /* neutral, not a gold tint, in the flow */
+  --gold-line:  #e7e5e4;
+
+  /* === Navy · primary brand / internal accent ================= */
+  --navy:       #0A1F3D;
+  --navy-2:     #1a3052;
+  --navy-3:     #1a3556;
+  --navy-mid:   #4B6177;
+  --navy-soft:  #8FA3B8;
+  --navy-fade:  #B8C5D1;
+  --navy-on:    #93c5fd;
+
+  /* === Signals · success reads navy in the flow =============== */
+  --green:      #0A1F3D;
+  --green-d:    #0A1F3D;
+  --green-on:   #D8BE6E;
+
+  /* === Forest / cream · premium brand moment (placement) ====== */
+  --forest:      #2F4D3A;
+  --cream:       #F5EFE0;
+
+  /* === Typography ============================================= */
+  --font:      'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono:      'Geist Mono', ui-monospace, Menlo, monospace;
+
+  /* === Radii ================================================== */
+  --r-1: 4px; --r-2: 8px; --r-3: 12px; --r-4: 14px;
+  --r-5: 16px; --r-6: 20px; --r-7: 28px; --r-8: 32px;
+  --r-pill: 100px;
+
+  /* === Shadows ================================================ */
+  --sh-card:   0 12px 32px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.04);
+  --sh-hover:  0 12px 28px rgba(0,0,0,0.18);
+  --sh-active: 0 30px 60px -10px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.05);
+  --sh-modal:  0 30px 80px -20px rgba(0,0,0,0.25);
+
+  /* The Builder card's signature drop shadow */
+  --sh-bld:    0 24px 60px -18px rgba(10,31,61,0.20), 0 4px 14px rgba(0,0,0,0.05);
+
+  /* === Motion ================================================= */
+  --ease:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
+}
+::selection { background: var(--ink); color: #fff; }
+button { font-family: inherit; }
+code { font-family: var(--mono); }
+
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 99px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+
+/* ============================================================
+   Keyframes
+   ============================================================ */
+@keyframes spgSpin   { to { transform: rotate(360deg); } }
+@keyframes spgReveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes spgFade   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spgSlideIn{ from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   Type scale primitives (bumped for readability, per the flow)
+   ============================================================ */
+.t-body        { font-family: var(--font); font-weight: 400; font-size: 16.5px; line-height: 1.55; letter-spacing: -0.01em; }
+.t-mono-tag    { font-family: var(--mono); font-weight: 500; font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+.t-mono-xs     { font-family: var(--mono); font-weight: 600; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+.t-mono-btn    { font-family: var(--mono); font-weight: 500; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+.t-section-label { font-weight: 700; color: var(--ink-2); }
+.t-display-lg  { font-family: var(--font); font-weight: 800; font-size: 42px; line-height: 1.0; letter-spacing: -0.04em; }
+.t-light       { font-weight: 400; color: var(--ink-3); }
+
+/* ============================================================
+   Stage wrapper backgrounds
+   ============================================================ */
+.stage-shell { min-height: 100vh; background: var(--bg); }
+.stage-shell.client { background: var(--paper); }
+.frame-pad { padding: 32px 40px 44px; }
+@media (max-width: 760px) { .frame-pad { padding: 20px; } }
+
+.submitstage { min-height: 560px; display: grid; place-items: center; padding: 40px; }
+
+/* ============================================================
+   Matrix Builder
+   ============================================================ */
+.bld-screen { background: var(--paper); padding: 30px 0 38px; min-height: 100vh; }
+.builder { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+.app-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+.app-bar-l { display: flex; align-items: center; gap: 11px; }
+.app-wm { font-weight: 900; font-size: 16px; letter-spacing: -0.06em; line-height: 1; }
+.app-bc { font-size: 14px; color: var(--ink-3); font-weight: 500; border-left: 1px solid var(--line); padding-left: 12px; }
+.app-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+
+.bld-hero { margin-bottom: 26px; }
+.bld-title { font-family: var(--font); font-weight: 700; font-size: clamp(34px, 4.6vw, 50px); line-height: 1.04; letter-spacing: -0.03em; margin: 0 0 16px; color: var(--ink); }
+.bld-title .ed { font-family: 'Newsreader', Georgia, serif; font-weight: 400; font-style: italic; color: var(--amber); letter-spacing: -0.005em; }
+.bld-sub { font-size: 16px; color: var(--ink-2); line-height: 1.55; margin: 0 0 32px; max-width: 52ch; }
+
+.bld-card { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-7); box-shadow: var(--sh-bld); padding: 30px 32px; }
+.bld-cardhead { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+.bld-sec { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; display: inline-flex; align-items: center; gap: 9px; }
+.bld-sec::before { content: ''; width: 14px; height: 2px; background: var(--amber); border-radius: 2px; display: inline-block; }
+.bld-sec-rule { height: 1px; background: var(--line); margin: 28px 0 18px; }
+
+.bld-mini-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 7px; }
+.bld-input { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: var(--r-3); padding: 11px 14px; font-family: var(--font); font-size: 15.5px; font-weight: 500; color: var(--ink); background: var(--paper); }
+.bld-input:focus { outline: none; border-color: var(--navy); }
+.bld-select { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: var(--r-3); padding: 11px 36px 11px 14px; font-family: var(--font); font-size: 15.5px; font-weight: 500; color: var(--ink); background-color: var(--paper); cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%230A1F3D' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; }
+.bld-select:focus { outline: none; border-color: var(--navy); }
+.bld-select.placeholder { color: var(--ink-3); }
+
+.bld-field { margin-bottom: 22px; }
+.bld-flabel { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.bld-flabel .l { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
+.bld-ta { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: var(--r-4); padding: 15px 18px; font-family: var(--font); font-size: 15px; line-height: 1.6; color: var(--ink-2); background: var(--paper); resize: vertical; display: block; }
+.bld-ta:focus { outline: none; border-color: var(--navy); color: var(--ink); }
+
+.bld-ghost { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; padding: 7px 12px; border-radius: var(--r-2); border: 1px solid var(--line); background: var(--bg); color: var(--ink-2); cursor: pointer; transition: all .18s var(--ease); }
+.bld-ghost:hover { border-color: var(--ink-3); }
+.bld-ghost.on { border-color: var(--navy); color: var(--navy); background: rgba(10,31,61,0.04); }
+.bld-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.bld-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.bld-buildbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
+.bld-buildbar .note { font-size: 14px; color: var(--ink-3); display: inline-flex; align-items: center; gap: 9px; max-width: 42ch; line-height: 1.4; }
+.bld-sample { font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); background: none; border: none; border-bottom: 1px solid var(--line); cursor: pointer; padding: 2px 0; transition: color .18s, border-color .18s; white-space: nowrap; }
+.bld-sample:hover { color: var(--navy); border-color: var(--navy); }
+.bld-sample:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.bld-jd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch; }
+.bld-jd-grid .bld-ta { height: 100%; }
+.bld-drop { min-height: 152px; text-align: center; border: 1.5px dashed rgba(10,31,61,0.32); border-radius: var(--r-4); background: rgba(10,31,61,0.025); padding: 28px 20px; cursor: pointer; transition: all .2s var(--ease); }
+.bld-drop:hover { border-color: var(--navy); background: rgba(10,31,61,0.055); }
+.bld-drop:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+.bld-drop.attached { cursor: default; border-style: solid; border-color: rgba(10,31,61,0.18); background: rgba(10,31,61,0.04); }
+.bld-drop-ic { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: #fff; border: 1px solid rgba(10,31,61,0.16); margin: 0 auto 12px; }
+.bld-drop-t { font-family: var(--font); font-weight: 700; font-size: 15.5px; letter-spacing: -0.01em; }
+.bld-drop-d { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-top: 6px; }
+.bld-drop .fn { font-weight: 700; font-size: 14.5px; letter-spacing: -0.01em; margin-bottom: 4px; word-break: break-word; max-width: 100%; }
+.bld-drop .fm { font-size: 12px; color: var(--ink-3); line-height: 1.4; margin-bottom: 12px; }
+
+@media (max-width: 560px) { .bld-jd-grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .bld-row { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .builder { padding: 0 18px; }
+  .bld-card { padding: 22px 18px; }
+  .bld-screen { padding: 22px 0 30px; }
+}
+
+/* ============================================================
+   The submit bridge bar (Matrix → client)
+   ============================================================ */
+.submitbar { margin-top: 34px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 22px 26px; border-radius: var(--r-6); border: 1px solid rgba(10,31,61,0.18); background: rgba(10,31,61,0.035); }
+.submitbar .sb-ic { width: 42px; height: 42px; border-radius: 12px; background: #fff; border: 1px solid rgba(10,31,61,0.16); display: grid; place-items: center; flex-shrink: 0; }
+.submitbar .sb-t { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+.submitbar .sb-d { font-size: 14.5px; color: var(--ink-2); margin-top: 3px; }
+
+/* ============================================================
+   Print: the Matrix document only
+   ============================================================ */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .print-hide { display: none !important; }
+  .frame-pad { padding: 0 !important; }
+  .stage-shell { background: #fff !important; }
+  section { break-inside: avoid; }
+  @page { margin: 14mm; }
+}
