@@ -154,11 +154,12 @@ export function FitChip({ fit, size = 'sm' }: { fit: number | null; size?: 'sm' 
   if (fit == null) {
     return <span className="t-mono-xs" style={{ color: 'var(--ink-4)', border: '1px solid var(--line)', borderRadius: 99, padding: size === 'sm' ? '3px 8px' : '4px 10px', whiteSpace: 'nowrap' }}>NO FIT YET</span>;
   }
+  // On-brand: gold for the strongest fits, navy below, muted ink for low.
   const tier = fit >= 85
-    ? { c: '#15795a', bg: 'rgba(21,121,90,0.09)', bd: 'rgba(21,121,90,0.30)' }
+    ? { c: 'var(--amber-ddd)', bg: 'var(--amber-bg)', bd: 'var(--gold-line)' }
     : fit >= 70
-      ? { c: '#9a6a12', bg: 'rgba(154,106,18,0.09)', bd: 'rgba(154,106,18,0.28)' }
-      : { c: '#9c4a25', bg: 'rgba(156,74,37,0.08)', bd: 'rgba(156,74,37,0.26)' };
+      ? { c: 'var(--navy)', bg: 'rgba(10,31,61,0.05)', bd: 'rgba(10,31,61,0.22)' }
+      : { c: 'var(--ink-3)', bg: 'var(--paper)', bd: 'var(--line)' };
   return (
     <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 2, padding: size === 'sm' ? '3px 8px' : '4px 10px', borderRadius: 99, background: tier.bg, border: `1px solid ${tier.bd}` }}>
       <span style={{ fontFamily: "'Geist', sans-serif", fontWeight: 800, fontSize: size === 'sm' ? 14.5 : 16.5, color: tier.c, letterSpacing: '-0.02em' }}>{fit}</span>

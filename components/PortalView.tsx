@@ -15,14 +15,8 @@ function initialsOf(name: string): string {
   return name.split(/\s+/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase() || '').join('') || '—';
 }
 
-// A small, refined accent palette — each candidate gets a stable color
-// so the shortlist has life without turning into confetti.
-const ACCENTS = ['var(--navy)', '#1f6f5c', '#6b3f8c', '#b05c34', '#2f5fa6', '#3f7a4f', '#8a4a5e'];
-function accentFor(id: string): string {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-  return ACCENTS[h % ACCENTS.length];
-}
+// Single brand accent — navy. (Gold is used sparingly for top fit scores.)
+const ACCENT = 'var(--navy)';
 
 export function PortalView({ initial, settings }: { initial: StoredCandidate[]; settings: PortalSettings }) {
   const [cands, setCands] = React.useState<StoredCandidate[]>(initial);
@@ -98,12 +92,11 @@ const fbMetaFor = (d: Decision) => ({
 function PortalCard({ c, rank, onOpen }: { c: StoredCandidate; rank: number; onOpen: () => void }) {
   const [hover, setHover] = React.useState(false);
   const fb = c.decision ? fbMetaFor(c.decision) : null;
-  const accent = accentFor(c.id);
+  const accent = ACCENT;
   return (
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} onClick={onOpen}
-      style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-6)', padding: 30, cursor: 'pointer', position: 'relative', overflow: 'hidden',
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-6)', padding: 30, cursor: 'pointer',
         boxShadow: hover ? 'var(--sh-hover)' : 'var(--sh-card)', transform: hover ? 'translateY(-3px)' : 'none', transition: 'all .25s var(--ease)', display: 'flex', flexDirection: 'column' }}>
-      <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: accent }} />
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <Avatar initials={initialsOf(c.name)} size={50} accent={accent} />
@@ -136,7 +129,7 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
   const [submitted, setSubmitted] = React.useState(!!c.decision);
   const [saving, setSaving] = React.useState(false);
   const first = c.name.split(' ')[0];
-  const accent = accentFor(c.id);
+  const accent = ACCENT;
 
   const meta = [
     { l: 'Current', v: [c.role, c.company].filter(Boolean).join(', ') },
