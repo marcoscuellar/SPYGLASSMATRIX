@@ -1,9 +1,9 @@
 import { AdminView } from '@/components/AdminView';
-import { listCandidates, isPersistent } from '@/lib/store';
+import { getSettings, listCandidates, isPersistent } from '@/lib/store';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
-  const initial = await listCandidates();
-  return <AdminView initial={initial} persistent={isPersistent()} />;
+  const [initial, settings] = await Promise.all([listCandidates(), getSettings()]);
+  return <AdminView initial={initial} settings={settings} persistent={isPersistent()} />;
 }

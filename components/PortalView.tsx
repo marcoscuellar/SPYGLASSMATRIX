@@ -9,7 +9,7 @@ import React from 'react';
 import { Avatar, Button, Eyebrow, FitChip, Mark, Tag } from './ui';
 import { Arrow, CheckIcon, SparkIcon } from './icons';
 import { SCORE_META } from '@/lib/data';
-import type { Decision, StoredCandidate } from '@/lib/types';
+import type { Decision, PortalSettings, StoredCandidate } from '@/lib/types';
 
 function initialsOf(name: string): string {
   return name.split(/\s+/).filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase() || '').join('') || '—';
@@ -24,7 +24,7 @@ function accentFor(id: string): string {
   return ACCENTS[h % ACCENTS.length];
 }
 
-export function PortalView({ initial }: { initial: StoredCandidate[] }) {
+export function PortalView({ initial, settings }: { initial: StoredCandidate[]; settings: PortalSettings }) {
   const [cands, setCands] = React.useState<StoredCandidate[]>(initial);
   const [openId, setOpenId] = React.useState<string | null>(null);
   const open = cands.find((c) => c.id === openId) || null;
@@ -35,11 +35,13 @@ export function PortalView({ initial }: { initial: StoredCandidate[] }) {
   if (open) {
     return <ExpandedDossier c={open} onBack={() => { setOpenId(null); window.scrollTo(0, 0); }} onFeedback={applyFeedback} />;
   }
-  return <Shortlist cands={cands} onOpen={(id) => { setOpenId(id); window.scrollTo(0, 0); }} />;
+  return <Shortlist cands={cands} settings={settings} onOpen={(id) => { setOpenId(id); window.scrollTo(0, 0); }} />;
 }
 
-function Shortlist({ cands, onOpen }: { cands: StoredCandidate[]; onOpen: (id: string) => void }) {
+function Shortlist({ cands, settings, onOpen }: { cands: StoredCandidate[]; settings: PortalSettings; onOpen: (id: string) => void }) {
   const sorted = [...cands].sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0));
+  const client = settings.clientName.trim();
+  const firstName = client.split(/\s+/)[0];
   return (
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
       <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 40px 110px' }}>
@@ -47,15 +49,19 @@ function Shortlist({ cands, onOpen }: { cands: StoredCandidate[]; onOpen: (id: s
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 30, flexWrap: 'wrap' }}>
             <Mark variant="navy" size={26} />
             <span className="t-mono-tag" style={{ color: 'var(--navy)' }}>PREPARED BY SPYGLASS</span>
+            {client && <>
+              <span style={{ width: 18, height: 1, background: 'var(--line)' }} />
+              <span className="t-mono-tag" style={{ color: 'var(--ink-2)' }}>FOR {client.toUpperCase()}</span>
+            </>}
             <span style={{ width: 18, height: 1, background: 'var(--line)' }} />
             <span className="t-mono-tag" style={{ color: 'var(--ink-3)' }}>CONFIDENTIAL</span>
           </div>
           <h1 style={{ fontFamily: 'var(--font)', fontWeight: 800, fontSize: 'clamp(38px, 5.4vw, 64px)', letterSpacing: '-0.04em', lineHeight: 1.0, margin: '0 0 22px', maxWidth: '15ch' }}>
-            Your shortlist.
+            {client ? `${firstName}, your shortlist.` : 'Your shortlist.'}
           </h1>
           <p className="t-body" style={{ color: 'var(--ink-2)', fontSize: 19.5, maxWidth: '60ch', margin: 0 }}>
             {sorted.length > 0
-              ? 'Hand-screened against your brief — not just the job description. Open any dossier to review and tell us where to take it.'
+              ? `Hand-screened${settings.roleLabel.trim() ? ` for your ${settings.roleLabel.trim()}` : ''} against your brief — not just the job description. Open any dossier to review and tell us where to take it.`
               : 'Your shortlist is being prepared. Candidates will appear here as soon as they’re ready for your review.'}
           </p>
         </header>

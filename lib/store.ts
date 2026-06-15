@@ -11,7 +11,7 @@
    ============================================================ */
 
 import { neon } from '@neondatabase/serverless';
-import type { Decision, StoredCandidate, StoredCandidateInput } from './types';
+import type { Decision, PortalSettings, StoredCandidate, StoredCandidateInput } from './types';
 
 const CONN =
   process.env.POSTGRES_URL ||
@@ -75,7 +75,31 @@ async function ensureSchema() {
     decision    TEXT,
     note        TEXT
   )`;
+  await db()`CREATE TABLE IF NOT EXISTS portal_settings (
+    id    TEXT PRIMARY KEY,
+    data  JSONB NOT NULL
+  )`;
   schemaReady = true;
+}
+
+const DEFAULT_SETTINGS: PortalSettings = { clientName: '', roleLabel: '' };
+let memSettings: PortalSettings = (globalThis as any).__spgSettings || ((globalThis as any).__spgSettings = { ...DEFAULT_SETTINGS });
+
+export async function getSettings(): Promise<PortalSettings> {
+  if (!hasDb) return { ...DEFAULT_SETTINGS, ...memSettings };
+  await ensureSchema();
+  const rows = (await db()`SELECT data FROM portal_settings WHERE id = 'default'`) as any[];
+  if (!rows.length) return { ...DEFAULT_SETTINGS };
+  const d = typeof rows[0].data === 'string' ? JSON.parse(rows[0].data) : rows[0].data;
+  return { ...DEFAULT_SETTINGS, ...d };
+}
+
+export async function setSettings(s: PortalSettings): Promise<void> {
+  const clean: PortalSettings = { clientName: String(s.clientName || ''), roleLabel: String(s.roleLabel || '') };
+  if (!hasDb) { memSettings = clean; (globalThis as any).__spgSettings = clean; return; }
+  await ensureSchema();
+  await db()`INSERT INTO portal_settings (id, data) VALUES ('default', ${JSON.stringify(clean)}::jsonb)
+    ON CONFLICT (id) DO UPDATE SET data = ${JSON.stringify(clean)}::jsonb`;
 }
 
 export async function listCandidates(): Promise<StoredCandidate[]> {

@@ -118,3 +118,9 @@ export type StoredCandidate = {
 
 // Everything the admin form submits (no id/createdAt/decision yet).
 export type StoredCandidateInput = Omit<StoredCandidate, 'id' | 'createdAt' | 'decision' | 'note'>;
+
+// Portal-level personalization (who the shortlist is prepared for).
+export type PortalSettings = {
+  clientName: string;   // e.g. "Procare HR"
+  roleLabel: string;    // e.g. "Director of Human Resources search"
+};

@@ -7,7 +7,7 @@
 import React from 'react';
 import { Button, FitChip, Mark, Tag } from './ui';
 import { Arrow, SparkIcon } from './icons';
-import type { ScoreKey, StoredCandidate } from '@/lib/types';
+import type { PortalSettings, ScoreKey, StoredCandidate } from '@/lib/types';
 
 const SCORES: ScoreKey[] = ['strong', 'solid', 'partial', 'gap'];
 const PORTAL_PATH = '/portal';
@@ -25,8 +25,26 @@ const emptyForm = () => ({
   ] as SignalRow[],
 });
 
-export function AdminView({ initial, persistent }: { initial: StoredCandidate[]; persistent: boolean }) {
+export function AdminView({ initial, settings, persistent }: { initial: StoredCandidate[]; settings: PortalSettings; persistent: boolean }) {
   const [list, setList] = React.useState<StoredCandidate[]>(initial);
+  const [clientName, setClientName] = React.useState(settings.clientName || '');
+  const [roleLabel, setRoleLabel] = React.useState(settings.roleLabel || '');
+  const [savedClient, setSavedClient] = React.useState(settings.clientName || '');
+  const [savingClient, setSavingClient] = React.useState(false);
+
+  const saveClient = async () => {
+    setSavingClient(true);
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ clientName, roleLabel }),
+      });
+      const data = await res.json();
+      if (res.ok) setSavedClient(data.settings.clientName || '');
+    } catch {}
+    setSavingClient(false);
+  };
+
   const [f, setF] = React.useState(emptyForm());
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState('');
@@ -149,6 +167,20 @@ export function AdminView({ initial, persistent }: { initial: StoredCandidate[];
             <div style={{ fontFamily: 'var(--mono)', fontSize: 14, color: 'var(--navy)' }}>{portalUrl}</div>
           </div>
           <Button kind="secondary" onClick={() => navigator.clipboard?.writeText(portalUrl)}>Copy link</Button>
+        </div>
+
+        {/* Who the portal is for */}
+        <div style={{ marginBottom: 28, padding: '20px 22px', borderRadius: 'var(--r-5)', border: '1px solid var(--line)', background: 'var(--bg-card)' }}>
+          <div className="t-mono-xs t-section-label" style={{ marginBottom: 4 }}>PREPARED FOR</div>
+          <p className="t-body" style={{ color: 'var(--ink-3)', fontSize: 13.5, margin: '0 0 14px' }}>Personalize the portal header so it reads as built for this client.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
+            <Field label="Client name"><input style={inputStyle} value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="Procare HR" /></Field>
+            <Field label="Search / role (optional)"><input style={inputStyle} value={roleLabel} onChange={(e) => setRoleLabel(e.target.value)} placeholder="Director of Human Resources search" /></Field>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Button kind="secondary" onClick={saveClient} disabled={savingClient || (clientName === savedClient && roleLabel === settings.roleLabel)}>{savingClient ? 'Saving…' : 'Save'}</Button>
+            {clientName.trim() && <span className="t-body" style={{ fontSize: 13.5, color: 'var(--ink-3)' }}>Header will read: <b style={{ color: 'var(--ink-2)' }}>“{clientName.trim().split(/\s+/)[0]}, your shortlist.”</b></span>}
+          </div>
         </div>
 
         {/* Add form */}
