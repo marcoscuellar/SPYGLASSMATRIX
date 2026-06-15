@@ -95,8 +95,9 @@ function PortalCard({ c, rank, onOpen }: { c: StoredCandidate; rank: number; onO
   const accent = ACCENT;
   return (
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} onClick={onOpen}
-      style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-6)', padding: 30, cursor: 'pointer',
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 'var(--r-6)', padding: 30, cursor: 'pointer', position: 'relative', overflow: 'hidden',
         boxShadow: hover ? 'var(--sh-hover)' : 'var(--sh-card)', transform: hover ? 'translateY(-3px)' : 'none', transition: 'all .25s var(--ease)', display: 'flex', flexDirection: 'column' }}>
+      <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'var(--amber)' }} />
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <Avatar initials={initialsOf(c.name)} size={50} accent={accent} />
@@ -105,7 +106,7 @@ function PortalCard({ c, rank, onOpen }: { c: StoredCandidate; rank: number; onO
             <div className="t-body" style={{ color: 'var(--ink-3)', fontSize: 14.5 }}>{[c.role, c.years ? `${c.years} yrs` : ''].filter(Boolean).join(' · ')}</div>
           </div>
         </div>
-        <span className="t-mono-xs" style={{ color: 'var(--ink-4)' }}>{String(rank).padStart(2, '0')}</span>
+        <span className="t-mono-xs" style={{ color: 'var(--amber-dd)', fontWeight: 600 }}>{String(rank).padStart(2, '0')}</span>
       </div>
       {c.headline && <p className="t-body" style={{ color: 'var(--ink)', fontSize: 17.5, fontWeight: 500, margin: '0 0 16px', letterSpacing: '-0.01em', minHeight: 48 }}>{c.headline}</p>}
       {c.tags.length > 0 && (
