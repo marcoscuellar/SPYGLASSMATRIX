@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
             points: toArr(e.points),
           }))
       : [],
+    resumeUrl: String(body?.resumeUrl || '').trim(),
   };
 
   const candidate = await addCandidate(input);
