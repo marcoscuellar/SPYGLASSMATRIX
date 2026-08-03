@@ -1,0 +1,292 @@
+/* ============================================================
+   Spyglass Matrix — portal seed (browser-console version)
+
+   HOW TO USE
+   1. Open your live site in the browser:  https://spyglassmatrix.vercel.app
+   2. Open DevTools > Console  (F12, or Cmd/Ctrl+Shift+J).
+   3. Paste this whole file, press Enter, watch the log.
+   4. Reload /portal — the Northwind Cloud tech shortlist is now live.
+
+   It runs on the site's own origin, so it writes straight to that site's
+   database via the existing /api/settings and /api/candidates routes.
+   Idempotent: clears whatever is there first, then adds exactly these three.
+   ============================================================ */
+(async () => {
+  const SETTINGS = {
+  "clientName": "Northwind Cloud",
+  "roleLabel": "Technical Product Manager search"
+};
+  const CANDIDATES = [
+  {
+    "id": "seed_priya_nair",
+    "name": "Priya Nair",
+    "role": "Senior Technical Product Manager",
+    "company": "Aperture Cloud",
+    "years": 9,
+    "location": "San Francisco, CA · open to remote",
+    "compExp": "$210–235k base",
+    "avail": "6-week notice",
+    "fit": 95,
+    "tags": [
+      "Developer Platform",
+      "APIs & SDKs",
+      "Ex-Engineer",
+      "Platform Strategy"
+    ],
+    "headline": "An engineer-turned-PM who ships developer platforms teams actually want to build on.",
+    "intro": "Priya spent five years as a backend engineer before moving into product, and it shows in how she works: she writes the specs the eng team builds from and can go deep on architecture, APIs, and trade-offs. At Aperture Cloud she owns the developer platform — APIs, SDKs, and CLI used by 40,000+ external developers — and led the API v2 redesign that cut integration time from about two weeks to two days, reaching 70% adoption within two quarters. For a Northwind Cloud TPM role that lives at the seam of platform, API, and developer experience, she is about as close to purpose-built as this search will surface.",
+    "fitBullets": [
+      "Ex-engineer credibility — five years as a backend engineer (billing + metering in Go and Postgres), so she earns technical trust with your platform teams from day one and can arbitrate design trade-offs, not just relay them.",
+      "API as a product — owns Aperture’s public APIs, SDKs, and CLI for 40k+ external developers; the API v2 redesign she led cut integration time from ~2 weeks to 2 days with 70% adoption in two quarters.",
+      "Developer-experience obsession — she measures success in integration time and adoption, exactly the lens Northwind’s developer platform needs.",
+      "Roadmaps from ambiguity — known for turning vague platform problems into shipped roadmaps; partners daily with staff engineers on architecture and sequencing.",
+      "Data-platform range — earlier ran Helio’s data-pipeline product (self-serve ingestion became the top revenue driver) and took its observability dashboard 0→1, so she ramps fast on Northwind’s data surface."
+    ],
+    "cta": "Priya is the strongest technical fit on this shortlist — she’s passive today, so worth an early conversation before her pipeline fills.",
+    "signals": [
+      {
+        "signal": "API product strategy",
+        "score": "strong"
+      },
+      {
+        "signal": "Developer experience (DX)",
+        "score": "strong"
+      },
+      {
+        "signal": "Engineering depth / ex-engineer",
+        "score": "strong"
+      },
+      {
+        "signal": "Platform roadmap & prioritization",
+        "score": "strong"
+      },
+      {
+        "signal": "Data-platform fluency",
+        "score": "solid"
+      },
+      {
+        "signal": "People / team leadership",
+        "score": "solid"
+      }
+    ],
+    "experience": [
+      {
+        "company": "Aperture Cloud",
+        "title": "Senior Technical Product Manager",
+        "period": "2020 – Present",
+        "location": "San Francisco, CA",
+        "points": [
+          "Owns the developer platform (APIs, SDKs, CLI) used by 40,000+ external developers.",
+          "Led the API v2 redesign that cut integration time from ~2 weeks to 2 days; adoption hit 70% in two quarters.",
+          "Partners daily with staff engineers on architecture and sequencing; writes the specs the eng team builds from.",
+          "Manages a pod of 2 associate PMs — both promoted under her."
+        ]
+      },
+      {
+        "company": "Helio Systems",
+        "title": "Product Manager",
+        "period": "2017 – 2020",
+        "location": "Remote",
+        "points": [
+          "Ran the data-pipeline product; shipped self-serve ingestion that became the top revenue driver.",
+          "Drove 0→1 on the observability dashboard, from customer interviews to GA."
+        ]
+      },
+      {
+        "company": "Cobalt Software",
+        "title": "Backend Software Engineer",
+        "period": "2015 – 2017",
+        "location": "Austin, TX",
+        "points": [
+          "Built and owned billing + metering services (Go, Postgres)."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "seed_sofia_ramos",
+    "name": "Sofia Ramos",
+    "role": "Technical Product Manager",
+    "company": "Northwind Cloud",
+    "years": 8,
+    "location": "Austin, TX",
+    "compExp": "$200–220k base",
+    "avail": "5-week notice · internal move",
+    "fit": 90,
+    "tags": [
+      "API Products",
+      "Partner Integrations",
+      "Northwind Insider",
+      "Ex-Data-Engineer"
+    ],
+    "headline": "Already inside Northwind — owns the public API and partner-integrations surface, and knows exactly where the bodies are buried.",
+    "intro": "Sofia is a rare internal candidate: a former data engineer who’s spent the last three-plus years as a TPM on Northwind Cloud’s public API and partner-integrations surface, where she grew partner integrations 3x and authored the API deprecation and versioning policy the whole company now follows. She knows the systems, the roadmap debts, and the cross-team relationships an external hire would need two quarters to learn. Bringing her into this expanded TPM seat is a low-risk, high-context bet — she’s productive in week one and already trusted by the staff engineers she’d partner with.",
+    "fitBullets": [
+      "Zero ramp on the domain — already owns Northwind’s public API and partner integrations (grew them 3x); she contributes to roadmap on day one, not day ninety.",
+      "Sets the standard others follow — authored the API deprecation and versioning policy the whole company now uses.",
+      "API + data platform in one profile — TPM on the API surface today, on top of a data-engineering and data-product background (streaming ingestion beta→GA, data catalog at Helio).",
+      "Trusted internally — runs launch reviews with staff engineers; the credibility an external hire spends a year earning, she already has.",
+      "Composure under pressure — known as a calm operator in launches and partner escalations."
+    ],
+    "cta": "Strong internal candidate — handle discreetly; she’s currently at Northwind and this would be an internal move.",
+    "signals": [
+      {
+        "signal": "API product strategy",
+        "score": "strong"
+      },
+      {
+        "signal": "Northwind domain context",
+        "score": "strong"
+      },
+      {
+        "signal": "Partner integrations",
+        "score": "strong"
+      },
+      {
+        "signal": "Data-platform fluency",
+        "score": "solid"
+      },
+      {
+        "signal": "Engineering depth / ex-engineer",
+        "score": "solid"
+      },
+      {
+        "signal": "Developer experience (DX)",
+        "score": "solid"
+      }
+    ],
+    "experience": [
+      {
+        "company": "Northwind Cloud",
+        "title": "Technical Product Manager",
+        "period": "2021 – Present",
+        "location": "Austin, TX",
+        "points": [
+          "Owns the public API + partner-integrations surface; grew partner integrations 3x.",
+          "Led the API deprecation + versioning policy the whole company now follows.",
+          "Writes crisp technical specs; runs launch reviews with staff engineers."
+        ]
+      },
+      {
+        "company": "Helio Systems",
+        "title": "Product Manager, Data",
+        "period": "2018 – 2021",
+        "location": "Remote",
+        "points": [
+          "Shipped the streaming-ingestion product from beta to GA.",
+          "Owned the data-catalog product and its self-serve onboarding."
+        ]
+      },
+      {
+        "company": "Aperture Cloud",
+        "title": "Data Engineer",
+        "period": "2016 – 2018",
+        "location": "San Francisco, CA",
+        "points": [
+          "Built ETL and warehouse pipelines (Python, Spark, Postgres)."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "seed_devin_alvarez",
+    "name": "Devin Alvarez",
+    "role": "Product Manager, Platform / Infrastructure",
+    "company": "Vantage Labs",
+    "years": 7,
+    "location": "Remote (US)",
+    "compExp": "$185–205k base",
+    "avail": "4-week notice",
+    "fit": 86,
+    "tags": [
+      "Platform",
+      "Infrastructure",
+      "CI/CD",
+      "Internal Tools"
+    ],
+    "headline": "A platform/infra PM who’s fluent in the CI/CD, tooling, and internal-developer work a cloud roadmap runs on.",
+    "intro": "Devin has spent his career on the load-bearing parts of the stack: internal developer platforms, CI/CD, and the tooling that keeps everyone else shipping. At Vantage Labs he owns the internal developer platform and CI/CD tooling used by 300+ engineers, and cut average build time 38% by prioritizing the right infra investments. His customers are engineers, so he prioritizes against real developer pain rather than shiny features — and he’s the PM the engineering managers trust to run the roadmap. He’s a slightly different shape than a pure API-product PM, but for the platform-and-infra half of the Northwind mandate he’s a strong, dependable fit.",
+    "fitBullets": [
+      "Platform/infra native — owns Vantage’s internal developer platform and CI/CD for 300+ engineers; he understands the tooling layer Northwind Cloud runs on.",
+      "Ships measurable infra wins — cut average build time 38% by sequencing the right investments, not the loudest requests.",
+      "Internal-customer empathy — his users are engineers, so he’s practiced at the developer-experience work this role demands, and is “the PM eng trusts.”",
+      "Rollout discipline — earlier built model-deployment workflows and a feature-flag / rollout system at Brightpath, so he’s fluent in safe, staged releases.",
+      "Motivated by scope — explicitly seeking a technical PM seat with real ownership; he’d join for the mandate, not to escape."
+    ],
+    "cta": "A strong platform/infra fit — worth an interview to weigh against the more API-centric candidates.",
+    "signals": [
+      {
+        "signal": "Platform & infrastructure depth",
+        "score": "strong"
+      },
+      {
+        "signal": "CI/CD & internal tooling",
+        "score": "strong"
+      },
+      {
+        "signal": "Developer experience (DX)",
+        "score": "solid"
+      },
+      {
+        "signal": "Roadmap & prioritization",
+        "score": "solid"
+      },
+      {
+        "signal": "API product strategy",
+        "score": "partial"
+      },
+      {
+        "signal": "Data-platform fluency",
+        "score": "partial"
+      }
+    ],
+    "experience": [
+      {
+        "company": "Vantage Labs",
+        "title": "Product Manager, Platform",
+        "period": "2019 – Present",
+        "location": "Remote",
+        "points": [
+          "Owns the internal developer platform and CI/CD tooling used by 300+ engineers.",
+          "Cut average build time 38% by prioritizing the right infra investments.",
+          "Runs the platform roadmap with two engineering managers; known as the PM eng trusts."
+        ]
+      },
+      {
+        "company": "Brightpath AI",
+        "title": "Associate Product Manager → Product Manager",
+        "period": "2016 – 2019",
+        "location": "Chicago, IL",
+        "points": [
+          "Shipped the model-deployment workflow used across the ML org.",
+          "Built the feature-flag and rollout system product."
+        ]
+      }
+    ]
+  }
+];
+
+  const api = async (method, path, body) => {
+    const res = await fetch(path, {
+      method,
+      headers: body ? { 'content-type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(method + ' ' + path + ' -> ' + res.status + ' ' + text.slice(0, 200));
+    return text ? JSON.parse(text) : {};
+  };
+
+  console.log('%cSpyglass — seeding portal on ' + location.origin, 'font-weight:bold');
+  const s = await api('POST', '/api/settings', SETTINGS);
+  console.log('Prepared for:', s.settings.clientName, '—', s.settings.roleLabel);
+
+  const { candidates: existing } = await api('GET', '/api/candidates');
+  for (const c of existing) { await api('DELETE', '/api/candidates/' + c.id); console.log('Removed:', c.name || c.id); }
+  if (!existing.length) console.log('(no existing candidates to remove)');
+
+  for (const c of CANDIDATES) { const { candidate } = await api('POST', '/api/candidates', c); console.log('Added:', candidate.name, '(fit ' + candidate.fit + ')'); }
+
+  const { candidates: final } = await api('GET', '/api/candidates');
+  console.log('%cDone — portal now shows ' + final.length + ' candidate(s). Reload /portal to see them.', 'color:green;font-weight:bold');
+})().catch((e) => console.error('Seed failed:', e.message || e));

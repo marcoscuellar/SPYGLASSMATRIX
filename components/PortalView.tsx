@@ -246,6 +246,35 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
           </div>
         )}
 
+        {/* Employment history */}
+        {c.experience.length > 0 && (
+          <div style={{ marginTop: 40 }}>
+            <div className="t-mono-xs" style={{ color: 'var(--ink-3)', marginBottom: 6 }}>EMPLOYMENT HISTORY</div>
+            <div>
+              {c.experience.map((e, i) => (
+                <div key={i} style={{ padding: '18px 0', borderTop: i === 0 ? '1px solid var(--line)' : 'none', borderBottom: '1px solid var(--line)' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 14, flexWrap: 'wrap' }}>
+                    <div style={{ fontFamily: 'var(--font)', fontWeight: 700, fontSize: 17.5, letterSpacing: '-0.01em' }}>
+                      {e.title}
+                      {e.company && <span style={{ color: 'var(--ink-2)', fontWeight: 500 }}>{` · ${e.company}`}</span>}
+                    </div>
+                    {(e.period || e.location) && (
+                      <span className="t-mono-xs" style={{ color: 'var(--ink-3)', flexShrink: 0 }}>{[e.period, e.location].filter(Boolean).join(' · ')}</span>
+                    )}
+                  </div>
+                  {e.points.length > 0 && (
+                    <ul style={{ margin: '9px 0 0', paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                      {e.points.map((p, j) => (
+                        <li key={j} className="t-body" style={{ fontSize: 15.5, color: 'var(--ink-2)', lineHeight: 1.5 }}>{p}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Decision */}
         <div id="decision-panel" style={{ marginTop: 48, padding: 'clamp(22px, 5vw, 32px)', borderRadius: 'var(--r-7)', background: 'var(--navy)', color: '#fff' }}>
           {!submitted ? (
