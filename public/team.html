@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spyglass Matrix — Team Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;--paper:#f5f5f4;--ink:#0a0a0a;--ink-2:#525252;--ink-3:#a3a3a3;--line:#e7e5e4;
+    --navy:#0A1F3D;--navy-2:#1a3052;--amber:#C2A24C;--amber-d:#A6862F;--forest:#2F4D3A;--cream:#F5EFE0;
+    --font:'Geist',-apple-system,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--serif:'Newsreader',Georgia,serif;
+    --sh:0 12px 32px rgba(10,31,61,0.06),0 2px 4px rgba(0,0,0,0.03);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);line-height:1.5;}
+  .m-serif{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--amber);}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px 60px;}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid var(--line);}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .mark{width:26px;height:26px;border-radius:7px;background:var(--navy);display:flex;align-items:center;justify-content:center;}
+  .brand .mark::after{content:'';width:11px;height:11px;border:2px solid var(--amber);border-radius:50%;}
+  .brand .wm{font-family:var(--font);font-weight:900;font-size:16px;letter-spacing:-0.06em;color:var(--navy);}
+  .logo{display:block;flex:none;}
+  .brand .pg{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--ink-3);padding-left:10px;margin-left:6px;border-left:1px solid var(--line);}
+  .top .date{font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.06em;}
+
+  h1{font-size:38px;font-weight:800;letter-spacing:-.025em;margin:32px 0 6px;line-height:1.05;}
+  .sub{color:var(--ink-2);font-size:15.5px;margin:0 0 28px;}
+
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:30px;}
+  @media(max-width:760px){.stats{grid-template-columns:1fr 1fr;}}
+  .tile{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--sh);}
+  .tile.gold{border-top:3px solid var(--amber);}
+  .tile .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);}
+  .tile .v{font-size:32px;font-weight:800;letter-spacing:-.02em;margin-top:6px;color:var(--navy);}
+  .tile .v.rev{color:var(--forest);}
+  .tile .d{font-size:12.5px;color:var(--ink-2);margin-top:2px;}
+  .tile .d .up{color:var(--forest);font-weight:600;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+  @media(max-width:860px){.grid{grid-template-columns:1fr;}}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);overflow:hidden;}
+  .card-h{display:flex;align-items:center;justify-content:space-between;padding:17px 22px;border-bottom:1px solid var(--line);}
+  .card-h .t{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);}
+  .card-h a{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber-d);text-decoration:none;font-weight:600;}
+
+  /* leaderboard */
+  .lead{display:flex;align-items:center;gap:13px;padding:14px 22px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;}
+  .lead:last-child{border-bottom:none;}
+  .lead:hover{background:var(--paper);}
+  .rank{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--amber-d);width:20px;}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none;}
+  .lead .nm{font-weight:700;font-size:15px;color:var(--navy);}
+  .lead .mini{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.03em;margin-top:1px;}
+  .lead .rev{margin-left:auto;text-align:right;}
+  .lead .rev .r{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--forest);}
+  .lead .rev .p{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);letter-spacing:.05em;}
+
+  /* searches */
+  .eng{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);}
+  .eng:last-child{border-bottom:none;}
+  .eng .role{flex:1;}
+  .eng .role .r{font-weight:700;font-size:14.5px;color:var(--navy);}
+  .eng .role .c{font-size:12.5px;color:var(--ink-2);margin-top:1px;}
+  .own{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--ink-3);}
+  .stage{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:4px 9px;border-radius:100px;background:var(--paper);color:var(--ink-2);border:1px solid var(--line);}
+  .stage.live{background:#eef3ee;color:var(--forest);border-color:#d5e2d5;}
+  .stage.new{background:#fbf6ea;color:var(--amber-d);border-color:#eadfc4;}
+
+  .bars{padding:18px 22px;}
+  .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:13px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-row .lbl{font-size:13.5px;font-weight:600;color:var(--navy);width:70px;}
+  .track{flex:1;height:10px;background:var(--paper);border-radius:100px;overflow:hidden;}
+  .track > span{display:block;height:100%;background:var(--amber);border-radius:100px;}
+  .bar-row .amt{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);width:66px;text-align:right;}
+  .foot{text-align:center;color:var(--ink-3);font-family:var(--mono);font-size:11px;letter-spacing:.05em;margin-top:34px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><svg class="logo" viewBox="0 0 100 100" width="26" height="26"><rect width="100" height="100" rx="28" fill="#0A1F3D"/><rect x="14" y="38" width="72" height="24" rx="3" fill="#fff"/><circle cx="72" cy="50" r="9" fill="#C2A24C"/><circle cx="72" cy="50" r="5" fill="#0A1F3D"/><circle cx="72" cy="50" r="2" fill="#C2A24C"/></svg><span class="wm">SPYGLASS MATRIX</span><span class="pg">Team Dashboard</span></div>
+    <div class="date">AUG 3, 2026 · Q3</div>
+  </div>
+
+  <h1>The whole desk, <span class="m-serif">one screen</span>.</h1>
+  <p class="sub">Team performance at a glance — drill into any recruiter for the detail.</p>
+
+  <div class="stats">
+    <div class="tile gold"><div class="k">Revenue · Q3</div><div class="v rev">$301.5k</div><div class="d"><span class="up">78%</span> to target</div></div>
+    <div class="tile"><div class="k">Placements</div><div class="v">6</div><div class="d">of 9 target</div></div>
+    <div class="tile"><div class="k">Active Searches</div><div class="v">6</div><div class="d">across 3 recruiters</div></div>
+    <div class="tile"><div class="k">Candidates in Play</div><div class="v">23</div><div class="d">8 client-ready</div></div>
+    <div class="tile"><div class="k">Avg. Time to Fill</div><div class="v">31<span style="font-size:16px;color:var(--ink-3);">d</span></div><div class="d"><span class="up">−4d</span> vs. Q2</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-h"><span class="t">Recruiter Leaderboard</span><a href="#">Full report</a></div>
+      <div class="lead" onclick="location.href='management.html'"><span class="rank">1</span><span class="av">MC</span><div><div class="nm">Marcos Cuellar</div><div class="mini">42 calls · 9 subs · 3 placed</div></div><div class="rev"><div class="r">$142.0k</div><div class="p">3 PLACEMENTS</div></div></div>
+      <div class="lead" onclick="location.href='management.html'"><span class="rank">2</span><span class="av">MC</span><div><div class="nm">Mike Chapman</div><div class="mini">31 calls · 6 subs · 2 placed</div></div><div class="rev"><div class="r">$98.5k</div><div class="p">2 PLACEMENTS</div></div></div>
+      <div class="lead" onclick="location.href='management.html'"><span class="rank">3</span><span class="av">LG</span><div><div class="nm">Luke Gendron</div><div class="mini">27 calls · 5 subs · 1 placed</div></div><div class="rev"><div class="r">$61.0k</div><div class="p">1 PLACEMENT</div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="t">Revenue by Recruiter</span><span class="own">Q3 · $</span></div>
+      <div class="bars">
+        <div class="bar-row"><span class="lbl">Marcos</span><span class="track"><span style="width:100%"></span></span><span class="amt">$142.0k</span></div>
+        <div class="bar-row"><span class="lbl">Mike</span><span class="track"><span style="width:69%"></span></span><span class="amt">$98.5k</span></div>
+        <div class="bar-row"><span class="lbl">Luke</span><span class="track"><span style="width:43%"></span></span><span class="amt">$61.0k</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <div class="card-h"><span class="t">Active Searches · All Recruiters</span><a href="#">View all</a></div>
+    <div class="eng"><div class="role"><div class="r">Senior Tax Manager</div><div class="c">Meridian Wealth Advisors</div></div><span class="own">MARCOS</span><span class="stage live">Client review</span></div>
+    <div class="eng"><div class="role"><div class="r">VP of Human Resources</div><div class="c">ProCare HR</div></div><span class="own">MARCOS</span><span class="stage live">Shortlist sent</span></div>
+    <div class="eng"><div class="role"><div class="r">Director of Finance</div><div class="c">Beacon Private Wealth</div></div><span class="own">MIKE</span><span class="stage live">Placed</span></div>
+    <div class="eng"><div class="role"><div class="r">Controller</div><div class="c">Larkspur &amp; Vance</div></div><span class="own">MIKE</span><span class="stage">Screening</span></div>
+    <div class="eng"><div class="role"><div class="r">Private Client Tax Manager</div><div class="c">Meridian Wealth Advisors</div></div><span class="own">LUKE</span><span class="stage new">New brief</span></div>
+    <div class="eng"><div class="role"><div class="r">Family Office Tax Lead</div><div class="c">Confidential</div></div><span class="own">MARCOS</span><span class="stage">Sourcing</span></div>
+  </div>
+
+  <div class="foot">Spyglass Matrix · team dashboard · Q3 2026</div>
+</div>
+</body>
+</html>
