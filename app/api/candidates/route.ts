@@ -49,6 +49,17 @@ export async function POST(req: NextRequest) {
           .filter((s: any) => s && String(s.signal || '').trim())
           .map((s: any) => ({ signal: String(s.signal).trim(), score: (SCORES.includes(s.score) ? s.score : 'solid') as ScoreKey }))
       : [],
+    experience: Array.isArray(body?.experience)
+      ? body.experience
+          .filter((e: any) => e && (String(e.company || '').trim() || String(e.title || '').trim()))
+          .map((e: any) => ({
+            company: String(e.company || '').trim(),
+            title: String(e.title || '').trim(),
+            period: String(e.period || '').trim(),
+            location: String(e.location || '').trim(),
+            points: toArr(e.points),
+          }))
+      : [],
   };
 
   const candidate = await addCandidate(input);

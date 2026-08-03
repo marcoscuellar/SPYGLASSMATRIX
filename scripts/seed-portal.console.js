@@ -68,6 +68,39 @@
         "signal": "People / team leadership",
         "score": "solid"
       }
+    ],
+    "experience": [
+      {
+        "company": "Aperture Cloud",
+        "title": "Senior Technical Product Manager",
+        "period": "2020 – Present",
+        "location": "San Francisco, CA",
+        "points": [
+          "Owns the developer platform (APIs, SDKs, CLI) used by 40,000+ external developers.",
+          "Led the API v2 redesign that cut integration time from ~2 weeks to 2 days; adoption hit 70% in two quarters.",
+          "Partners daily with staff engineers on architecture and sequencing; writes the specs the eng team builds from.",
+          "Manages a pod of 2 associate PMs — both promoted under her."
+        ]
+      },
+      {
+        "company": "Helio Systems",
+        "title": "Product Manager",
+        "period": "2017 – 2020",
+        "location": "Remote",
+        "points": [
+          "Ran the data-pipeline product; shipped self-serve ingestion that became the top revenue driver.",
+          "Drove 0→1 on the observability dashboard, from customer interviews to GA."
+        ]
+      },
+      {
+        "company": "Cobalt Software",
+        "title": "Backend Software Engineer",
+        "period": "2015 – 2017",
+        "location": "Austin, TX",
+        "points": [
+          "Built and owned billing + metering services (Go, Postgres)."
+        ]
+      }
     ]
   },
   {
@@ -121,6 +154,38 @@
         "signal": "Developer experience (DX)",
         "score": "solid"
       }
+    ],
+    "experience": [
+      {
+        "company": "Northwind Cloud",
+        "title": "Technical Product Manager",
+        "period": "2021 – Present",
+        "location": "Austin, TX",
+        "points": [
+          "Owns the public API + partner-integrations surface; grew partner integrations 3x.",
+          "Led the API deprecation + versioning policy the whole company now follows.",
+          "Writes crisp technical specs; runs launch reviews with staff engineers."
+        ]
+      },
+      {
+        "company": "Helio Systems",
+        "title": "Product Manager, Data",
+        "period": "2018 – 2021",
+        "location": "Remote",
+        "points": [
+          "Shipped the streaming-ingestion product from beta to GA.",
+          "Owned the data-catalog product and its self-serve onboarding."
+        ]
+      },
+      {
+        "company": "Aperture Cloud",
+        "title": "Data Engineer",
+        "period": "2016 – 2018",
+        "location": "San Francisco, CA",
+        "points": [
+          "Built ETL and warehouse pipelines (Python, Spark, Postgres)."
+        ]
+      }
     ]
   },
   {
@@ -173,6 +238,29 @@
       {
         "signal": "Data-platform fluency",
         "score": "partial"
+      }
+    ],
+    "experience": [
+      {
+        "company": "Vantage Labs",
+        "title": "Product Manager, Platform",
+        "period": "2019 – Present",
+        "location": "Remote",
+        "points": [
+          "Owns the internal developer platform and CI/CD tooling used by 300+ engineers.",
+          "Cut average build time 38% by prioritizing the right infra investments.",
+          "Runs the platform roadmap with two engineering managers; known as the PM eng trusts."
+        ]
+      },
+      {
+        "company": "Brightpath AI",
+        "title": "Associate Product Manager → Product Manager",
+        "period": "2016 – 2019",
+        "location": "Chicago, IL",
+        "points": [
+          "Shipped the model-deployment workflow used across the ML org.",
+          "Built the feature-flag and rollout system product."
+        ]
       }
     ]
   }

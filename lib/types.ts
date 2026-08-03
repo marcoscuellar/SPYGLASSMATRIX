@@ -95,6 +95,15 @@ export type ClientView = { name: 'portal' | 'dossier' | 'placement'; candId: str
 // ---- Persisted client-portal candidate (manually added by the recruiter) ----
 export type StoredSignal = { signal: string; score: ScoreKey };
 
+// One role in a candidate's employment history (client-facing).
+export type ExperienceItem = {
+  company: string;
+  title: string;
+  period: string;        // e.g. "2020 – Present"
+  location?: string;
+  points: string[];      // highlights for this role
+};
+
 export type StoredCandidate = {
   id: string;
   createdAt: string;
@@ -112,6 +121,7 @@ export type StoredCandidate = {
   fitBullets: string[];// "why they fit the brief"
   cta: string;
   signals: StoredSignal[];
+  experience: ExperienceItem[]; // employment history
   decision: Decision | null;
   note: string | null;
 };

@@ -73,6 +73,7 @@ function rowToCandidate(id: string, createdAt: string, data: any, decision: stri
     fitBullets: Array.isArray(d.fitBullets) ? d.fitBullets : [],
     cta: d.cta || '',
     signals: Array.isArray(d.signals) ? d.signals : [],
+    experience: Array.isArray(d.experience) ? d.experience : [],
     decision: (decision as Decision) || null,
     note: note || null,
   };
