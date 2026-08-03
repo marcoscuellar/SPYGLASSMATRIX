@@ -261,6 +261,15 @@ function QuestionRow({ i, q, candidate }: { i: number; q: Question; candidate: b
               </div>
             </div>
           )}
+          {!candidate && (
+            <div style={{ marginTop: 12 }}>
+              <span className="t-mono-xs" style={{ color: 'var(--navy)', display: 'block', marginBottom: 6 }}>YOUR NOTES · TYPE WHILE YOU TALK</span>
+              <textarea
+                placeholder="Great speaking with you… jot the messy notes here while you're on the call."
+                style={{ width: '100%', minHeight: 64, resize: 'vertical', padding: '11px 13px', border: '1px solid var(--line)', borderRadius: 'var(--r-2)', fontFamily: "'Geist', sans-serif", fontSize: 15, color: 'var(--ink)', background: 'var(--bg-card)', boxSizing: 'border-box' }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
