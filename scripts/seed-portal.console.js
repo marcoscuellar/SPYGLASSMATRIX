@@ -18,6 +18,7 @@
 };
   const CANDIDATES = [
   {
+    "id": "seed_priya_nair",
     "name": "Priya Nair",
     "role": "Senior Technical Product Manager",
     "company": "Aperture Cloud",
@@ -70,6 +71,7 @@
     ]
   },
   {
+    "id": "seed_sofia_ramos",
     "name": "Sofia Ramos",
     "role": "Technical Product Manager",
     "company": "Northwind Cloud",
@@ -122,6 +124,7 @@
     ]
   },
   {
+    "id": "seed_devin_alvarez",
     "name": "Devin Alvarez",
     "role": "Product Manager, Platform / Infrastructure",
     "company": "Vantage Labs",

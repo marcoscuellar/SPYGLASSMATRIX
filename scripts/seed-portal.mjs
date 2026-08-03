@@ -1,133 +1,39 @@
 #!/usr/bin/env node
 /* ============================================================
-   Spyglass Matrix — portal seed (tech demo)
-   Re-seeds the client portal so /portal shows the Northwind Cloud
-   Technical Product Manager search instead of the old ProCare HR/tax
-   shortlist.
+   Spyglass Matrix — portal seed (manual / CI runner)
 
-   It drives the same public API routes the app already exposes — no
-   direct DB access required — so running it against the live URL
-   writes straight to the shared Neon Postgres store:
+   NOTE: the app now seeds itself on first run (see lib/store.ts +
+   lib/portal-seed.json), so a normal deploy needs nothing here. This script
+   stays as a manual override — e.g. to force a re-seed against a running
+   instance, or from CI — by driving the same public API routes:
 
      POST   /api/settings           set "prepared for" client + role
      GET    /api/candidates         read current shortlist
      DELETE /api/candidates/:id     remove each existing candidate
-     POST   /api/candidates         add each new candidate
+     POST   /api/candidates         add each seed candidate
+
+   The candidate data is read from the single source of truth,
+   lib/portal-seed.json, so it can never drift from what the app seeds.
 
    Usage:
      node scripts/seed-portal.mjs                       # -> http://localhost:3000
      node scripts/seed-portal.mjs https://your-app.app  # -> live site
      BASE_URL=https://your-app.app node scripts/seed-portal.mjs
      node scripts/seed-portal.mjs --dry-run             # print, don't write
-
-   Idempotent: it clears whatever candidates exist first, so re-running
-   it always leaves exactly the three demo candidates below.
    ============================================================ */
+
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const seed = JSON.parse(readFileSync(join(HERE, '..', 'lib', 'portal-seed.json'), 'utf8'));
+
+export const SETTINGS = seed.settings;
+export const CANDIDATES = seed.candidates; // each includes a stable `id`; the API ignores it and assigns its own
 
 const BASE_URL = (process.argv.find((a) => /^https?:\/\//.test(a)) || process.env.BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
 const DRY_RUN = process.argv.includes('--dry-run');
-
-// ---- Portal personalization ("Prepared for") -----------------
-export const SETTINGS = {
-  clientName: 'Northwind Cloud',
-  roleLabel: 'Technical Product Manager search',
-};
-
-// ---- The three tech-demo candidates --------------------------
-// Scores for the signal map: 'strong' | 'solid' | 'partial' | 'gap'
-// ('gap' rows are hidden from the client view by the portal.)
-export const CANDIDATES = [
-  {
-    name: 'Priya Nair',
-    role: 'Senior Technical Product Manager',
-    company: 'Aperture Cloud',
-    years: 9,
-    location: 'San Francisco, CA · open to remote',
-    compExp: '$210–235k base',
-    avail: '6-week notice',
-    fit: 95,
-    tags: ['Developer Platform', 'APIs & SDKs', 'Ex-Engineer', 'Platform Strategy'],
-    headline: 'An engineer-turned-PM who ships developer platforms teams actually want to build on.',
-    intro:
-      'Priya spent five years as a backend engineer before moving into product, and it shows in how she works: she writes the specs the eng team builds from and can go deep on architecture, APIs, and trade-offs. At Aperture Cloud she owns the developer platform — APIs, SDKs, and CLI used by 40,000+ external developers — and led the API v2 redesign that cut integration time from about two weeks to two days, reaching 70% adoption within two quarters. For a Northwind Cloud TPM role that lives at the seam of platform, API, and developer experience, she is about as close to purpose-built as this search will surface.',
-    fitBullets: [
-      'Ex-engineer credibility — five years as a backend engineer (billing + metering in Go and Postgres), so she earns technical trust with your platform teams from day one and can arbitrate design trade-offs, not just relay them.',
-      'API as a product — owns Aperture’s public APIs, SDKs, and CLI for 40k+ external developers; the API v2 redesign she led cut integration time from ~2 weeks to 2 days with 70% adoption in two quarters.',
-      'Developer-experience obsession — she measures success in integration time and adoption, exactly the lens Northwind’s developer platform needs.',
-      'Roadmaps from ambiguity — known for turning vague platform problems into shipped roadmaps; partners daily with staff engineers on architecture and sequencing.',
-      'Data-platform range — earlier ran Helio’s data-pipeline product (self-serve ingestion became the top revenue driver) and took its observability dashboard 0→1, so she ramps fast on Northwind’s data surface.',
-    ],
-    cta: 'Priya is the strongest technical fit on this shortlist — she’s passive today, so worth an early conversation before her pipeline fills.',
-    signals: [
-      { signal: 'API product strategy', score: 'strong' },
-      { signal: 'Developer experience (DX)', score: 'strong' },
-      { signal: 'Engineering depth / ex-engineer', score: 'strong' },
-      { signal: 'Platform roadmap & prioritization', score: 'strong' },
-      { signal: 'Data-platform fluency', score: 'solid' },
-      { signal: 'People / team leadership', score: 'solid' },
-    ],
-  },
-  {
-    name: 'Sofia Ramos',
-    role: 'Technical Product Manager',
-    company: 'Northwind Cloud',
-    years: 8,
-    location: 'Austin, TX',
-    compExp: '$200–220k base',
-    avail: '5-week notice · internal move',
-    fit: 90,
-    tags: ['API Products', 'Partner Integrations', 'Northwind Insider', 'Ex-Data-Engineer'],
-    headline: 'Already inside Northwind — owns the public API and partner-integrations surface, and knows exactly where the bodies are buried.',
-    intro:
-      'Sofia is a rare internal candidate: a former data engineer who’s spent the last three-plus years as a TPM on Northwind Cloud’s public API and partner-integrations surface, where she grew partner integrations 3x and authored the API deprecation and versioning policy the whole company now follows. She knows the systems, the roadmap debts, and the cross-team relationships an external hire would need two quarters to learn. Bringing her into this expanded TPM seat is a low-risk, high-context bet — she’s productive in week one and already trusted by the staff engineers she’d partner with.',
-    fitBullets: [
-      'Zero ramp on the domain — already owns Northwind’s public API and partner integrations (grew them 3x); she contributes to roadmap on day one, not day ninety.',
-      'Sets the standard others follow — authored the API deprecation and versioning policy the whole company now uses.',
-      'API + data platform in one profile — TPM on the API surface today, on top of a data-engineering and data-product background (streaming ingestion beta→GA, data catalog at Helio).',
-      'Trusted internally — runs launch reviews with staff engineers; the credibility an external hire spends a year earning, she already has.',
-      'Composure under pressure — known as a calm operator in launches and partner escalations.',
-    ],
-    cta: 'Strong internal candidate — handle discreetly; she’s currently at Northwind and this would be an internal move.',
-    signals: [
-      { signal: 'API product strategy', score: 'strong' },
-      { signal: 'Northwind domain context', score: 'strong' },
-      { signal: 'Partner integrations', score: 'strong' },
-      { signal: 'Data-platform fluency', score: 'solid' },
-      { signal: 'Engineering depth / ex-engineer', score: 'solid' },
-      { signal: 'Developer experience (DX)', score: 'solid' },
-    ],
-  },
-  {
-    name: 'Devin Alvarez',
-    role: 'Product Manager, Platform / Infrastructure',
-    company: 'Vantage Labs',
-    years: 7,
-    location: 'Remote (US)',
-    compExp: '$185–205k base',
-    avail: '4-week notice',
-    fit: 86,
-    tags: ['Platform', 'Infrastructure', 'CI/CD', 'Internal Tools'],
-    headline: 'A platform/infra PM who’s fluent in the CI/CD, tooling, and internal-developer work a cloud roadmap runs on.',
-    intro:
-      'Devin has spent his career on the load-bearing parts of the stack: internal developer platforms, CI/CD, and the tooling that keeps everyone else shipping. At Vantage Labs he owns the internal developer platform and CI/CD tooling used by 300+ engineers, and cut average build time 38% by prioritizing the right infra investments. His customers are engineers, so he prioritizes against real developer pain rather than shiny features — and he’s the PM the engineering managers trust to run the roadmap. He’s a slightly different shape than a pure API-product PM, but for the platform-and-infra half of the Northwind mandate he’s a strong, dependable fit.',
-    fitBullets: [
-      'Platform/infra native — owns Vantage’s internal developer platform and CI/CD for 300+ engineers; he understands the tooling layer Northwind Cloud runs on.',
-      'Ships measurable infra wins — cut average build time 38% by sequencing the right investments, not the loudest requests.',
-      'Internal-customer empathy — his users are engineers, so he’s practiced at the developer-experience work this role demands, and is “the PM eng trusts.”',
-      'Rollout discipline — earlier built model-deployment workflows and a feature-flag / rollout system at Brightpath, so he’s fluent in safe, staged releases.',
-      'Motivated by scope — explicitly seeking a technical PM seat with real ownership; he’d join for the mandate, not to escape.',
-    ],
-    cta: 'A strong platform/infra fit — worth an interview to weigh against the more API-centric candidates.',
-    signals: [
-      { signal: 'Platform & infrastructure depth', score: 'strong' },
-      { signal: 'CI/CD & internal tooling', score: 'strong' },
-      { signal: 'Developer experience (DX)', score: 'solid' },
-      { signal: 'Roadmap & prioritization', score: 'solid' },
-      { signal: 'API product strategy', score: 'partial' },
-      { signal: 'Data-platform fluency', score: 'partial' },
-    ],
-  },
-];
 
 // ---- Tiny fetch helpers --------------------------------------
 async function api(method, path, body) {
@@ -167,7 +73,7 @@ async function main() {
   }
   if (!existing.length) console.log('  (no existing candidates to remove)');
 
-  // 3) Add the three tech-demo candidates.
+  // 3) Add the seed candidates.
   for (const c of CANDIDATES) {
     const { candidate } = await api('POST', '/api/candidates', c);
     console.log(`✓ Added: ${candidate.name} — ${candidate.role} (fit ${candidate.fit})  [${candidate.id}]`);
@@ -179,7 +85,6 @@ async function main() {
 }
 
 // Only run when invoked directly (e.g. `node scripts/seed-portal.mjs`), not on import.
-import { fileURLToPath } from 'node:url';
 const invokedDirectly = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
 if (invokedDirectly) {
   main().catch((err) => {
