@@ -20,28 +20,28 @@
   {
     "name": "Priya Nair",
     "role": "Senior Technical Product Manager",
-    "company": "Stripe",
+    "company": "Aperture Cloud",
     "years": 9,
-    "location": "San Francisco, CA · Remote-friendly",
-    "compExp": "$235–265k + equity",
-    "avail": "30-day notice",
+    "location": "San Francisco, CA · open to remote",
+    "compExp": "$210–235k base",
+    "avail": "6-week notice",
     "fit": 95,
     "tags": [
       "Developer Platform",
-      "APIs",
+      "APIs & SDKs",
       "Ex-Engineer",
       "Platform Strategy"
     ],
     "headline": "An engineer-turned-PM who ships developer platforms teams actually want to build on.",
-    "intro": "Priya spent six years shipping backend and API infrastructure before moving into product, and it shows in how she works: she writes the interface spec, reviews the SDKs, and sits in the on-call channel. On Stripe’s developer-platform surface she owns the API design review and the public roadmap, translating messy internal capabilities into clean, versioned products that outside engineers adopt without hand-holding. For a Northwind Cloud TPM role that lives at the seam of platform, API, and developer experience, she is as close to a purpose-built fit as this search will surface.",
+    "intro": "Priya spent five years as a backend engineer before moving into product, and it shows in how she works: she writes the specs the eng team builds from and can go deep on architecture, APIs, and trade-offs. At Aperture Cloud she owns the developer platform — APIs, SDKs, and CLI used by 40,000+ external developers — and led the API v2 redesign that cut integration time from about two weeks to two days, reaching 70% adoption within two quarters. For a Northwind Cloud TPM role that lives at the seam of platform, API, and developer experience, she is about as close to purpose-built as this search will surface.",
     "fitBullets": [
-      "Ex-engineer credibility — six years writing production backend/API code, so she earns technical trust with your platform teams from day one and can arbitrate design trade-offs, not just relay them.",
-      "API as a product — owns Stripe’s API design review and versioning/deprecation policy; she treats the interface contract, docs, and SDKs as the product, which is exactly the Northwind Cloud mandate.",
-      "Developer-experience obsession — drove a measurable cut in time-to-first-successful-call for new integrators by reworking onboarding, quickstarts, and error messaging.",
-      "Roadmap under constraints — has run a public, RFC-driven platform roadmap across competing internal consumers without letting the loudest team win.",
-      "Fluent with data-heavy platforms — partnered closely with data/infra teams on usage metering and rate-limiting, so she ramps fast on Northwind’s data-platform surface."
+      "Ex-engineer credibility — five years as a backend engineer (billing + metering in Go and Postgres), so she earns technical trust with your platform teams from day one and can arbitrate design trade-offs, not just relay them.",
+      "API as a product — owns Aperture’s public APIs, SDKs, and CLI for 40k+ external developers; the API v2 redesign she led cut integration time from ~2 weeks to 2 days with 70% adoption in two quarters.",
+      "Developer-experience obsession — she measures success in integration time and adoption, exactly the lens Northwind’s developer platform needs.",
+      "Roadmaps from ambiguity — known for turning vague platform problems into shipped roadmaps; partners daily with staff engineers on architecture and sequencing.",
+      "Data-platform range — earlier ran Helio’s data-pipeline product (self-serve ingestion became the top revenue driver) and took its observability dashboard 0→1, so she ramps fast on Northwind’s data surface."
     ],
-    "cta": "Priya is the strongest technical fit on this shortlist — worth an early conversation before her pipeline fills.",
+    "cta": "Priya is the strongest technical fit on this shortlist — she’s passive today, so worth an early conversation before her pipeline fills.",
     "signals": [
       {
         "signal": "API product strategy",
@@ -64,7 +64,7 @@
         "score": "solid"
       },
       {
-        "signal": "Executive & GTM stakeholders",
+        "signal": "People / team leadership",
         "score": "solid"
       }
     ]
@@ -73,34 +73,30 @@
     "name": "Sofia Ramos",
     "role": "Technical Product Manager",
     "company": "Northwind Cloud",
-    "years": 7,
+    "years": 8,
     "location": "Austin, TX",
-    "compExp": "$205–230k",
-    "avail": "Confidential — internal move (currently at Northwind)",
+    "compExp": "$200–220k base",
+    "avail": "5-week notice · internal move",
     "fit": 90,
     "tags": [
       "API Products",
-      "Data Platform",
+      "Partner Integrations",
       "Northwind Insider",
-      "Roadmap"
+      "Ex-Data-Engineer"
     ],
-    "headline": "Already inside Northwind — owns the API and data-platform surface, and knows exactly where the bodies are buried.",
-    "intro": "Sofia is a rare internal candidate: she’s spent the last two years as a TPM on Northwind Cloud’s data-platform team, shipping the ingestion APIs and the schema-registry work the broader platform now depends on. She knows the systems, the roadmap debts, and the cross-team politics that a external hire would need two quarters to learn. Bringing her into this expanded TPM seat is a low-risk, high-context bet — she can be productive in week one and is already trusted by the engineering leads she’d be partnering with.",
+    "headline": "Already inside Northwind — owns the public API and partner-integrations surface, and knows exactly where the bodies are buried.",
+    "intro": "Sofia is a rare internal candidate: a former data engineer who’s spent the last three-plus years as a TPM on Northwind Cloud’s public API and partner-integrations surface, where she grew partner integrations 3x and authored the API deprecation and versioning policy the whole company now follows. She knows the systems, the roadmap debts, and the cross-team relationships an external hire would need two quarters to learn. Bringing her into this expanded TPM seat is a low-risk, high-context bet — she’s productive in week one and already trusted by the staff engineers she’d partner with.",
     "fitBullets": [
-      "Zero ramp on the domain — already owns Northwind’s data-ingestion APIs and schema registry; she starts contributing to roadmap on day one, not day ninety.",
-      "API + data platform in one profile — the exact intersection this role sits on, backed by shipped products rather than a pitch.",
-      "Trusted internally — the platform engineering leads already know her; she’s built the cross-functional credibility that usually takes an external hire a year to earn.",
-      "Roadmap continuity — she can protect and extend the commitments already made to internal consumers instead of resetting them.",
-      "Retention signal — promoting into this seat keeps deep institutional knowledge in the building and de-risks the search."
+      "Zero ramp on the domain — already owns Northwind’s public API and partner integrations (grew them 3x); she contributes to roadmap on day one, not day ninety.",
+      "Sets the standard others follow — authored the API deprecation and versioning policy the whole company now uses.",
+      "API + data platform in one profile — TPM on the API surface today, on top of a data-engineering and data-product background (streaming ingestion beta→GA, data catalog at Helio).",
+      "Trusted internally — runs launch reviews with staff engineers; the credibility an external hire spends a year earning, she already has.",
+      "Composure under pressure — known as a calm operator in launches and partner escalations."
     ],
-    "cta": "Strong internal candidate — handle discreetly; she’s currently at Northwind and this is a confidential move.",
+    "cta": "Strong internal candidate — handle discreetly; she’s currently at Northwind and this would be an internal move.",
     "signals": [
       {
         "signal": "API product strategy",
-        "score": "strong"
-      },
-      {
-        "signal": "Data-platform fluency",
         "score": "strong"
       },
       {
@@ -108,46 +104,46 @@
         "score": "strong"
       },
       {
+        "signal": "Partner integrations",
+        "score": "strong"
+      },
+      {
+        "signal": "Data-platform fluency",
+        "score": "solid"
+      },
+      {
+        "signal": "Engineering depth / ex-engineer",
+        "score": "solid"
+      },
+      {
         "signal": "Developer experience (DX)",
         "score": "solid"
-      },
-      {
-        "signal": "Engineering depth",
-        "score": "solid"
-      },
-      {
-        "signal": "Roadmap & prioritization",
-        "score": "solid"
-      },
-      {
-        "signal": "Executive & GTM stakeholders",
-        "score": "partial"
       }
     ]
   },
   {
     "name": "Devin Alvarez",
     "role": "Product Manager, Platform / Infrastructure",
-    "company": "HashiCorp",
-    "years": 6,
-    "location": "Denver, CO",
-    "compExp": "$190–210k",
-    "avail": "2–4 weeks",
+    "company": "Vantage Labs",
+    "years": 7,
+    "location": "Remote (US)",
+    "compExp": "$185–205k base",
+    "avail": "4-week notice",
     "fit": 86,
     "tags": [
       "Platform",
       "Infrastructure",
-      "Reliability",
+      "CI/CD",
       "Internal Tools"
     ],
-    "headline": "A platform/infra PM who’s fluent in the reliability, tooling, and internal-customer work a cloud roadmap runs on.",
-    "intro": "Devin has spent his product career on the unglamorous, load-bearing parts of the stack: internal developer platforms, CI/CD, and the reliability tooling that keeps everything else shipping. At HashiCorp he owns a platform-infrastructure surface with internal engineering teams as his customers, so he’s comfortable prioritizing against SLOs and toil rather than shiny features. He’s a slightly different shape than a pure API-product PM, but for the infrastructure half of the Northwind Cloud mandate he’s a strong, dependable fit worth meeting.",
+    "headline": "A platform/infra PM who’s fluent in the CI/CD, tooling, and internal-developer work a cloud roadmap runs on.",
+    "intro": "Devin has spent his career on the load-bearing parts of the stack: internal developer platforms, CI/CD, and the tooling that keeps everyone else shipping. At Vantage Labs he owns the internal developer platform and CI/CD tooling used by 300+ engineers, and cut average build time 38% by prioritizing the right infra investments. His customers are engineers, so he prioritizes against real developer pain rather than shiny features — and he’s the PM the engineering managers trust to run the roadmap. He’s a slightly different shape than a pure API-product PM, but for the platform-and-infra half of the Northwind mandate he’s a strong, dependable fit.",
     "fitBullets": [
-      "Platform/infra native — owns an internal developer platform end-to-end; he understands the reliability and tooling layer Northwind Cloud is built on.",
-      "Reliability-first prioritization — routinely trades features against SLOs, error budgets, and toil reduction in partnership with SRE.",
-      "Internal-customer empathy — his users are engineers, so he’s practiced at the developer-experience work this role demands.",
-      "Solid API grounding — has shipped internal service APIs, giving him a credible on-ramp to the external API surface.",
-      "Pragmatic operator — dependable roadmap execution and clear written comms; a steady complement to a more API-forward hire."
+      "Platform/infra native — owns Vantage’s internal developer platform and CI/CD for 300+ engineers; he understands the tooling layer Northwind Cloud runs on.",
+      "Ships measurable infra wins — cut average build time 38% by sequencing the right investments, not the loudest requests.",
+      "Internal-customer empathy — his users are engineers, so he’s practiced at the developer-experience work this role demands, and is “the PM eng trusts.”",
+      "Rollout discipline — earlier built model-deployment workflows and a feature-flag / rollout system at Brightpath, so he’s fluent in safe, staged releases.",
+      "Motivated by scope — explicitly seeking a technical PM seat with real ownership; he’d join for the mandate, not to escape."
     ],
     "cta": "A strong platform/infra fit — worth an interview to weigh against the more API-centric candidates.",
     "signals": [
@@ -156,20 +152,20 @@
         "score": "strong"
       },
       {
-        "signal": "Reliability / SRE partnership",
+        "signal": "CI/CD & internal tooling",
         "score": "strong"
-      },
-      {
-        "signal": "Roadmap & prioritization",
-        "score": "solid"
       },
       {
         "signal": "Developer experience (DX)",
         "score": "solid"
       },
       {
-        "signal": "API product strategy",
+        "signal": "Roadmap & prioritization",
         "score": "solid"
+      },
+      {
+        "signal": "API product strategy",
+        "score": "partial"
       },
       {
         "signal": "Data-platform fluency",
