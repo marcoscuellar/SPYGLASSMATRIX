@@ -28,7 +28,7 @@ const BASE_URL = (process.argv.find((a) => /^https?:\/\//.test(a)) || process.en
 const DRY_RUN = process.argv.includes('--dry-run');
 
 // ---- Portal personalization ("Prepared for") -----------------
-const SETTINGS = {
+export const SETTINGS = {
   clientName: 'Northwind Cloud',
   roleLabel: 'Technical Product Manager search',
 };
@@ -36,7 +36,7 @@ const SETTINGS = {
 // ---- The three tech-demo candidates --------------------------
 // Scores for the signal map: 'strong' | 'solid' | 'partial' | 'gap'
 // ('gap' rows are hidden from the client view by the portal.)
-const CANDIDATES = [
+export const CANDIDATES = [
   {
     name: 'Priya Nair',
     role: 'Senior Technical Product Manager',
@@ -179,8 +179,13 @@ async function main() {
   console.log(`\nDone. Portal now shows ${final.length} candidate(s). Open ${BASE_URL}/portal to review.\n`);
 }
 
-main().catch((err) => {
-  console.error('\nSeed failed:', err.message);
-  console.error(`(Is the target reachable at ${BASE_URL}? For local, run "npm run dev" first.)\n`);
-  process.exit(1);
-});
+// Only run when invoked directly (e.g. `node scripts/seed-portal.mjs`), not on import.
+import { fileURLToPath } from 'node:url';
+const invokedDirectly = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+if (invokedDirectly) {
+  main().catch((err) => {
+    console.error('\nSeed failed:', err.message);
+    console.error(`(Is the target reachable at ${BASE_URL}? For local, run "npm run dev" first.)\n`);
+    process.exit(1);
+  });
+}
