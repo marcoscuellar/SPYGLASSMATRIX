@@ -101,7 +101,8 @@
           "Built and owned billing + metering services (Go, Postgres)."
         ]
       }
-    ]
+    ],
+    "resumeUrl": "/resumes/priya-nair.pdf"
   },
   {
     "id": "seed_sofia_ramos",
@@ -186,7 +187,8 @@
           "Built ETL and warehouse pipelines (Python, Spark, Postgres)."
         ]
       }
-    ]
+    ],
+    "resumeUrl": "/resumes/sofia-ramos.pdf"
   },
   {
     "id": "seed_devin_alvarez",
@@ -262,7 +264,8 @@
           "Built the feature-flag and rollout system product."
         ]
       }
-    ]
+    ],
+    "resumeUrl": "/resumes/devin-alvarez.pdf"
   }
 ];
 

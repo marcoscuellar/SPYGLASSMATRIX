@@ -74,6 +74,7 @@ function rowToCandidate(id: string, createdAt: string, data: any, decision: stri
     cta: d.cta || '',
     signals: Array.isArray(d.signals) ? d.signals : [],
     experience: Array.isArray(d.experience) ? d.experience : [],
+    resumeUrl: d.resumeUrl || '',
     decision: (decision as Decision) || null,
     note: note || null,
   };

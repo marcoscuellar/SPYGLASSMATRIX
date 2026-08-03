@@ -275,6 +275,23 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
           </div>
         )}
 
+        {/* Résumé download */}
+        {c.resumeUrl && (
+          <div style={{ marginTop: 26, display: 'flex', justifyContent: 'flex-start' }}>
+            <a href={c.resumeUrl} target="_blank" rel="noopener noreferrer" download
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 10, textDecoration: 'none',
+                padding: '12px 20px', borderRadius: 'var(--r-4)', border: '1px solid var(--line)',
+                background: 'var(--bg-card)', color: 'var(--ink)', fontFamily: 'var(--font)', fontWeight: 600, fontSize: 15,
+                boxShadow: 'var(--sh-card)', transition: 'all .2s var(--ease)' }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M8 1v9m0 0L4.5 6.5M8 10l3.5-3.5M2.5 12.5V14h11v-1.5" stroke="var(--navy)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Download {c.name.split(' ')[0]}’s résumé
+              <span className="t-mono-xs" style={{ color: 'var(--ink-3)', fontWeight: 500 }}>PDF</span>
+            </a>
+          </div>
+        )}
+
         {/* Decision */}
         <div id="decision-panel" style={{ marginTop: 48, padding: 'clamp(22px, 5vw, 32px)', borderRadius: 'var(--r-7)', background: 'var(--navy)', color: '#fff' }}>
           {!submitted ? (

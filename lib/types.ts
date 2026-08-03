@@ -122,6 +122,7 @@ export type StoredCandidate = {
   cta: string;
   signals: StoredSignal[];
   experience: ExperienceItem[]; // employment history
+  resumeUrl: string;   // link to the candidate's résumé (empty if none)
   decision: Decision | null;
   note: string | null;
 };
