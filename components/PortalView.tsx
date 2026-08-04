@@ -6,7 +6,7 @@
    signal map + an Advance / Hold / Pass decision that persists.
    ============================================================ */
 import React from 'react';
-import { Avatar, Button, Eyebrow, FitChip, Mark, Tag } from './ui';
+import { Avatar, Button, Eyebrow, FitChip, Lockup, Mark, Tag } from './ui';
 import { Arrow, CheckIcon, SparkIcon } from './icons';
 import { SCORE_META } from '@/lib/data';
 import type { Decision, PortalSettings, StoredCandidate } from '@/lib/types';
@@ -42,9 +42,8 @@ function Shortlist({ cands, settings, onOpen }: { cands: StoredCandidate[]; sett
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
       <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 clamp(20px, 5vw, 40px) 110px' }}>
         <header style={{ padding: 'clamp(40px, 8vw, 64px) 0 40px', borderBottom: '1px solid var(--line)', marginBottom: 48 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 30, flexWrap: 'wrap' }}>
-            <Mark variant="navy" size={26} />
-            <span className="t-mono-tag" style={{ color: 'var(--navy)' }}>PREPARED BY SPYGLASS</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 30, flexWrap: 'wrap' }}>
+            <Lockup size={24} />
             {client && <>
               <span style={{ width: 18, height: 1, background: 'var(--line)' }} />
               <span className="t-mono-tag" style={{ color: 'var(--ink-2)' }}>FOR {client.toUpperCase()}</span>

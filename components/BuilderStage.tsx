@@ -5,7 +5,7 @@
    fields auto-fill from the brief (server-side LLM extraction).
    ============================================================ */
 import React from 'react';
-import { Button, Mark } from './ui';
+import { Button, Lockup } from './ui';
 import { Arrow, UploadIcon, MicIcon, FileGlyph, LockIcon } from './icons';
 import { EMP_TYPES, LOCATIONS } from '@/lib/prompts';
 import { MATRIX } from '@/lib/data';
@@ -126,9 +126,7 @@ export function BuilderStage({ onBuild }: { onBuild: (p: BuilderPayload) => void
       <div className="builder">
         <div className="app-bar">
           <div className="app-bar-l">
-            <Mark variant="primary" size={26} />
-            <span className="app-wm">SPYGLASS&nbsp;MATRIX</span>
-            <span className="app-bc">Builder</span>
+            <Lockup sub="Builder" size={24} />
           </div>
           <span className="app-meta">{today}</span>
         </div>
