@@ -20,9 +20,9 @@
   --line:      #d9d5cd;
   --line-soft: #e4e0d9;
 
-  /* === Jewel accent · re-skinned gold -> sage ================= */
-  --amber:      #5C7A6E;
-  --amber-d:    #47645A;
+  /* === Jewel accent · brand green (#3EA672) ================== */
+  --amber:      #3EA672;
+  --amber-d:    #2E8659;
   /* Re-skin: amber-dd/ddd read as pine in the flow */
   --amber-dd:   #2A5343;
   --amber-ddd:  #2A5343;
