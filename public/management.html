@@ -6,17 +6,17 @@
 <title>Spyglass Matrix — Management</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#fbfaf6;--paper:#e8e4df;--ink:#222c2c;--ink-2:#4c554f;--ink-3:#7e837e;--line:#d9d5cd;
-    --navy:#2A5343;--navy-2:#34614E;--amber:#3EA672;--amber-d:#2E8659;--forest:#2A5343;--cream:#F1ECE3;
-    --font:'Archivo',-apple-system,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--serif:'Newsreader',Georgia,serif;
+    --bg:#ffffff;--paper:#f4f3f1;--ink:#0a0a0a;--ink-2:#525252;--ink-3:#a3a3a3;--line:#e7e5e4;
+    --navy:#0A1F3D;--navy-2:#1a3052;--amber:#0E7C84;--amber-d:#0A6169;--forest:#0E7C84;--cream:#F4F3F1;--yellow:#F5C518;
+    --font:'Geist',-apple-system,sans-serif;--mono:'Geist Mono',ui-monospace,monospace;--serif:'Geist',sans-serif;
     --sh:0 12px 32px rgba(10,31,61,0.06),0 2px 4px rgba(0,0,0,0.03);
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);line-height:1.5;}
-  .m-serif{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--amber);}
+  .m-serif{font-family:var(--font);font-style:normal;font-weight:700;color:var(--amber);}
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px 60px;}
   .top{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid var(--line);}
   .brand{display:flex;align-items:center;gap:10px;}
@@ -39,7 +39,7 @@
   .rec{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;}
   .rec:last-child{border-bottom:none;}
   .rec:hover{background:var(--paper);}
-  .rec.sel{background:#e2eae5;box-shadow:inset 3px 0 0 var(--amber);}
+  .rec.sel{background:#e2f1f2;box-shadow:inset 3px 0 0 var(--amber);}
   .av{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:none;}
   .rec.sel .av{background:var(--amber-d);}
   .rec .nm{font-weight:700;font-size:15px;color:var(--navy);}
@@ -70,8 +70,8 @@
   .sub-list .job{flex:1;font-size:14.5px;}
   .sub-list .job b{color:var(--navy);}
   .sub-list .out{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;padding:4px 9px;border-radius:100px;}
-  .out.placed{background:#e2eae5;color:var(--forest);border:1px solid #cbdacf;}
-  .out.review{background:#e2eae5;color:var(--amber-d);border:1px solid #cbdacf;}
+  .out.placed{background:#e2f1f2;color:var(--forest);border:1px solid #c6e3e5;}
+  .out.review{background:#e2f1f2;color:var(--amber-d);border:1px solid #c6e3e5;}
   .out.pass{background:var(--paper);color:var(--ink-2);border:1px solid var(--line);}
   .foot{text-align:center;color:var(--ink-3);font-family:var(--mono);font-size:11px;letter-spacing:.05em;margin-top:34px;}
 </style>
@@ -79,7 +79,7 @@
 <body>
 <div class="wrap">
   <div class="top">
-    <div class="brand"><svg class="logo" viewBox="0 0 100 100" width="26" height="26"><rect width="100" height="100" rx="28" fill="#2A5343"/><rect x="14" y="38" width="72" height="24" rx="3" fill="#fff"/><circle cx="72" cy="50" r="9" fill="#3EA672"/><circle cx="72" cy="50" r="5" fill="#2A5343"/><circle cx="72" cy="50" r="2" fill="#3EA672"/></svg><span class="wm">SPYGLASS MATRIX</span><span class="pg">Management</span></div>
+    <div class="brand"><svg class="logo" viewBox="0 0 100 100" width="26" height="26"><rect width="100" height="100" rx="28" fill="#0A1F3D"/><rect x="14" y="38" width="72" height="24" rx="3" fill="#fff"/><circle cx="72" cy="50" r="9" fill="#0E7C84"/><circle cx="72" cy="50" r="5" fill="#0A1F3D"/><circle cx="72" cy="50" r="2" fill="#0E7C84"/></svg><span class="wm">SPYGLASS MATRIX</span><span class="pg">Management</span></div>
     <div class="date">AUG 3, 2026</div>
   </div>
 

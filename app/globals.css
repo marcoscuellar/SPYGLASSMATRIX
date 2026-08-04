@@ -8,48 +8,49 @@
 
 :root {
   /* === Surfaces · warm off-whites (brand) ===================== */
-  --bg:        #f5f3ef;
-  --bg-card:   #fbfaf6;
-  --paper:     #e8e4df;
+  --bg:        #ffffff;
+  --bg-card:   #ffffff;
+  --paper:     #f4f3f1;
 
   /* === Ink scale · near-black + warm greys ==================== */
-  --ink:       #222c2c;
-  --ink-2:     #4c554f;
-  --ink-3:     #7e837e;
-  --ink-4:     #c4c7c0;
-  --line:      #d9d5cd;
-  --line-soft: #e4e0d9;
+  --ink:       #0a0a0a;
+  --ink-2:     #525252;
+  --ink-3:     #a3a3a3;
+  --ink-4:     #d4d4d4;
+  --line:      #e7e5e4;
+  --line-soft: #ededeb;
 
-  /* === Jewel accent · brand green (#3EA672) ================== */
-  --amber:      #3EA672;
-  --amber-d:    #2E8659;
+  /* === Jewel accent · brand teal (#0E7C84) =================== */
+  --amber:      #0E7C84;
+  --amber-d:    #0A6169;
   /* Re-skin: amber-dd/ddd read as pine in the flow */
-  --amber-dd:   #2A5343;
-  --amber-ddd:  #2A5343;
-  --amber-pale: #e2eae5;
-  --amber-bg:   #e8e4df;   /* neutral warm */
-  --gold-line:  #d9d5cd;
+  --amber-dd:   #0A1F3D;
+  --amber-ddd:  #0A1F3D;
+  --amber-pale: #e2f1f2;
+  --amber-bg:   #f4f3f1;   /* neutral warm */
+  --gold-line:  #e7e5e4;
 
   /* === Navy · primary brand / internal accent -> pine ======== */
-  --navy:       #2A5343;
-  --navy-2:     #34614E;
-  --navy-3:     #35634F;
-  --navy-mid:   #5C7A6E;
-  --navy-soft:  #9FB8AC;
-  --navy-fade:  #C2D2C9;
-  --navy-on:    #A7C2B4;
+  --navy:       #0A1F3D;
+  --navy-2:     #1a3052;
+  --navy-3:     #1a3556;
+  --navy-mid:   #4B6177;
+  --navy-soft:  #8FA3B8;
+  --navy-fade:  #B8C5D1;
+  --navy-on:    #F5C518;
+  --yellow:     #F5C518;
 
   /* === Signals · success reads pine in the flow ============== */
-  --green:      #2A5343;
-  --green-d:    #22463A;
-  --green-on:   #C0D3C8;
+  --green:      #0E7C84;
+  --green-d:    #0A6169;
+  --green-on:   #ffffff;
 
   /* === Forest / cream · premium brand moment (placement) ====== */
-  --forest:      #2A5343;
-  --cream:       #F1ECE3;
+  --forest:      #0E7C84;
+  --cream:       #f4f3f1;
 
-  /* === Typography · Archivo (brand) ========================== */
-  --font:      'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* === Typography · Geist (brand) ============================ */
+  --font:      'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono:      'Geist Mono', ui-monospace, Menlo, monospace;
 
   /* === Radii ================================================== */
