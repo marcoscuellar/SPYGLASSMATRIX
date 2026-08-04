@@ -6,6 +6,7 @@
    ============================================================ */
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { SpyglassMark } from './ui';
 
 type Mode = 'signin' | 'reset';
 
@@ -61,7 +62,7 @@ export function LoginView() {
     <div className="lgn">
       <div className="panel">
         <div className="brand">
-          <span className="mark" />
+          <SpyglassMark color="#fff" height={30} />
           <span className="name">Spyglass <span className="mk">Matrix</span></span>
         </div>
         <div className="lede">
