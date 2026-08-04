@@ -386,3 +386,39 @@ code { font-family: var(--mono); }
 .dsk .owner b { color: var(--ink-2); font-weight: 700; }
 .dsk .foot { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-3); }
 @media (max-width: 760px) { .dsk .deck { grid-template-columns: 1fr; } .dsk .stats { grid-template-columns: repeat(2,1fr); } }
+
+
+/* ============================================================
+   Login — split sign-in, on the locked brand (navy leads,
+   teal accent, yellow-on-navy). Namespaced .lgn
+   ============================================================ */
+.lgn { display: grid; grid-template-columns: 1.05fr 1fr; min-height: 100vh; }
+.lgn .panel { background: var(--navy); color: #fff; padding: clamp(28px, 5vw, 56px); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+.lgn .panel .brand { display: flex; align-items: center; gap: 10px; }
+.lgn .panel .brand .mark { width: 26px; height: 26px; border-radius: 7px; background: #fff; flex: none; }
+.lgn .panel .brand .name { font-family: var(--mono); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+.lgn .panel .brand .name .mk { color: var(--yellow); margin-left: 2px; }
+.lgn .panel .lede { max-width: 22ch; }
+.lgn .panel .kick { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 700; }
+.lgn .panel .kick::before { content: ''; display: inline-block; width: 22px; height: 3px; background: var(--yellow); border-radius: 3px; vertical-align: middle; margin-right: 10px; }
+.lgn .panel h1 { font-size: clamp(30px, 4vw, 44px); font-weight: 800; letter-spacing: -.03em; line-height: 1.04; margin: 16px 0 12px; color: #fff; }
+.lgn .panel p { color: rgba(255,255,255,.72); font-size: 15.5px; margin: 0; }
+.lgn .panel .note { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: rgba(255,255,255,.5); }
+
+.lgn .formwrap { background: var(--paper); display: grid; place-items: center; padding: clamp(24px, 5vw, 48px); }
+.lgn form { width: 100%; max-width: 360px; }
+.lgn form .h { font-size: 26px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); margin: 0 0 6px; }
+.lgn form .s { color: var(--ink-2); font-size: 14.5px; margin: 0 0 26px; }
+.lgn .field { margin-bottom: 16px; }
+.lgn .field label { display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--navy-mid); margin-bottom: 7px; }
+.lgn .field input { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-family: var(--font); font-size: 15px; color: var(--ink); background: #fff; }
+.lgn .field input:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(14,124,132,.14); }
+.lgn .row { display: flex; justify-content: flex-end; margin: -4px 0 20px; }
+.lgn .row a { font-size: 13px; color: var(--amber-d); text-decoration: none; font-weight: 600; }
+.lgn .btn-primary { width: 100%; background: var(--navy); color: #fff; border: none; border-radius: 100px; padding: 14px; font-family: var(--font); font-weight: 700; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.lgn .btn-primary:hover { background: var(--navy-2); }
+.lgn .btn-primary:disabled { opacity: .6; cursor: default; }
+.lgn .alt { text-align: center; margin-top: 22px; font-size: 14px; color: var(--ink-2); }
+.lgn .alt a { color: var(--amber-d); text-decoration: none; font-weight: 700; }
+.lgn .demoflag { margin-top: 26px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; color: var(--ink-3); text-align: center; line-height: 1.5; }
+@media (max-width: 820px) { .lgn { grid-template-columns: 1fr; } .lgn .panel { min-height: 210px; } }
