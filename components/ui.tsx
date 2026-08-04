@@ -5,6 +5,7 @@
    MonoButton, Card, Avatar, FitChip. Built on the design tokens.
    ============================================================ */
 import React from 'react';
+import Link from 'next/link';
 
 // ---- The mark: the cufflink housing, recolored per-variant ----
 type MarkVariant = 'primary' | 'amber' | 'navy' | 'forest' | 'light';
@@ -75,11 +76,11 @@ export function SpyglassMark({ color = 'var(--navy)', height = 26 }: { color?: s
   );
 }
 
-export function Lockup({ sub, onNavy = false, size = 24 }: { sub?: string; onNavy?: boolean; size?: number }) {
+export function Lockup({ sub, onNavy = false, size = 24, href }: { sub?: string; onNavy?: boolean; size?: number; href?: string }) {
   const fg = onNavy ? '#fff' : 'var(--navy)';
   const mk = onNavy ? 'var(--yellow)' : 'var(--amber)';
-  return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+  const inner = (
+    <>
       <SpyglassMark color={onNavy ? '#fff' : 'var(--navy)'} height={Math.round(size * 1.15)} />
       <span style={{ fontFamily: 'var(--mono)', fontSize: 12.5, letterSpacing: '0.13em', textTransform: 'uppercase', fontWeight: 700, color: fg, whiteSpace: 'nowrap' }}>
         Spyglass <span style={{ color: mk }}>Matrix</span>
@@ -90,8 +91,13 @@ export function Lockup({ sub, onNavy = false, size = 24 }: { sub?: string; onNav
           <span style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: onNavy ? 'rgba(255,255,255,0.62)' : 'var(--ink-3)', whiteSpace: 'nowrap' }}>{sub}</span>
         </>
       )}
-    </span>
+    </>
   );
+  const base: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 10, minWidth: 0 };
+  if (href) {
+    return <Link href={href} aria-label="Spyglass Matrix — back to your desk" style={{ ...base, textDecoration: 'none', cursor: 'pointer' }}>{inner}</Link>;
+  }
+  return <span style={base}>{inner}</span>;
 }
 
 export function Eyebrow({ children, color = 'var(--ink-3)', style }: { children: React.ReactNode; color?: string; style?: React.CSSProperties }) {

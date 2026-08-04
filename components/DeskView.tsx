@@ -42,7 +42,7 @@ export function DeskView() {
     <div className="dsk">
       <div className="topbar">
         <div className="topinner">
-          <Lockup sub="Desk" size={24} />
+          <Lockup sub="Desk" size={24} href="/desk" />
           <div className="spacer" />
           <div className="tabs">
             <a className="on">Desk</a>

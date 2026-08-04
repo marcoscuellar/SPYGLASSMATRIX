@@ -51,7 +51,7 @@ export function ManagementView() {
     <div className="mg">
       <div className="topbar">
         <div className="topinner">
-          <Lockup sub="Management" size={24} />
+          <Lockup sub="Management" size={24} href="/desk" />
           <div className="spacer" />
           <div className="tabs">
             <Link href="/desk">Desk</Link>

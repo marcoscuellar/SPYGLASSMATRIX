@@ -126,7 +126,7 @@ export function BuilderStage({ onBuild }: { onBuild: (p: BuilderPayload) => void
       <div className="builder">
         <div className="app-bar">
           <div className="app-bar-l">
-            <Lockup sub="Builder" size={24} />
+            <Lockup sub="Builder" size={24} href="/desk" />
           </div>
           <span className="app-meta">{today}</span>
         </div>

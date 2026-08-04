@@ -30,7 +30,7 @@ export function TeamView() {
     <div className="tm">
       <div className="topbar">
         <div className="topinner">
-          <Lockup sub="Team" size={24} />
+          <Lockup sub="Team" size={24} href="/desk" />
           <div className="spacer" />
           <div className="tabs">
             <Link href="/desk">Desk</Link>
