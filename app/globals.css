@@ -7,49 +7,49 @@
    ============================================================ */
 
 :root {
-  /* === Surfaces ================================================ */
-  --bg:        #ffffff;
-  --bg-card:   #ffffff;
-  --paper:     #f5f5f4;
+  /* === Surfaces · warm off-whites (brand) ===================== */
+  --bg:        #f5f3ef;
+  --bg-card:   #fbfaf6;
+  --paper:     #e8e4df;
 
-  /* === Ink scale =============================================== */
-  --ink:       #0a0a0a;
-  --ink-2:     #525252;
-  --ink-3:     #a3a3a3;
-  --ink-4:     #d4d4d4;
-  --line:      #e7e5e4;
-  --line-soft: #ededeb;
+  /* === Ink scale · near-black + warm greys ==================== */
+  --ink:       #222c2c;
+  --ink-2:     #4c554f;
+  --ink-3:     #7e837e;
+  --ink-4:     #c4c7c0;
+  --line:      #d9d5cd;
+  --line-soft: #e4e0d9;
 
-  /* === Gold · jewel accent only ================================ */
-  --amber:      #C2A24C;
-  --amber-d:    #A6862F;
-  /* Re-skin: amber-dd/ddd read as navy in the flow (gold is jewel-only) */
-  --amber-dd:   #0A1F3D;
-  --amber-ddd:  #0A1F3D;
-  --amber-pale: #ececea;
-  --amber-bg:   #f5f5f4;   /* neutral, not a gold tint, in the flow */
-  --gold-line:  #e7e5e4;
+  /* === Jewel accent · re-skinned gold -> sage ================= */
+  --amber:      #5C7A6E;
+  --amber-d:    #47645A;
+  /* Re-skin: amber-dd/ddd read as pine in the flow */
+  --amber-dd:   #2A5343;
+  --amber-ddd:  #2A5343;
+  --amber-pale: #e2eae5;
+  --amber-bg:   #e8e4df;   /* neutral warm */
+  --gold-line:  #d9d5cd;
 
-  /* === Navy · primary brand / internal accent ================= */
-  --navy:       #0A1F3D;
-  --navy-2:     #1a3052;
-  --navy-3:     #1a3556;
-  --navy-mid:   #4B6177;
-  --navy-soft:  #8FA3B8;
-  --navy-fade:  #B8C5D1;
-  --navy-on:    #93c5fd;
+  /* === Navy · primary brand / internal accent -> pine ======== */
+  --navy:       #2A5343;
+  --navy-2:     #34614E;
+  --navy-3:     #35634F;
+  --navy-mid:   #5C7A6E;
+  --navy-soft:  #9FB8AC;
+  --navy-fade:  #C2D2C9;
+  --navy-on:    #A7C2B4;
 
-  /* === Signals · success reads navy in the flow =============== */
-  --green:      #0A1F3D;
-  --green-d:    #0A1F3D;
-  --green-on:   #D8BE6E;
+  /* === Signals · success reads pine in the flow ============== */
+  --green:      #2A5343;
+  --green-d:    #22463A;
+  --green-on:   #C0D3C8;
 
   /* === Forest / cream · premium brand moment (placement) ====== */
-  --forest:      #2F4D3A;
-  --cream:       #F5EFE0;
+  --forest:      #2A5343;
+  --cream:       #F1ECE3;
 
-  /* === Typography ============================================= */
-  --font:      'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* === Typography · Archivo (brand) ========================== */
+  --font:      'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono:      'Geist Mono', ui-monospace, Menlo, monospace;
 
   /* === Radii ================================================== */
