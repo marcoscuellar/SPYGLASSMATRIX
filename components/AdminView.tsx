@@ -5,7 +5,7 @@
    there, and remove anyone. Everything here writes to the store.
    ============================================================ */
 import React from 'react';
-import { Button, FitChip, Mark, Tag } from './ui';
+import { Button, FitChip, Lockup, Tag } from './ui';
 import { Arrow, SparkIcon } from './icons';
 import type { PortalSettings, ScoreKey, StoredCandidate } from '@/lib/types';
 
@@ -144,11 +144,7 @@ export function AdminView({ initial, settings, persistent }: { initial: StoredCa
       <div style={{ maxWidth: 920, margin: '0 auto', padding: '0 24px' }}>
         {/* Bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, paddingBottom: 20, borderBottom: '1px solid var(--line)', marginBottom: 24, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
-            <Mark variant="primary" size={26} />
-            <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: '-0.06em' }}>SPYGLASS&nbsp;MATRIX</span>
-            <span style={{ fontSize: 14, color: 'var(--ink-3)', fontWeight: 500, borderLeft: '1px solid var(--line)', paddingLeft: 12 }}>Portal admin</span>
-          </div>
+          <Lockup sub="Portal admin" size={24} />
           <a href={PORTAL_PATH} target="_blank" rel="noreferrer" className="t-mono-xs" style={{ color: 'var(--navy)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             OPEN CLIENT PORTAL <Arrow s={12} />
           </a>

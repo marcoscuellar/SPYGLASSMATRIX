@@ -344,6 +344,9 @@ code { font-family: var(--mono); }
 .dsk .brand .name .mk { color: var(--amber); }
 .dsk .spacer { flex: 1; }
 .dsk .leadbadge { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: #fff; background: var(--navy); padding: 5px 10px; border-radius: 6px; }
+.dsk .tabs { display: inline-flex; gap: 4px; background: var(--paper); border: 1px solid var(--line); border-radius: 100px; padding: 3px; }
+.dsk .tabs a { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--navy-mid); text-decoration: none; padding: 6px 12px; border-radius: 100px; cursor: pointer; }
+.dsk .tabs a.on { background: var(--navy); color: #fff; }
 .dsk .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
 .dsk .wrap { max-width: 1120px; margin: 0 auto; padding: clamp(22px, 4vw, 38px) clamp(16px, 4vw, 34px) 80px; }
 .dsk .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 700; }
@@ -389,7 +392,129 @@ code { font-family: var(--mono); }
 
 
 /* ============================================================
-   Login — split sign-in, on the locked brand (navy leads,
+   The Team Dashboard — management's view of how the team is doing.
+   Ported from the approved team mockup; colors resolve through the
+   brand tokens (teal = --amber, navy, no gold/serif). Namespaced .tm
+   ============================================================ */
+.tm { color: var(--ink); --tm-sh: 0 20px 50px -18px rgba(10,31,61,0.14), 0 3px 12px rgba(0,0,0,0.05); }
+.tm .topbar { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; box-shadow: 0 1px 2px rgba(10,31,61,.05); }
+.tm .topinner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; gap: 12px; padding: 12px clamp(16px, 4vw, 34px); }
+.tm .spacer { flex: 1; }
+.tm .leadbadge { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: #fff; background: var(--navy); padding: 5px 10px; border-radius: 6px; }
+.tm .tabs { display: inline-flex; gap: 4px; background: var(--paper); border: 1px solid var(--line); border-radius: 100px; padding: 3px; }
+.tm .tabs a { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--navy-mid); text-decoration: none; padding: 6px 12px; border-radius: 100px; }
+.tm .tabs a.on { background: var(--navy); color: #fff; }
+.tm .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; }
+.tm .wrap { max-width: 1120px; margin: 0 auto; padding: clamp(22px, 4vw, 34px) clamp(16px, 4vw, 34px) 70px; }
+.tm .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 700; }
+.tm h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: -.03em; line-height: 1.03; margin: 8px 0 6px; color: var(--ink); }
+.tm h1 .mk { color: var(--amber); }
+.tm .sub { color: var(--ink-2); font-size: 15.5px; margin: 0 0 26px; }
+.tm .stats { display: grid; grid-template-columns: repeat(5,1fr); gap: 14px; margin-bottom: 28px; }
+.tm .tile { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 17px 19px; box-shadow: var(--tm-sh); }
+.tm .tile.hi { border-top: 3px solid var(--amber); }
+.tm .tile .k { font-family: var(--mono); font-size: 10px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
+.tm .tile .v { font-size: 31px; font-weight: 800; letter-spacing: -.03em; margin-top: 6px; color: var(--navy); font-variant-numeric: tabular-nums; }
+.tm .tile .v.rev { color: var(--amber-d); }
+.tm .tile .v small { font-size: 15px; font-weight: 600; color: var(--ink-3); }
+.tm .tile .d { font-size: 12.5px; color: var(--ink-2); margin-top: 3px; }
+.tm .tile .d .up { color: var(--amber-d); font-weight: 700; }
+.tm .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+.tm .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--tm-sh); overflow: hidden; }
+.tm .card-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 22px; border-bottom: 1px solid var(--line); }
+.tm .card-h .t { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); font-weight: 700; }
+.tm .card-h .meta { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.tm .lead { display: flex; align-items: center; gap: 13px; padding: 14px 22px; border-bottom: 1px solid var(--line); }
+.tm .lead:last-child { border-bottom: none; }
+.tm .rank { font-family: var(--mono); font-weight: 700; font-size: 13px; color: var(--amber-d); width: 18px; flex: none; }
+.tm .av { width: 36px; height: 36px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 12.5px; flex: none; }
+.tm .lead .nm { font-weight: 700; font-size: 15px; color: var(--navy); letter-spacing: -.01em; }
+.tm .lead .mini { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); letter-spacing: .03em; margin-top: 2px; }
+.tm .lead .rev { margin-left: auto; text-align: right; flex: none; }
+.tm .lead .rev .r { font-family: var(--mono); font-weight: 700; font-size: 15px; color: var(--amber-d); }
+.tm .lead .rev .p { font-family: var(--mono); font-size: 9.5px; color: var(--ink-3); letter-spacing: .05em; margin-top: 2px; }
+.tm .bars { padding: 18px 22px; }
+.tm .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.tm .bar-row:last-child { margin-bottom: 0; }
+.tm .bar-row .lbl { font-size: 13.5px; font-weight: 600; color: var(--navy); width: 66px; flex: none; }
+.tm .track { flex: 1; height: 10px; background: var(--paper); border-radius: 100px; overflow: hidden; }
+.tm .track > span { display: block; height: 100%; background: var(--amber); border-radius: 100px; }
+.tm .bar-row .amt { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); width: 62px; text-align: right; flex: none; }
+.tm .eng { display: flex; align-items: center; gap: 12px; padding: 14px 22px; border-bottom: 1px solid var(--line); }
+.tm .eng:last-child { border-bottom: none; }
+.tm .eng .role { flex: 1; min-width: 0; }
+.tm .eng .role .r { font-weight: 700; font-size: 14.5px; color: var(--navy); letter-spacing: -.01em; }
+.tm .eng .role .c { font-size: 12.5px; color: var(--ink-2); margin-top: 1px; }
+.tm .own { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; color: var(--ink-3); flex: none; }
+.tm .stage { font-family: var(--mono); font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; padding: 4px 9px; border-radius: 100px; background: var(--paper); color: var(--ink-2); border: 1px solid var(--line); flex: none; }
+.tm .stage.live { background: var(--amber-pale); color: var(--amber-d); border-color: #cfe6e7; }
+.tm .stage.new { background: #eaeef5; color: var(--navy); border-color: rgba(10,31,61,0.16); }
+.tm .foot { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-3); }
+@media (max-width: 860px) { .tm .grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .tm .stats { grid-template-columns: 1fr 1fr; } }
+
+
+/* ============================================================
+   The Management view — birds-eye across the company: pick any
+   recruiter and drill into their activity, submissions, revenue.
+   Ported from the approved mockup; brand tokens. Namespaced .mg
+   ============================================================ */
+.mg { color: var(--ink); --mg-sh: 0 20px 50px -18px rgba(10,31,61,0.14), 0 3px 12px rgba(0,0,0,0.05); }
+.mg .topbar { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; box-shadow: 0 1px 2px rgba(10,31,61,.05); }
+.mg .topinner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; gap: 12px; padding: 12px clamp(16px, 4vw, 34px); }
+.mg .spacer { flex: 1; }
+.mg .leadbadge { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: #fff; background: var(--navy); padding: 5px 10px; border-radius: 6px; }
+.mg .tabs { display: inline-flex; gap: 4px; background: var(--paper); border: 1px solid var(--line); border-radius: 100px; padding: 3px; }
+.mg .tabs a { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--navy-mid); text-decoration: none; padding: 6px 12px; border-radius: 100px; cursor: pointer; }
+.mg .tabs a.on { background: var(--navy); color: #fff; }
+.mg .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; }
+.mg .wrap { max-width: 1120px; margin: 0 auto; padding: clamp(22px, 4vw, 34px) clamp(16px, 4vw, 34px) 70px; }
+.mg .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 700; }
+.mg h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: -.03em; line-height: 1.03; margin: 8px 0 6px; color: var(--ink); }
+.mg h1 .mk { color: var(--amber); }
+.mg .sub { color: var(--ink-2); font-size: 15.5px; margin: 0 0 26px; }
+.mg .layout { display: grid; grid-template-columns: 300px 1fr; gap: 18px; align-items: start; }
+.mg .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--mg-sh); overflow: hidden; }
+.mg .card-h { padding: 16px 20px; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); font-weight: 700; }
+.mg .rec { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background .15s; width: 100%; text-align: left; background: none; border-left: none; border-right: none; border-top: none; font-family: inherit; }
+.mg .rec:last-child { border-bottom: none; }
+.mg .rec:hover { background: var(--paper); }
+.mg .rec.sel { background: var(--amber-pale); box-shadow: inset 3px 0 0 var(--amber); }
+.mg .av { width: 38px; height: 38px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; flex: none; }
+.mg .rec.sel .av { background: var(--amber-d); }
+.mg .rec .nm { font-weight: 700; font-size: 15px; color: var(--navy); letter-spacing: -.01em; }
+.mg .rec .rl { font-size: 12.5px; color: var(--ink-3); }
+.mg .rec .rev { margin-left: auto; font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--amber-d); }
+.mg .detail { background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--mg-sh); padding: 26px 28px; }
+.mg .dhead { display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 20px; margin-bottom: 22px; }
+.mg .dhead .av { width: 56px; height: 56px; font-size: 19px; }
+.mg .dhead .nm { font-size: clamp(22px, 4vw, 28px); font-weight: 800; letter-spacing: -.02em; color: var(--navy); }
+.mg .dhead .rl { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-top: 3px; }
+.mg .period { margin-left: auto; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); background: var(--paper); border: 1px solid var(--line); padding: 7px 12px; border-radius: 100px; }
+.mg .dstats { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 26px; }
+.mg .tile { border: 1px solid var(--line); border-radius: 14px; padding: 15px 16px; }
+.mg .tile.hi { border-top: 3px solid var(--amber); }
+.mg .tile .k { font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
+.mg .tile .v { font-size: 27px; font-weight: 800; letter-spacing: -.03em; margin-top: 6px; color: var(--navy); font-variant-numeric: tabular-nums; }
+.mg .tile .v.rev { color: var(--amber-d); }
+.mg .block-h { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); font-weight: 700; margin: 0 0 12px; }
+.mg .sub-list { list-style: none; padding: 0; margin: 0; }
+.mg .sub-list li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.mg .sub-list li:last-child { border-bottom: none; }
+.mg .badge { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--navy); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 4px 9px; flex: none; }
+.mg .sub-list .job { flex: 1; font-size: 14.5px; min-width: 0; }
+.mg .sub-list .job b { color: var(--navy); }
+.mg .sub-list .out { font-family: var(--mono); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; padding: 4px 9px; border-radius: 100px; flex: none; }
+.mg .out.placed { background: var(--amber-pale); color: var(--amber-d); border: 1px solid #c6e3e5; }
+.mg .out.review { background: #eaeef5; color: var(--navy); border: 1px solid rgba(10,31,61,0.16); }
+.mg .out.pass { background: var(--paper); color: var(--ink-2); border: 1px solid var(--line); }
+.mg .foot { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-3); }
+@media (max-width: 820px) { .mg .layout { grid-template-columns: 1fr; } }
+@media (max-width: 680px) { .mg .dstats { grid-template-columns: 1fr 1fr; } }
+
+
+/* ============================================================
+   The Team Dashboard — management's view of how the team is doing.
    teal accent, yellow-on-navy). Namespaced .lgn
    ============================================================ */
 .lgn { display: grid; grid-template-columns: 1.05fr 1fr; min-height: 100vh; }

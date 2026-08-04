@@ -10,11 +10,12 @@ import React from 'react';
 type MarkVariant = 'primary' | 'amber' | 'navy' | 'forest' | 'light';
 
 export function Mark({ variant = 'primary', size = 28 }: { variant?: MarkVariant; size?: number }) {
+  // Locked brand: navy leads, teal accent — the retired gold (#C2A24C) is gone.
   const V: Record<MarkVariant, any> = {
-    primary: { housing: '#0A1F3D', band: '#ffffff', stitch: '#0A1F3D', cuf: ['#C2A24C', '#0A1F3D', '#C2A24C'] },
-    amber:   { housing: '#0a0a0a', band: '#ffffff', stitch: '#0a0a0a', cuf: ['#C2A24C', '#ffffff', '#C2A24C'] },
-    navy:    { housing: '#0A1F3D', band: '#ffffff', stitch: '#0A1F3D', cuf: ['#C2A24C', '#0A1F3D', '#C2A24C'] },
-    forest:  { housing: '#C2A24C', band: '#ffffff', stitch: '#C2A24C', cuf: ['#0A1F3D', '#ffffff', '#0A1F3D'] },
+    primary: { housing: '#0A1F3D', band: '#ffffff', stitch: '#0A1F3D', cuf: ['#0E7C84', '#0A1F3D', '#0E7C84'] },
+    amber:   { housing: '#0a0a0a', band: '#ffffff', stitch: '#0a0a0a', cuf: ['#0E7C84', '#ffffff', '#0E7C84'] },
+    navy:    { housing: '#0A1F3D', band: '#ffffff', stitch: '#0A1F3D', cuf: ['#0E7C84', '#0A1F3D', '#0E7C84'] },
+    forest:  { housing: '#0E7C84', band: '#ffffff', stitch: '#0E7C84', cuf: ['#0A1F3D', '#ffffff', '#0A1F3D'] },
     light:   { housing: '#f5f5f4', housingStroke: '#e7e5e4', band: '#0a0a0a', stitch: '#ffffff', stitchOpacity: 0.55, cuf: ['#ffffff', '#0a0a0a', '#ffffff'] },
   };
   const v = V[variant] || V.primary;
@@ -37,6 +38,58 @@ export function Wordmark({ size = 20, color = 'var(--ink)' }: { size?: number; c
   return (
     <span style={{ fontFamily: "'Geist', sans-serif", fontWeight: 900, fontSize: size, letterSpacing: '-0.07em', lineHeight: 1, color, whiteSpace: 'nowrap' }} aria-label="SPYGLASS">
       SPYGLASS
+    </span>
+  );
+}
+
+/* ------------------------------------------------------------
+   Lockup — the shared brand signature used across every screen.
+   Navy rounded square + "SPYGLASS MATRIX" mono wordmark with the
+   teal "MATRIX" mark (yellow when it sits on navy). This is the
+   exact lockup the Desk and Login use, so the whole app opens the
+   same way. `sub` prints a mono breadcrumb after a hairline rule.
+   ------------------------------------------------------------ */
+// The spyglass mark — monoline barrel + lens with the crescent, traced to
+// the brand logo. Navy on light, white on navy. Scales crisp to any size.
+export function SpyglassMark({ color = 'var(--navy)', height = 26 }: { color?: string; height?: number }) {
+  const uid = React.useId();
+  return (
+    <svg height={height} width={height * (200 / 430)} viewBox="0 0 200 430" fill="none" role="img" aria-label="Spyglass" style={{ flex: 'none' }} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <mask id={uid}>
+          <rect width="200" height="430" fill="#fff" />
+          <circle cx="104" cy="168" r="33" fill="#000" />
+        </mask>
+      </defs>
+      <g stroke={color} strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        <line x1="58" y1="16" x2="142" y2="16" /><line x1="58" y1="16" x2="58" y2="34" /><line x1="142" y1="16" x2="142" y2="34" />
+        <line x1="82" y1="34" x2="82" y2="98" /><line x1="118" y1="34" x2="118" y2="98" />
+        <circle cx="100" cy="170" r="72" />
+        <line x1="82" y1="242" x2="82" y2="300" /><line x1="118" y1="242" x2="118" y2="300" />
+        <line x1="62" y1="300" x2="138" y2="300" /><line x1="62" y1="300" x2="62" y2="286" /><line x1="138" y1="300" x2="138" y2="286" />
+        <line x1="82" y1="300" x2="82" y2="404" /><line x1="118" y1="300" x2="118" y2="404" />
+        <line x1="58" y1="416" x2="142" y2="416" /><line x1="58" y1="416" x2="58" y2="402" /><line x1="142" y1="416" x2="142" y2="402" />
+      </g>
+      <circle cx="88" cy="156" r="37" fill={color} mask={`url(#${uid})`} />
+    </svg>
+  );
+}
+
+export function Lockup({ sub, onNavy = false, size = 24 }: { sub?: string; onNavy?: boolean; size?: number }) {
+  const fg = onNavy ? '#fff' : 'var(--navy)';
+  const mk = onNavy ? 'var(--yellow)' : 'var(--amber)';
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+      <SpyglassMark color={onNavy ? '#fff' : 'var(--navy)'} height={Math.round(size * 1.15)} />
+      <span style={{ fontFamily: 'var(--mono)', fontSize: 12.5, letterSpacing: '0.13em', textTransform: 'uppercase', fontWeight: 700, color: fg, whiteSpace: 'nowrap' }}>
+        Spyglass <span style={{ color: mk }}>Matrix</span>
+      </span>
+      {sub && (
+        <>
+          <span style={{ width: 1, height: 15, background: onNavy ? 'rgba(255,255,255,0.22)' : 'var(--line)', flex: 'none' }} />
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: onNavy ? 'rgba(255,255,255,0.62)' : 'var(--ink-3)', whiteSpace: 'nowrap' }}>{sub}</span>
+        </>
+      )}
     </span>
   );
 }
@@ -68,7 +121,7 @@ export function Tag({ children, tone = 'pipeline' }: { children: React.ReactNode
 }
 
 export function Dot({ color = 'var(--green)' }: { color?: string }) {
-  return <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: 99, background: color, boxShadow: `0 0 0 3px rgba(194,162,76,0.18)` }} />;
+  return <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: 99, background: color, boxShadow: `0 0 0 3px rgba(14,124,132,0.18)` }} />;
 }
 
 type ButtonKind = 'primary' | 'secondary' | 'amber' | 'navy' | 'ghost';
