@@ -328,3 +328,61 @@ code { font-family: var(--mono); }
   .mtx .layout { display: block; max-width: none; }
   .mtx section, .mtx .bar { box-shadow: none; border: 1px solid var(--line); break-inside: avoid; }
 }
+
+
+/* ============================================================
+   The Desk / Dashboard — leadership board (all live roles)
+   Ported from the approved Desk mockup; colors resolve through the
+   brand tokens (teal = --amber, navy, yellow-on-navy). Namespaced .dsk
+   ============================================================ */
+.dsk { color: var(--ink); --dsk-sh: 0 20px 50px -18px rgba(10,31,61,0.14), 0 3px 12px rgba(0,0,0,0.05); }
+.dsk .topbar { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; box-shadow: 0 1px 2px rgba(10,31,61,.05); }
+.dsk .topinner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; gap: 12px; padding: 12px clamp(16px, 4vw, 34px); }
+.dsk .brand { display: flex; align-items: center; gap: 9px; }
+.dsk .brand .mark { width: 22px; height: 22px; border-radius: 6px; background: var(--navy); flex: none; }
+.dsk .brand .name { font-family: var(--mono); font-size: 12px; letter-spacing: .13em; text-transform: uppercase; font-weight: 700; color: var(--navy); }
+.dsk .brand .name .mk { color: var(--amber); }
+.dsk .spacer { flex: 1; }
+.dsk .leadbadge { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: #fff; background: var(--navy); padding: 5px 10px; border-radius: 6px; }
+.dsk .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.dsk .wrap { max-width: 1120px; margin: 0 auto; padding: clamp(22px, 4vw, 38px) clamp(16px, 4vw, 34px) 80px; }
+.dsk .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 700; }
+.dsk h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -.03em; line-height: 1; margin: 8px 0 6px; color: var(--ink); }
+.dsk h1 .mk { color: var(--amber); }
+.dsk .sub { color: var(--ink-2); font-size: 15.5px; margin: 0 0 26px; }
+.dsk .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 30px; }
+.dsk .tile { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 15px 17px; box-shadow: var(--dsk-sh); }
+.dsk .tile .l { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.dsk .tile .v { font-size: 32px; font-weight: 800; letter-spacing: -.03em; margin-top: 6px; color: var(--navy); font-variant-numeric: tabular-nums; }
+.dsk .tile .v small { font-size: 13px; font-weight: 600; color: var(--ink-3); margin-left: 5px; }
+.dsk .tile.attn .v { color: #8C2F3A; }
+.dsk .boardlabel { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--amber-d); font-weight: 700; background: var(--amber-pale); padding: 6px 11px; border-radius: 7px; margin-bottom: 16px; }
+.dsk .deck { display: grid; grid-template-columns: repeat(2,1fr); gap: 15px; }
+.dsk .rcard { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; box-shadow: var(--dsk-sh); display: flex; flex-direction: column; gap: 14px; }
+.dsk .rcard.attn { border-color: #e2c4c9; }
+.dsk .rcard .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.dsk .rcard .rn { font-size: 19px; font-weight: 800; letter-spacing: -.02em; line-height: 1.12; color: var(--navy); }
+.dsk .rcard .rc { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--amber); font-weight: 700; margin-top: 5px; }
+.dsk .daychip { text-align: right; flex: none; }
+.dsk .daychip .n { font-size: 25px; font-weight: 800; letter-spacing: -.03em; color: var(--navy); font-variant-numeric: tabular-nums; line-height: 1; }
+.dsk .daychip .u { font-family: var(--mono); font-size: 9px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); display: block; margin-top: 4px; }
+.dsk .rcard.attn .daychip .n { color: #8C2F3A; }
+.dsk .stageline .sname { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.dsk .stageline .sname b { font-family: var(--mono); color: var(--ink-3); font-weight: 700; margin-right: 7px; font-size: 12px; }
+.dsk .rail { display: flex; gap: 3px; margin-top: 9px; }
+.dsk .rail i { height: 5px; border-radius: 3px; flex: 1; background: var(--line); }
+.dsk .rail i.on { background: var(--navy); }
+.dsk .rail i.cur { background: var(--amber); box-shadow: 0 2px 7px rgba(14,124,132,.4); }
+.dsk .note { font-size: 14px; color: var(--ink-2); line-height: 1.5; border-top: 1px solid var(--line-soft); padding-top: 14px; }
+.dsk .note b { color: var(--ink); font-weight: 600; }
+.dsk .cardfoot { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--line-soft); padding-top: 14px; margin-top: auto; }
+.dsk .chip { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .03em; padding: 5px 11px; border-radius: 999px; }
+.dsk .chip .d { width: 7px; height: 7px; border-radius: 50%; }
+.dsk .chip.client { color: var(--amber-d); background: var(--amber-pale); }
+.dsk .chip.client .d { background: var(--amber); }
+.dsk .chip.us { color: var(--navy); background: #eaeef5; }
+.dsk .chip.us .d { background: var(--navy); }
+.dsk .owner { font-family: var(--mono); font-size: 11px; letter-spacing: .02em; color: var(--ink-3); }
+.dsk .owner b { color: var(--ink-2); font-weight: 700; }
+.dsk .foot { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-3); }
+@media (max-width: 760px) { .dsk .deck { grid-template-columns: 1fr; } .dsk .stats { grid-template-columns: repeat(2,1fr); } }
