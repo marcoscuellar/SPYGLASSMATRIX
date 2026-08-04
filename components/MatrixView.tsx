@@ -8,6 +8,7 @@
    ============================================================ */
 import React from 'react';
 import type { Matrix } from '@/lib/types';
+import { SpyglassMark } from './ui';
 
 type Mode = 'recruiter' | 'candidate';
 const GLABEL: Record<number, string> = { 3: 'Strong', 2: 'Solid', 1: 'Partial', 0: 'Gap' };
@@ -76,7 +77,7 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
       <div className="layout">
         {/* ===== Sticky rail ===== */}
         <nav className="nav">
-          <div className="brand"><span className="mark" /><span className="t">Spyglass <span className="m-caps">Matrix</span></span></div>
+          <div className="brand"><SpyglassMark color="#fff" height={26} /><span className="t">Spyglass <span className="m-caps">Matrix</span></span></div>
           {NAV.map((it) => (
             <a key={it.id} className={(it.internal ? 'int-only ' : '') + (active === it.id ? 'on' : '')}
               role="button" tabIndex={0} onClick={() => goTo(it.id)}
