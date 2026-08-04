@@ -49,6 +49,7 @@ export function DeskView() {
             <Link href="/team">Team</Link>
             <Link href="/management">Management</Link>
           </div>
+          <Link href="/" className="newbtn"><span className="plus">+</span><span className="lbl">Create new Matrix</span></Link>
           <div className="avatar">MC</div>
         </div>
       </div>

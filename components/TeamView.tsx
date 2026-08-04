@@ -37,6 +37,7 @@ export function TeamView() {
             <a className="on">Team</a>
             <Link href="/management">Management</Link>
           </div>
+          <Link href="/" className="newbtn"><span className="plus">+</span><span className="lbl">Create new Matrix</span></Link>
           <div className="avatar">MC</div>
         </div>
       </div>
