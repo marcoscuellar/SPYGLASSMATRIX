@@ -11,8 +11,9 @@
    ============================================================ */
 
 import { neon } from '@neondatabase/serverless';
-import type { Decision, PortalSettings, StoredCandidate, StoredCandidateInput } from './types';
+import type { Decision, PortalSettings, Role, StoredCandidate, StoredCandidateInput, User } from './types';
 import portalSeed from './portal-seed.json';
+import { hashPassword } from './auth';
 
 // ---- Auto-seed --------------------------------------------------
 // The portal is data-driven: it shows whatever candidates are in the store.
@@ -206,4 +207,142 @@ export async function setFeedback(id: string, decision: Decision, note: string):
   }
   await ensureSchema();
   await db()`UPDATE portal_candidates SET decision = ${decision}, note = ${note} WHERE id = ${id}`;
+}
+
+/* ============================================================
+   Accounts / team logins
+   Users are stored in sm_users (JSONB payload holds name, role,
+   passwordHash, mustReset). A bootstrap admin is seeded once so the
+   first person can sign in and create the leadership logins.
+   ============================================================ */
+type UserRaw = User & { passwordHash: string };
+
+const memUsers: Map<string, UserRaw> = (globalThis as any).__spgUsers || ((globalThis as any).__spgUsers = new Map());
+
+function newUserId(): string {
+  return 'u_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+}
+
+let usersSchemaReady = false;
+async function ensureUsersSchema() {
+  if (!hasDb || usersSchemaReady) return;
+  await db()`CREATE TABLE IF NOT EXISTS sm_users (
+    id          TEXT PRIMARY KEY,
+    email       TEXT UNIQUE NOT NULL,
+    data        JSONB NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
+  usersSchemaReady = true;
+}
+
+function rowToUserRaw(id: string, email: string, createdAt: string, data: any): UserRaw {
+  const d = typeof data === 'string' ? JSON.parse(data) : (data || {});
+  return {
+    id,
+    email,
+    name: d.name || '',
+    role: (d.role as Role) || 'member',
+    mustReset: !!d.mustReset,
+    createdAt,
+    passwordHash: d.passwordHash || '',
+  };
+}
+
+const publicUser = (u: UserRaw): User => ({ id: u.id, email: u.email, name: u.name, role: u.role, mustReset: u.mustReset, createdAt: u.createdAt });
+
+let adminSeedReady = false;
+export async function ensureAdminSeed(): Promise<void> {
+  if (adminSeedReady) return;
+  const email = (process.env.ADMIN_EMAIL || 'admin@spyglassmatrix.app').toLowerCase();
+  const password = process.env.ADMIN_PASSWORD || 'ChangeMe-Spyglass';
+
+  if (!hasDb) {
+    if (memUsers.size === 0) {
+      const id = newUserId();
+      memUsers.set(id, { id, email, name: 'Admin', role: 'admin', mustReset: true, createdAt: new Date().toISOString(), passwordHash: hashPassword(password) });
+    }
+    adminSeedReady = true;
+    return;
+  }
+  await ensureUsersSchema();
+  const rows = (await db()`SELECT count(*)::int AS n FROM sm_users`) as any[];
+  if (!rows.length || rows[0].n === 0) {
+    const id = newUserId();
+    const data = { name: 'Admin', role: 'admin', mustReset: true, passwordHash: hashPassword(password) };
+    await db()`INSERT INTO sm_users (id, email, data) VALUES (${id}, ${email}, ${JSON.stringify(data)}::jsonb)
+      ON CONFLICT (email) DO NOTHING`;
+  }
+  adminSeedReady = true;
+}
+
+export async function getUserByEmail(email: string): Promise<UserRaw | null> {
+  await ensureAdminSeed();
+  const key = (email || '').trim().toLowerCase();
+  if (!key) return null;
+  if (!hasDb) {
+    for (const u of memUsers.values()) if (u.email === key) return u;
+    return null;
+  }
+  await ensureUsersSchema();
+  const rows = (await db()`SELECT id, email, created_at, data FROM sm_users WHERE email = ${key}`) as any[];
+  if (!rows.length) return null;
+  const r = rows[0];
+  return rowToUserRaw(r.id, r.email, new Date(r.created_at).toISOString(), r.data);
+}
+
+export async function getUserById(id: string): Promise<User | null> {
+  await ensureAdminSeed();
+  if (!hasDb) { const u = memUsers.get(id); return u ? publicUser(u) : null; }
+  await ensureUsersSchema();
+  const rows = (await db()`SELECT id, email, created_at, data FROM sm_users WHERE id = ${id}`) as any[];
+  if (!rows.length) return null;
+  const r = rows[0];
+  return publicUser(rowToUserRaw(r.id, r.email, new Date(r.created_at).toISOString(), r.data));
+}
+
+export async function listUsers(): Promise<User[]> {
+  await ensureAdminSeed();
+  if (!hasDb) {
+    return [...memUsers.values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt)).map(publicUser);
+  }
+  await ensureUsersSchema();
+  const rows = (await db()`SELECT id, email, created_at, data FROM sm_users ORDER BY created_at ASC`) as any[];
+  return rows.map((r) => publicUser(rowToUserRaw(r.id, r.email, new Date(r.created_at).toISOString(), r.data)));
+}
+
+// Create a user with an already-hashed password. Throws 'EMAIL_TAKEN' on dup.
+export async function createUser(input: { email: string; name: string; role: Role; passwordHash: string; mustReset: boolean }): Promise<User> {
+  await ensureAdminSeed();
+  const email = input.email.trim().toLowerCase();
+  const existing = await getUserByEmail(email);
+  if (existing) throw new Error('EMAIL_TAKEN');
+  const id = newUserId();
+  const createdAt = new Date().toISOString();
+  const data = { name: input.name.trim(), role: input.role, mustReset: input.mustReset, passwordHash: input.passwordHash };
+  if (!hasDb) {
+    memUsers.set(id, { id, email, createdAt, ...(data as any) });
+    return { id, email, name: data.name, role: data.role, mustReset: data.mustReset, createdAt };
+  }
+  await ensureUsersSchema();
+  await db()`INSERT INTO sm_users (id, email, created_at, data) VALUES (${id}, ${email}, ${createdAt}, ${JSON.stringify(data)}::jsonb)`;
+  return { id, email, name: data.name, role: data.role, mustReset: data.mustReset, createdAt };
+}
+
+export async function updateUserPassword(id: string, passwordHash: string, mustReset: boolean): Promise<void> {
+  if (!hasDb) {
+    const u = memUsers.get(id);
+    if (u) { u.passwordHash = passwordHash; u.mustReset = mustReset; }
+    return;
+  }
+  await ensureUsersSchema();
+  // Merge into the existing JSONB payload.
+  await db()`UPDATE sm_users
+    SET data = data || ${JSON.stringify({ passwordHash, mustReset })}::jsonb
+    WHERE id = ${id}`;
+}
+
+export async function deleteUser(id: string): Promise<void> {
+  if (!hasDb) { memUsers.delete(id); return; }
+  await ensureUsersSchema();
+  await db()`DELETE FROM sm_users WHERE id = ${id}`;
 }

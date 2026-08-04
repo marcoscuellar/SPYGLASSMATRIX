@@ -8,6 +8,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Lockup } from './ui';
+import { UserMenu } from './UserMenu';
 
 type Out = 'placed' | 'review' | 'pass';
 type Sub = { n: number; job: string; client: string; out: Out };
@@ -59,7 +60,7 @@ export function ManagementView() {
             <a className="on">Management</a>
           </div>
           <Link href="/" className="newbtn"><span className="plus">+</span><span className="lbl">Create new Matrix</span></Link>
-          <div className="avatar">MC</div>
+          <UserMenu />
         </div>
       </div>
 

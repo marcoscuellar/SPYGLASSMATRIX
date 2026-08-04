@@ -520,7 +520,76 @@ code { font-family: var(--mono); }
 
 
 /* ============================================================
-   The Team Dashboard — management's view of how the team is doing.
+   User menu (avatar + dropdown) — shared across dashboards/accounts
+   ============================================================ */
+.umenu { position: relative; flex: none; }
+.umenu .umavatar { width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: #fff; border: none; cursor: pointer; font-family: var(--font); font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+.umenu .ummenu { position: absolute; right: 0; top: calc(100% + 8px); background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 20px 50px -18px rgba(10,31,61,.28), 0 3px 12px rgba(0,0,0,.06); min-width: 210px; padding: 6px; z-index: 50; }
+.umenu .umhead { padding: 10px 12px 9px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+.umenu .umname { font-weight: 700; font-size: 14px; color: var(--navy); letter-spacing: -.01em; }
+.umenu .umemail { font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-top: 2px; word-break: break-all; }
+.umenu .umitem { display: block; width: 100%; text-align: left; background: none; border: none; cursor: pointer; font-family: var(--font); font-size: 13.5px; color: var(--ink); padding: 9px 12px; border-radius: 8px; text-decoration: none; }
+.umenu .umitem:hover { background: var(--paper); }
+
+/* ============================================================
+   Accounts — admin manages team logins. Namespaced .acct
+   ============================================================ */
+.acct { color: var(--ink); --acct-sh: 0 20px 50px -18px rgba(10,31,61,0.14), 0 3px 12px rgba(0,0,0,0.05); }
+.acct .topbar { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; box-shadow: 0 1px 2px rgba(10,31,61,.05); }
+.acct .topinner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: 12px; padding: 12px clamp(16px, 4vw, 24px); }
+.acct .spacer { flex: 1; }
+.acct .wrap { max-width: 760px; margin: 0 auto; padding: clamp(22px, 4vw, 34px) clamp(16px, 4vw, 24px) 70px; }
+.acct .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 700; }
+.acct h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: -.03em; line-height: 1.03; margin: 8px 0 6px; color: var(--ink); }
+.acct h1 .mk { color: var(--amber); }
+.acct .sub { color: var(--ink-2); font-size: 15.5px; margin: 0 0 26px; max-width: 56ch; }
+.acct .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--acct-sh); overflow: hidden; }
+.acct .addcard { margin-bottom: 30px; }
+.acct .card-h { padding: 16px 22px; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); font-weight: 700; }
+.acct .addform { padding: 20px 22px; }
+.acct .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.acct .fld { display: flex; flex-direction: column; }
+.acct .fld:first-child { grid-column: 1 / -1; }
+.acct .fld label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--navy-mid); margin-bottom: 7px; }
+.acct .fld input, .acct .fld select { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-family: var(--font); font-size: 15px; color: var(--ink); background: #fff; }
+.acct .fld input:focus, .acct .fld select:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(14,124,132,.14); }
+.acct .err { background: #fbeaec; border: 1px solid #f0c3ca; color: #8C2F3A; font-size: 13.5px; border-radius: 10px; padding: 10px 13px; margin: 14px 0 0; }
+.acct .addbar { display: flex; justify-content: flex-end; margin-top: 16px; }
+.acct .btn-primary { background: var(--navy); color: #fff; border: none; border-radius: 100px; padding: 12px 20px; font-family: var(--font); font-weight: 700; font-size: 14.5px; cursor: pointer; }
+.acct .btn-primary:hover { background: var(--navy-2); }
+.acct .btn-primary:disabled { opacity: .6; cursor: default; }
+.acct .invite { margin: 0 22px 22px; background: var(--amber-pale); border: 1px solid #cfe6e7; border-radius: 14px; padding: 18px 20px; }
+.acct .inv-h { font-weight: 700; font-size: 15px; color: var(--amber-d); letter-spacing: -.01em; margin-bottom: 14px; }
+.acct .inv-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.acct .inv-row { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #cfe6e7; border-radius: 10px; padding: 10px 12px; }
+.acct .inv-row .k { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); width: 108px; flex: none; }
+.acct .inv-row .v { flex: 1; min-width: 0; font-size: 14px; color: var(--ink); word-break: break-all; }
+.acct .inv-row .v.mono { font-family: var(--mono); font-weight: 600; letter-spacing: .04em; color: var(--navy); }
+.acct .inv-row button { flex: none; font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; font-weight: 600; color: var(--amber-d); background: var(--amber-pale); border: 1px solid #cfe6e7; border-radius: 8px; padding: 6px 11px; cursor: pointer; }
+.acct .inv-copyall { width: 100%; font-family: var(--font); font-weight: 600; font-size: 14px; color: #fff; background: var(--amber); border: none; border-radius: 10px; padding: 12px; cursor: pointer; }
+.acct .inv-copyall:hover { background: var(--amber-d); }
+.acct .inv-note { font-size: 12.5px; color: var(--amber-d); margin-top: 12px; line-height: 1.45; }
+.acct .listhead { display: flex; align-items: baseline; justify-content: space-between; margin: 0 0 14px; }
+.acct .lh-t { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); font-weight: 700; }
+.acct .lh-n { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-3); }
+.acct .empty { padding: 40px; text-align: center; color: var(--ink-3); font-size: 14.5px; }
+.acct .urow { display: flex; align-items: center; gap: 13px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+.acct .urow:last-child { border-bottom: none; }
+.acct .ua { width: 36px; height: 36px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 12.5px; flex: none; }
+.acct .uinfo { flex: 1; min-width: 0; }
+.acct .un { font-weight: 700; font-size: 15px; color: var(--navy); letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+.acct .rolechip { font-family: var(--mono); font-size: 9px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; color: #fff; background: var(--navy); padding: 2px 7px; border-radius: 20px; }
+.acct .ue { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+.acct .ustatus { font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; font-weight: 700; color: var(--amber-d); background: var(--amber-pale); border: 1px solid #cfe6e7; padding: 4px 9px; border-radius: 100px; flex: none; }
+.acct .ustatus.pending { color: var(--navy); background: #eaeef5; border-color: rgba(10,31,61,0.16); }
+.acct .urm { flex: none; font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); background: none; border: 1px solid var(--line); border-radius: 8px; padding: 7px 11px; cursor: pointer; }
+.acct .urm:hover { border-color: #8C2F3A; color: #8C2F3A; }
+.acct .foot { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .05em; color: var(--ink-3); }
+@media (max-width: 560px) { .acct .grid { grid-template-columns: 1fr; } .acct .inv-row { flex-wrap: wrap; } .acct .inv-row .k { width: auto; } }
+
+
+/* ============================================================
+   Login — split sign-in, on the locked brand (navy leads,
    teal accent, yellow-on-navy). Namespaced .lgn
    ============================================================ */
 .lgn { display: grid; grid-template-columns: 1.05fr 1fr; min-height: 100vh; }
@@ -544,6 +613,7 @@ code { font-family: var(--mono); }
 .lgn .field label { display: block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--navy-mid); margin-bottom: 7px; }
 .lgn .field input { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-family: var(--font); font-size: 15px; color: var(--ink); background: #fff; }
 .lgn .field input:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(14,124,132,.14); }
+.lgn .err { background: #fbeaec; border: 1px solid #f0c3ca; color: #8C2F3A; font-size: 13.5px; line-height: 1.45; border-radius: 10px; padding: 10px 13px; margin: 0 0 16px; }
 .lgn .row { display: flex; justify-content: flex-end; margin: -4px 0 20px; }
 .lgn .row a { font-size: 13px; color: var(--amber-d); text-decoration: none; font-weight: 600; }
 .lgn .btn-primary { width: 100%; background: var(--navy); color: #fff; border: none; border-radius: 100px; padding: 14px; font-family: var(--font); font-weight: 700; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }

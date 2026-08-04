@@ -135,3 +135,26 @@ export type PortalSettings = {
   clientName: string;   // e.g. "Procare HR"
   roleLabel: string;    // e.g. "Director of Human Resources search"
 };
+
+// ---- Accounts / auth --------------------------------------------
+// 'admin' can manage team logins; 'member' is a leadership viewer.
+export type Role = 'admin' | 'member';
+
+// Public-safe user shape (never carries the password hash).
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
+  mustReset: boolean;   // true until they change the temp password
+  createdAt: string;
+};
+
+// The signed session payload stored in the cookie.
+export type Session = {
+  uid: string;
+  email: string;
+  name: string;
+  role: Role;
+  exp: number;          // unix seconds
+};
