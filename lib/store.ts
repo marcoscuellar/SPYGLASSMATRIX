@@ -13,6 +13,7 @@
 import { neon } from '@neondatabase/serverless';
 import type { Decision, PortalSettings, Role, StoredCandidate, StoredCandidateInput, User } from './types';
 import portalSeed from './portal-seed.json';
+import teamSeed from './team-seed.json';
 import { hashPassword } from './auth';
 
 // ---- Auto-seed --------------------------------------------------
@@ -219,6 +220,9 @@ type UserRaw = User & { passwordHash: string };
 
 const memUsers: Map<string, UserRaw> = (globalThis as any).__spgUsers || ((globalThis as any).__spgUsers = new Map());
 
+// Pre-loaded demo logins (baked in): created once, only if the email is new.
+const TEAM_SEED = ((teamSeed as any).users || []) as { name: string; email: string; role: Role; tempPassword: string }[];
+
 function newUserId(): string {
   return 'u_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 }
@@ -261,6 +265,15 @@ export async function ensureAdminSeed(): Promise<void> {
       const id = newUserId();
       memUsers.set(id, { id, email, name: 'Admin', role: 'admin', mustReset: true, createdAt: new Date().toISOString(), passwordHash: hashPassword(password) });
     }
+    // Pre-loaded demo logins: create any that don't exist yet.
+    for (const u of TEAM_SEED) {
+      const em = u.email.trim().toLowerCase();
+      let present = false;
+      for (const x of memUsers.values()) if (x.email === em) { present = true; break; }
+      if (present) continue;
+      const id = newUserId();
+      memUsers.set(id, { id, email: em, name: u.name, role: (u.role as Role) || 'member', mustReset: true, createdAt: new Date().toISOString(), passwordHash: hashPassword(u.tempPassword) });
+    }
     adminSeedReady = true;
     return;
   }
@@ -270,6 +283,14 @@ export async function ensureAdminSeed(): Promise<void> {
     const id = newUserId();
     const data = { name: 'Admin', role: 'admin', mustReset: true, passwordHash: hashPassword(password) };
     await db()`INSERT INTO sm_users (id, email, data) VALUES (${id}, ${email}, ${JSON.stringify(data)}::jsonb)
+      ON CONFLICT (email) DO NOTHING`;
+  }
+  // Pre-loaded demo logins: idempotent insert (only if the email is new).
+  for (const u of TEAM_SEED) {
+    const em = u.email.trim().toLowerCase();
+    const id = newUserId();
+    const data = { name: u.name, role: (u.role as Role) || 'member', mustReset: true, passwordHash: hashPassword(u.tempPassword) };
+    await db()`INSERT INTO sm_users (id, email, data) VALUES (${id}, ${em}, ${JSON.stringify(data)}::jsonb)
       ON CONFLICT (email) DO NOTHING`;
   }
   adminSeedReady = true;
