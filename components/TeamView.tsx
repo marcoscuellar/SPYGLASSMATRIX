@@ -7,6 +7,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Lockup } from './ui';
+import { UserMenu } from './UserMenu';
 
 type Rec = { rank: number; name: string; initials: string; calls: number; subs: number; placed: number; rev: string; barPct: number; first: string };
 const RECRUITERS: Rec[] = [
@@ -30,7 +31,7 @@ export function TeamView() {
     <div className="tm">
       <div className="topbar">
         <div className="topinner">
-          <Lockup sub="Team" size={24} />
+          <Lockup sub="Team" size={24} href="/desk" />
           <div className="spacer" />
           <div className="tabs">
             <Link href="/desk">Desk</Link>
@@ -38,7 +39,7 @@ export function TeamView() {
             <Link href="/management">Management</Link>
           </div>
           <Link href="/" className="newbtn"><span className="plus">+</span><span className="lbl">Create new Matrix</span></Link>
-          <div className="avatar">MC</div>
+          <UserMenu />
         </div>
       </div>
 

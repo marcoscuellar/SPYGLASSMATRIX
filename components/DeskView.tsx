@@ -7,6 +7,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Lockup } from './ui';
+import { UserMenu } from './UserMenu';
 
 type Wait = 'Sales' | 'Recruiter' | 'Client';
 type Role = {
@@ -42,7 +43,7 @@ export function DeskView() {
     <div className="dsk">
       <div className="topbar">
         <div className="topinner">
-          <Lockup sub="Desk" size={24} />
+          <Lockup sub="Desk" size={24} href="/desk" />
           <div className="spacer" />
           <div className="tabs">
             <a className="on">Desk</a>
@@ -50,7 +51,7 @@ export function DeskView() {
             <Link href="/management">Management</Link>
           </div>
           <Link href="/" className="newbtn"><span className="plus">+</span><span className="lbl">Create new Matrix</span></Link>
-          <div className="avatar">MC</div>
+          <UserMenu />
         </div>
       </div>
 

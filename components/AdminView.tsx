@@ -144,7 +144,7 @@ export function AdminView({ initial, settings, persistent }: { initial: StoredCa
       <div style={{ maxWidth: 920, margin: '0 auto', padding: '0 24px' }}>
         {/* Bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, paddingBottom: 20, borderBottom: '1px solid var(--line)', marginBottom: 24, flexWrap: 'wrap' }}>
-          <Lockup sub="Portal admin" size={24} />
+          <Lockup sub="Portal admin" size={24} href="/desk" />
           <a href={PORTAL_PATH} target="_blank" rel="noreferrer" className="t-mono-xs" style={{ color: 'var(--navy)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             OPEN CLIENT PORTAL <Arrow s={12} />
           </a>
