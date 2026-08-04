@@ -49,12 +49,38 @@ export function Wordmark({ size = 20, color = 'var(--ink)' }: { size?: number; c
    exact lockup the Desk and Login use, so the whole app opens the
    same way. `sub` prints a mono breadcrumb after a hairline rule.
    ------------------------------------------------------------ */
+// The spyglass mark — monoline barrel + lens with the crescent, traced to
+// the brand logo. Navy on light, white on navy. Scales crisp to any size.
+export function SpyglassMark({ color = 'var(--navy)', height = 26 }: { color?: string; height?: number }) {
+  const uid = React.useId();
+  return (
+    <svg height={height} width={height * (200 / 430)} viewBox="0 0 200 430" fill="none" role="img" aria-label="Spyglass" style={{ flex: 'none' }} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <mask id={uid}>
+          <rect width="200" height="430" fill="#fff" />
+          <circle cx="104" cy="168" r="33" fill="#000" />
+        </mask>
+      </defs>
+      <g stroke={color} strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        <line x1="58" y1="16" x2="142" y2="16" /><line x1="58" y1="16" x2="58" y2="34" /><line x1="142" y1="16" x2="142" y2="34" />
+        <line x1="82" y1="34" x2="82" y2="98" /><line x1="118" y1="34" x2="118" y2="98" />
+        <circle cx="100" cy="170" r="72" />
+        <line x1="82" y1="242" x2="82" y2="300" /><line x1="118" y1="242" x2="118" y2="300" />
+        <line x1="62" y1="300" x2="138" y2="300" /><line x1="62" y1="300" x2="62" y2="286" /><line x1="138" y1="300" x2="138" y2="286" />
+        <line x1="82" y1="300" x2="82" y2="404" /><line x1="118" y1="300" x2="118" y2="404" />
+        <line x1="58" y1="416" x2="142" y2="416" /><line x1="58" y1="416" x2="58" y2="402" /><line x1="142" y1="416" x2="142" y2="402" />
+      </g>
+      <circle cx="88" cy="156" r="37" fill={color} mask={`url(#${uid})`} />
+    </svg>
+  );
+}
+
 export function Lockup({ sub, onNavy = false, size = 24 }: { sub?: string; onNavy?: boolean; size?: number }) {
   const fg = onNavy ? '#fff' : 'var(--navy)';
   const mk = onNavy ? 'var(--yellow)' : 'var(--amber)';
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-      <span style={{ width: size, height: size, borderRadius: Math.round(size * 0.28), background: onNavy ? '#fff' : 'var(--navy)', flex: 'none' }} />
+      <SpyglassMark color={onNavy ? '#fff' : 'var(--navy)'} height={Math.round(size * 1.15)} />
       <span style={{ fontFamily: 'var(--mono)', fontSize: 12.5, letterSpacing: '0.13em', textTransform: 'uppercase', fontWeight: 700, color: fg, whiteSpace: 'nowrap' }}>
         Spyglass <span style={{ color: mk }}>Matrix</span>
       </span>

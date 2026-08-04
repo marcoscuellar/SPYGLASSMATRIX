@@ -5,6 +5,8 @@
    (Sample roles for now; plugs into real search data later.)
    ============================================================ */
 import React from 'react';
+import Link from 'next/link';
+import { Lockup } from './ui';
 
 type Wait = 'Sales' | 'Recruiter' | 'Client';
 type Role = {
@@ -40,12 +42,13 @@ export function DeskView() {
     <div className="dsk">
       <div className="topbar">
         <div className="topinner">
-          <div className="brand">
-            <span className="mark" />
-            <span className="name">Spyglass <span className="mk">Matrix</span></span>
-          </div>
+          <Lockup sub="Desk" size={24} />
           <div className="spacer" />
-          <span className="leadbadge">Leadership</span>
+          <div className="tabs">
+            <a className="on">Desk</a>
+            <Link href="/team">Team</Link>
+            <Link href="/management">Management</Link>
+          </div>
           <div className="avatar">MC</div>
         </div>
       </div>
