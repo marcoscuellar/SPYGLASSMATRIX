@@ -1,305 +1,223 @@
 'use client';
 /* ============================================================
-   Spyglass Matrix — Stage 02: the generated, forked document
-   Recruiter view (full strategy) ⇄ Candidate view (sanitized).
-   Internal sections are removed from the DOM in candidate view.
+   Spyglass Matrix — Stage 02: the OHMatrix workstation
+   Navy sticky rail · JD hero · Recruiter ⇄ Candidate-safe toggle ·
+   live grading + fit score · boolean copy · watch-outs · print/Word.
+   Wired to the app's Matrix data; internal sections hide in the
+   candidate-safe view (removed from the DOM, not just hidden).
    ============================================================ */
 import React from 'react';
-import { Card, Mark, Tag, MonoButton } from './ui';
-import { Arrow, LockIcon, CheckIcon, PrinterIcon, EyeIcon, FlagIcon } from './icons';
-import { JdDocument } from './JdDocument';
-import type { Matrix, Question } from '@/lib/types';
+import type { Matrix } from '@/lib/types';
 
 type Mode = 'recruiter' | 'candidate';
+const GLABEL: Record<number, string> = { 3: 'Strong', 2: 'Solid', 1: 'Partial', 0: 'Gap' };
+const NAV: { id: string; label: string; internal: boolean }[] = [
+  { id: 'jd', label: 'Job Description', internal: false },
+  { id: 'look', label: 'What to Look For', internal: true },
+  { id: 'questions', label: 'Screening Questions', internal: false },
+  { id: 'titles', label: 'Target Titles', internal: true },
+  { id: 'boolean', label: 'Boolean Search', internal: true },
+  { id: 'watch', label: 'Watch-Outs', internal: true },
+];
 
-export function MatrixView({ matrix }: { matrix: Matrix }) {
-  const [generating, setGenerating] = React.useState(false);
+export function MatrixView({ matrix: M }: { matrix: Matrix }) {
   const [mode, setMode] = React.useState<Mode>('recruiter');
-  const regen = () => { setGenerating(true); setTimeout(() => setGenerating(false), 1900); };
-
-  return (
-    <div>
-      <div className="print-hide" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, marginBottom: 22, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <ModeToggle mode={mode} setMode={setMode} />
-          <span className="t-mono-xs" style={{ color: 'var(--ink-3)' }}>
-            {mode === 'recruiter' ? 'FULL STRATEGY · INTERNAL' : 'SANITIZED · SAFE TO SHARE'}
-          </span>
-        </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <MonoButton onClick={regen}>↻ Re-run</MonoButton>
-          <MonoButton onClick={() => window.print()}><PrinterIcon /> {mode === 'candidate' ? 'Print packet' : 'Print'}</MonoButton>
-        </div>
-      </div>
-
-      <div style={{ position: 'relative' }}>
-        {generating && <GenerationOverlay />}
-        <MatrixDoc mode={mode} M={matrix} />
-      </div>
-    </div>
-  );
-}
-
-function ModeToggle({ mode, setMode }: { mode: Mode; setMode: (m: Mode) => void }) {
-  const opts: { key: Mode; label: string; ic: React.ReactNode }[] = [
-    { key: 'recruiter', label: 'Recruiter view', ic: <EyeIcon /> },
-    { key: 'candidate', label: 'Candidate view', ic: <LockIcon c="currentColor" /> },
-  ];
-  return (
-    <div style={{ display: 'inline-flex', background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 'var(--r-3)', padding: 3, gap: 3 }}>
-      {opts.map((o) => {
-        const on = mode === o.key;
-        const accent = o.key === 'recruiter' ? 'var(--ink)' : 'var(--navy)';
-        return (
-          <button key={o.key} onClick={() => setMode(o.key)}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 14px', borderRadius: 9, cursor: 'pointer', border: 'none',
-              backgroundColor: on ? accent : 'transparent', color: on ? '#fff' : 'var(--ink-2)',
-              fontFamily: "'Geist', sans-serif", fontWeight: 600, fontSize: 15, transition: 'color .2s var(--ease)' }}>
-            {o.ic} {o.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-function MatrixDoc({ mode, M }: { mode: Mode; M: Matrix }) {
+  const [jdOpen, setJdOpen] = React.useState(false);
+  const [grades, setGrades] = React.useState<Record<number, number>>({});
+  const [copied, setCopied] = React.useState(false);
+  const [active, setActive] = React.useState('jd');
+  const contentRef = React.useRef<HTMLDivElement>(null);
   const candidate = mode === 'candidate';
-  const railColor = candidate ? 'var(--navy)' : 'var(--amber)';
-  const meta = [
-    { l: 'Engagement', v: M.empType },
-    { l: 'Location', v: M.location },
-    !candidate ? { l: 'Compensation', v: M.salary } : null,
-    { l: 'Opened', v: M.date },
-  ].filter((x): x is { l: string; v: string } => !!(x && x.v));
+
+  // Scrollspy: highlight the rail item for the section in view.
+  React.useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); }),
+      { rootMargin: '-20% 0px -70% 0px' },
+    );
+    NAV.forEach(({ id }) => { const el = document.getElementById(id); if (el) obs.observe(el); });
+    return () => obs.disconnect();
+  }, []);
+
+  const fit = React.useMemo(() => {
+    const keys = Object.keys(grades);
+    const n = M.questions.length || 1;
+    const got = keys.reduce((s, k) => s + grades[Number(k)], 0);
+    const pct = Math.round((got / (n * 3)) * 100);
+    const word = pct >= 80 ? 'Strong fit' : pct >= 55 ? 'Solid fit' : pct >= 30 ? 'Partial fit' : 'Gap — weak fit';
+    return { has: keys.length > 0, pct, word, count: keys.length, n: M.questions.length };
+  }, [grades, M.questions.length]);
+
+  const goTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  const copyBool = () => {
+    try { navigator.clipboard?.writeText(M.boolean); } catch { /* noop */ }
+    setCopied(true); setTimeout(() => setCopied(false), 1200);
+  };
+  const exportDoc = () => {
+    const body = contentRef.current?.innerHTML || '';
+    const html = '<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"></head><body>' + body + '</body></html>';
+    const blob = new Blob(['﻿' + html], { type: 'application/msword' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'Spyglass-Matrix-' + (M.jd.title || 'Role').replace(/\s+/g, '-') + '.doc';
+    a.click();
+  };
+
+  const heroFacts = [
+    { k: 'Client', v: M.client },
+    { k: 'Location', v: M.location },
+    { k: 'Compensation', v: M.salary },
+    { k: 'Type', v: M.empType },
+  ].filter((f) => !!f.v);
+  const metaLine = [M.client, M.empType, M.salary, M.location].filter(Boolean).join(' · ').toUpperCase();
 
   return (
-    <Card style={{ padding: 0, overflow: 'hidden', borderColor: candidate ? 'rgba(10,31,61,0.25)' : 'var(--line)', transition: 'border-color .3s' }}>
-      {/* Header band */}
-      <div style={{ padding: '26px 40px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: candidate ? 'rgba(10,31,61,0.03)' : 'var(--amber-bg)', transition: 'background .3s' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <Mark variant={candidate ? 'navy' : 'amber'} size={34} />
-          <div>
-            <div className="t-mono-xs" style={{ color: 'var(--navy)', marginBottom: 4 }}>{candidate ? 'CANDIDATE PACKET' : 'RECRUITER STRATEGY · THE MATRIX'}</div>
-            <div style={{ fontFamily: "'Geist', sans-serif", fontWeight: 700, fontSize: 19.5, letterSpacing: '-0.02em' }}>
-              {M.jd.title} · {M.client || 'Meridian Wealth Advisors'}{M.empType ? ' · ' + M.empType : ''}
+    <div className={'mtx' + (candidate ? ' candidate' : '')}>
+      <div className="layout">
+        {/* ===== Sticky rail ===== */}
+        <nav className="nav">
+          <div className="brand"><span className="mark" /><span className="t">Spyglass <span className="m-caps">Matrix</span></span></div>
+          {NAV.map((it) => (
+            <a key={it.id} className={(it.internal ? 'int-only ' : '') + (active === it.id ? 'on' : '')}
+              role="button" tabIndex={0} onClick={() => goTo(it.id)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') goTo(it.id); }}>
+              <span className="dot" /> {it.label}
+            </a>
+          ))}
+          <div className="navnote">The rail stays put as you scroll. Internal sections hide in Candidate view.</div>
+        </nav>
+
+        {/* ===== Content ===== */}
+        <div className="content" ref={contentRef}>
+          <div className="bar">
+            <div>
+              <div className="role">{M.jd.title} <span className="m-caps">Matrix</span></div>
+              {metaLine && <div className="meta">{metaLine}</div>}
+            </div>
+            <div className="actions">
+              <div className="toggle">
+                <button className={!candidate ? 'active' : ''} onClick={() => setMode('recruiter')}>Recruiter</button>
+                <button className={candidate ? 'active' : ''} onClick={() => setMode('candidate')}>Candidate-safe</button>
+              </div>
+              <button className="btn" onClick={() => window.print()}>Print</button>
+              <button className="btn teal" onClick={exportDoc}>Word doc</button>
             </div>
           </div>
-        </div>
-        <Tag tone={candidate ? 'navy' : 'amber'}>{candidate ? 'Internal notes stripped' : 'Generated ' + (M.date || 'Jun 6')}</Tag>
-      </div>
 
-      {meta.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', borderBottom: '1px solid var(--line)', background: candidate ? 'rgba(10,31,61,0.02)' : 'var(--amber-bg)' }}>
-          {meta.map((x, i) => (
-            <div key={i} style={{ padding: '15px 26px', borderRight: '1px solid var(--line)' }}>
-              <div className="t-mono-xs" style={{ color: 'var(--ink-3)', marginBottom: 5 }}>{x.l}</div>
-              <div style={{ fontFamily: "'Geist', sans-serif", fontWeight: 600, fontSize: 15.5, color: 'var(--ink)' }}>{x.v}</div>
+          <div className="cand-banner">Candidate-safe view — internal strategy, screening rationale, and watch-outs are removed from this copy.</div>
+
+          {/* ===== Job Description ===== */}
+          <section id="jd">
+            <div className="jd-hero">
+              <div className="kick">Job Description</div>
+              <div className="title">{M.jd.title}</div>
+              {heroFacts.length > 0 && (
+                <div className="jd-hero-facts">
+                  {heroFacts.map((f, i) => (
+                    <div className="f" key={i}><div className="k">{f.k}</div><div className="v">{f.v}</div></div>
+                  ))}
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-      )}
 
-      <div style={{ padding: '38px 40px', display: 'grid', gridTemplateColumns: '170px 1fr', gap: 36, alignItems: 'start' }}>
-        <div className="print-hide" style={{ position: 'sticky', top: 24, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <DocNav label="Job description" active railColor={railColor} />
-          <DocNav label="What to look for" muted={candidate} railColor={railColor} />
-          <DocNav label="Qualifying questions" railColor={railColor} />
-          <DocNav label="Search & watch-outs" muted={candidate} railColor={railColor} />
-        </div>
+            <div className="jd-block">
+              <div className="bh">Overview</div>
+              <p className="jd-sum" style={{ marginBottom: 0 }}>{M.jd.summary}</p>
+            </div>
 
-        <div style={{ maxWidth: 680 }}>
-          {/* 01 — JD : identical in both views */}
-          <section style={{ marginBottom: 40 }}>
-            <SectionHead n="01" title="Job description" sub="Kept intact — the role exactly as it was submitted." />
-            {M.jd.fullText ? (
-              <JdDocument text={M.jd.fullText} />
-            ) : (
+            {(M.jd.summary2 || M.jd.mustHave.length > 0 || M.jd.niceToHave.length > 0) && (
               <>
-                <p className="t-body" style={{ fontSize: 17.5, color: 'var(--ink-2)', marginTop: 0, marginBottom: 14 }}>{M.jd.summary}</p>
-                <p className="t-body" style={{ fontSize: 17.5, color: 'var(--ink-2)', marginTop: 0, marginBottom: 0 }}>{M.jd.summary2}</p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30, marginTop: 26 }}>
-                  <DocList title="Must have" items={M.jd.mustHave} />
-                  <DocList title="Nice to have" items={M.jd.niceToHave} />
+                <button className={'jd-toggle' + (jdOpen ? ' open' : '')} onClick={() => setJdOpen((v) => !v)}>
+                  {jdOpen ? 'Hide full job description' : 'Read the full job description'} <span className="chev">▾</span>
+                </button>
+                <div className={'jd-more' + (jdOpen ? ' open' : '')}>
+                  {M.jd.summary2 && (
+                    <div className="jd-block">
+                      <div className="bh">More on the role</div>
+                      <p className="jd-sum" style={{ marginBottom: 0 }}>{M.jd.summary2}</p>
+                    </div>
+                  )}
+                  {(M.jd.mustHave.length > 0 || M.jd.niceToHave.length > 0) && (
+                    <div className="cols">
+                      <div className="hilite-box">
+                        <div className="mini" style={{ color: 'var(--amber-d)' }}>Must have</div>
+                        <ul className="clean">{M.jd.mustHave.map((x, i) => <li key={i}>{x}</li>)}</ul>
+                      </div>
+                      <div className="plain-box">
+                        <div className="mini">Nice to have</div>
+                        <ul className="clean">{M.jd.niceToHave.map((x, i) => <li key={i}>{x}</li>)}</ul>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </>
             )}
           </section>
 
-          {/* 02 — What to look for : INTERNAL */}
-          <section style={{ marginBottom: 40 }}>
-            <SectionHead n="02" title="What to look for" sub="The strategy layer — the soft skills, turned into signals." internal />
-            {candidate ? (
-              <Redacted label="Internal strategy — hidden from the candidate packet" />
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 14 }}>
-                {M.lookFor.map((l, i) => (
-                  <div key={i} style={{ padding: '18px 20px', background: 'var(--navy)', borderRadius: 'var(--r-4)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
-                      <span style={{ width: 6, height: 6, borderRadius: 99, background: 'var(--amber)', flexShrink: 0 }} />
-                      <div style={{ fontFamily: "'Geist', sans-serif", fontWeight: 700, fontSize: 16.5, color: '#fff' }}>{l.signal}</div>
-                    </div>
-                    <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 15, lineHeight: 1.5, color: 'rgba(255,255,255,0.78)' }}>{l.detail}</div>
-                  </div>
-                ))}
-              </div>
-            )}
+          {/* ===== What to Look For (internal) ===== */}
+          <section id="look" className="int-only">
+            <div className="sec-label">What to Look For <span className="int">Internal</span></div>
+            {M.lookFor.map((l, i) => (
+              <div className="lf" key={i}><div className="sig">{l.signal}</div><div className="det">{l.detail}</div></div>
+            ))}
           </section>
 
-          {/* 03 — Qualifying questions */}
-          <section>
-            <SectionHead n="03" title="Qualifying questions"
-              sub={candidate ? 'Use these in the interview.' : 'Each maps to a signal — with internal guidance for the screen.'} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
-              {M.questions.map((q, i) => <QuestionRow key={i} i={i} q={q} candidate={candidate} />)}
+          {/* ===== Screening Questions ===== */}
+          <section id="questions">
+            <div className="sec-label">Screening Questions</div>
+            <h2 className="sec-h" style={{ fontSize: 19, marginBottom: 14 }}>Ask, grade, and type your notes live</h2>
+
+            <div className="fitcard int-only">
+              <div className="num">{fit.has ? fit.pct : '—'}<small>%</small></div>
+              <div className="mid">
+                <div className="lab">Live fit score</div>
+                <div className="gradeword">{fit.has ? fit.word : 'Grade the answers as you go'}</div>
+                <div className="bar"><span style={{ width: (fit.has ? fit.pct : 0) + '%' }} /></div>
+              </div>
+              <div className="cnt">{fit.count} / {fit.n} graded</div>
             </div>
-          </section>
 
-          {/* 04 — Search & watch-outs : INTERNAL */}
-          <section style={{ marginTop: 40 }}>
-            <SectionHead n="04" title="Search & watch-outs" sub="How we hunt the role — and the traps the client cannot afford to fall into again." internal />
-            {candidate ? (
-              <Redacted label="Sourcing strategy & watch-outs — internal to Spyglass" />
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 16 }}>
-                <div>
-                  <div className="t-mono-xs t-section-label" style={{ marginBottom: 10 }}>TARGET TITLES</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {M.targetTitles.map((t, i) => <Tag key={i} tone={i === 0 ? 'ink' : 'pipeline'}>{t}</Tag>)}
-                  </div>
+            {M.questions.map((q, i) => (
+              <div className="q" key={i}>
+                <div className="qt">{i + 1}. {q.q}</div>
+                <div className="surf">Surfaces: {q.surfaces}</div>
+                <div className="why int-only"><b>Why we ask</b>{q.internal}</div>
+                <div className="grade int-only">
+                  <span className="glabel">Grade</span>
+                  {[0, 1, 2, 3].map((g) => (
+                    <button key={g} data-g={g} className={grades[i] === g ? 'sel' : ''}
+                      onClick={() => setGrades((s) => ({ ...s, [i]: g }))}>{GLABEL[g]}</button>
+                  ))}
                 </div>
-                <div>
-                  <div className="t-mono-xs t-section-label" style={{ marginBottom: 10 }}>BOOLEAN SEARCH ASSET</div>
-                  <div style={{ position: 'relative', padding: '16px 18px', background: 'var(--ink)', borderRadius: 'var(--r-4)' }}>
-                    <code style={{ fontFamily: "'Geist Mono', monospace", fontSize: 14, lineHeight: 1.7, color: '#e5e5e5', wordBreak: 'break-word' }}>{M.boolean}</code>
-                    <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
-                      <span className="t-mono-xs" style={{ color: 'var(--ink-4)', display: 'inline-flex', alignItems: 'center', gap: 7 }}>
-                        <span style={{ width: 5, height: 5, borderRadius: 99, background: 'var(--amber)' }} /> READY TO PASTE INTO LINKEDIN RECRUITER
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className="t-mono-xs t-section-label" style={{ marginBottom: 10 }}>WATCH-OUTS</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {M.watchOuts.map((w, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 13, padding: '15px 17px', background: 'var(--navy)', borderRadius: 'var(--r-4)' }}>
-                        <span style={{ paddingTop: 1, flexShrink: 0 }}><FlagIcon c="var(--amber)" /></span>
-                        <div>
-                          <div style={{ fontFamily: "'Geist', sans-serif", fontWeight: 700, fontSize: 16, marginBottom: 3, color: '#fff' }}>{w.flag}</div>
-                          <div style={{ fontFamily: "'Geist', sans-serif", fontSize: 15, lineHeight: 1.5, color: 'rgba(255,255,255,0.78)' }}>{w.note}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                <div className="notes-wrap">
+                  <div className="lbl"><span className="live" /> Your notes — type while you talk</div>
+                  <textarea placeholder="Great speaking with you… jot the messy notes here. They go straight into the system." />
                 </div>
               </div>
-            )}
+            ))}
+          </section>
+
+          {/* ===== Target Titles (internal) ===== */}
+          <section id="titles" className="int-only">
+            <div className="sec-label">Target Titles <span className="int">Internal</span></div>
+            {M.targetTitles.map((t, i) => <span className="chip" key={i}>{t}</span>)}
+          </section>
+
+          {/* ===== Boolean Search (internal) ===== */}
+          <section id="boolean" className="int-only">
+            <div className="sec-label">Boolean Search <span className="int">Internal</span></div>
+            <div className="bool">{M.boolean}</div>
+            <button className="btn" style={{ marginTop: 12 }} onClick={copyBool}>{copied ? 'Copied' : 'Copy string'}</button>
+          </section>
+
+          {/* ===== Watch-Outs (internal) ===== */}
+          <section id="watch" className="int-only">
+            <div className="sec-label">Watch-Outs <span className="int">Internal</span></div>
+            {M.watchOuts.map((w, i) => (
+              <div className="watch" key={i}><div className="fl">{w.flag}</div><div className="nt">{w.note}</div></div>
+            ))}
           </section>
         </div>
-      </div>
-    </Card>
-  );
-}
-
-function DocNav({ label, active, muted, railColor }: { label: string; active?: boolean; muted?: boolean; railColor: string }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 0', opacity: muted ? 0.4 : 1, transition: 'opacity .3s' }}>
-      <span style={{ width: 6, height: 6, borderRadius: 99, background: active ? railColor : 'var(--ink-4)', transition: 'background .3s' }} />
-      <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 15, fontWeight: active ? 600 : 500, color: active ? 'var(--ink)' : 'var(--ink-3)' }}>{label}</span>
-    </div>
-  );
-}
-
-function SectionHead({ n, title, sub, internal }: { n: string; title: string; sub: string; internal?: boolean }) {
-  return (
-    <div style={{ marginBottom: 6 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-        <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 13.5, color: 'var(--ink-3)' }}>{n}</span>
-        <h3 style={{ fontFamily: "'Geist', sans-serif", fontWeight: 700, fontSize: 25.5, letterSpacing: '-0.03em', margin: 0 }}>{title}</h3>
-        {internal && <Tag tone="amber">Internal</Tag>}
-      </div>
-      <p className="t-body" style={{ color: 'var(--ink-3)', margin: 0, paddingLeft: 24 }}>{sub}</p>
-    </div>
-  );
-}
-
-function DocList({ title, items }: { title: string; items: string[] }) {
-  return (
-    <div style={{ marginTop: 20 }}>
-      <div className="t-mono-xs t-section-label" style={{ marginBottom: 10 }}>{title}</div>
-      <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 9 }}>
-        {items.map((it, i) => (
-          <li key={i} style={{ display: 'flex', gap: 12, fontFamily: "'Geist', sans-serif", fontSize: 16.5, lineHeight: 1.5, color: 'var(--ink-2)' }}>
-            <span style={{ color: 'var(--ink-4)', paddingTop: 2 }}>—</span>{it}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function QuestionRow({ i, q, candidate }: { i: number; q: Question; candidate: boolean }) {
-  return (
-    <div style={{ padding: 20, border: '1px solid var(--line)', borderRadius: 'var(--r-4)', background: 'var(--bg-card)', transition: 'all .25s var(--ease)' }}>
-      <div style={{ display: 'flex', gap: 14 }}>
-        <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 13.5, color: 'var(--navy)', fontWeight: 600, paddingTop: 2 }}>Q{i + 1}</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: "'Geist', sans-serif", fontWeight: 600, fontSize: 18, letterSpacing: '-0.01em', lineHeight: 1.4 }}>{q.q}</div>
-          <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span className="t-mono-xs" style={{ color: 'var(--ink-3)' }}>SURFACES</span>
-            <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 14.5, color: 'var(--ink-2)' }}>{q.surfaces}</span>
-          </div>
-          {!candidate && (
-            <div style={{ overflow: 'hidden', marginTop: 12, animation: 'spgReveal .35s var(--ease)' }}>
-              <div style={{ display: 'flex', gap: 9, padding: '11px 13px', background: 'var(--paper)', borderRadius: 'var(--r-2)', borderLeft: '2px solid var(--navy)' }}>
-                <span style={{ paddingTop: 1 }}><LockIcon c="var(--navy)" /></span>
-                <div>
-                  <span className="t-mono-xs" style={{ color: 'var(--navy)', display: 'block', marginBottom: 3 }}>WHY WE ASK · INTERNAL</span>
-                  <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 15, color: 'var(--ink-2)', lineHeight: 1.45 }}>{q.internal}</span>
-                </div>
-              </div>
-            </div>
-          )}
-          {!candidate && (
-            <div style={{ marginTop: 12 }}>
-              <span className="t-mono-xs" style={{ color: 'var(--navy)', display: 'block', marginBottom: 6 }}>YOUR NOTES · TYPE WHILE YOU TALK</span>
-              <textarea
-                placeholder="Great speaking with you… jot the messy notes here while you're on the call."
-                style={{ width: '100%', minHeight: 64, resize: 'vertical', padding: '11px 13px', border: '1px solid var(--line)', borderRadius: 'var(--r-2)', fontFamily: "'Geist', sans-serif", fontSize: 15, color: 'var(--ink)', background: 'var(--bg-card)', boxSizing: 'border-box' }}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Redacted({ label }: { label: string }) {
-  return (
-    <div style={{ marginTop: 14, padding: '20px 22px', borderRadius: 'var(--r-4)', border: '1px dashed rgba(10,31,61,0.25)', background: 'rgba(10,31,61,0.03)', display: 'flex', alignItems: 'center', gap: 12 }}>
-      <LockIcon c="var(--navy)" />
-      <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 15.5, fontWeight: 500, color: 'var(--navy)' }}>{label}</span>
-      <div style={{ flex: 1, display: 'flex', gap: 6, marginLeft: 8 }}>
-        {[60, 40, 75, 30].map((w, i) => <span key={i} style={{ height: 8, width: w, background: 'rgba(10,31,61,0.12)', borderRadius: 2 }} />)}
-      </div>
-    </div>
-  );
-}
-
-function GenerationOverlay() {
-  const steps = ['Reading the client meeting…', 'Extracting soft-skill signals…', 'Mapping signals to questions…', 'Sealing internal notes…'];
-  const [s, setS] = React.useState(0);
-  React.useEffect(() => {
-    const t = setInterval(() => setS((v) => Math.min(v + 1, steps.length - 1)), 460);
-    return () => clearInterval(t);
-  }, [steps.length]);
-  return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 20, background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(8px)', borderRadius: 'var(--r-6)', display: 'grid', placeItems: 'center' }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ display: 'inline-flex', marginBottom: 20, animation: 'spgSpin 1.1s linear infinite', width: 40, height: 40 }}><Mark variant="amber" size={40} /></div>
-        <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 14.5, color: 'var(--ink-2)', letterSpacing: '0.02em' }}>{steps[s]}</div>
       </div>
     </div>
   );
