@@ -134,7 +134,7 @@ export function BuilderStage({ onBuild }: { onBuild: (p: BuilderPayload) => void
         </div>
 
         <div className="bld-hero">
-          <h2 className="bld-title">Ready. Set.<br />Create a <span className="ed">Spyglass Matrix</span>.</h2>
+          <h2 className="bld-title">Ready. Set.<br />Create a Spyglass <span className="ed">Matrix</span>.</h2>
           <p className="bld-sub">Add the role and drop in the brief. Spyglass drafts the strategy and screening, then splits it into a recruiter copy and a candidate-safe copy.</p>
         </div>
 
