@@ -378,6 +378,13 @@ code { font-family: var(--mono); }
 .dsk .rail i.cur { background: var(--amber); box-shadow: 0 2px 7px rgba(14,124,132,.4); }
 .dsk .note { font-size: 14px; color: var(--ink-2); line-height: 1.5; border-top: 1px solid var(--line-soft); padding-top: 14px; }
 .dsk .note b { color: var(--ink); font-weight: 600; }
+.dsk .teamnote { border-top: 1px solid var(--line-soft); padding-top: 13px; }
+.dsk .tn-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 7px; display: flex; align-items: center; gap: 7px; }
+.dsk .tn-shared { font-family: var(--mono); font-size: 8.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--amber-d); background: var(--amber-pale); border: 1px solid #cfe6e7; border-radius: 20px; padding: 2px 7px; }
+.dsk .tn-ta { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; font-family: var(--font); font-size: 13px; line-height: 1.45; color: var(--ink); background: #fdfdfc; resize: vertical; min-height: 44px; }
+.dsk .tn-ta:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(14,124,132,.12); }
+.dsk .tn-meta { font-family: var(--mono); font-size: 9.5px; letter-spacing: .04em; color: var(--ink-3); margin-top: 5px; min-height: 12px; }
+.dsk .tn-meta.ok { color: var(--amber-d); }
 .dsk .cardfoot { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--line-soft); padding-top: 14px; margin-top: auto; }
 .dsk .chip { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .03em; padding: 5px 11px; border-radius: 999px; }
 .dsk .chip .d { width: 7px; height: 7px; border-radius: 50%; }

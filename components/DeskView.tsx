@@ -8,6 +8,13 @@ import React from 'react';
 import Link from 'next/link';
 import { Lockup } from './ui';
 import { UserMenu } from './UserMenu';
+import { BoardNote } from './BoardNote';
+import { getBoardNotes } from '@/lib/store';
+
+// Stable per-role key so the whole team shares one note per role.
+function noteKeyFor(role: string, client: string): string {
+  return (role + '__' + client).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
 
 type Wait = 'Sales' | 'Recruiter' | 'Client';
 type Role = {
@@ -32,7 +39,8 @@ const ROLES: Role[] = [
 ];
 const ATTN_DAYS = 8; // flag anything sitting this long or more
 
-export function DeskView() {
+export async function DeskView() {
+  const notes = await getBoardNotes();
   const roles = [...ROLES].sort((a, b) => b.days - a.days);
   const liveCount = roles.length;
   const waitingClient = roles.filter((r) => r.waiting === 'Client').length;
@@ -94,6 +102,7 @@ export function DeskView() {
                   </div>
                 </div>
                 <div className="note">{r.note}</div>
+                <BoardNote noteKey={noteKeyFor(r.role, r.client)} initial={notes[noteKeyFor(r.role, r.client)]} />
                 <div className="cardfoot">
                   <span className={'chip ' + (onUs ? 'us' : 'client')}>
                     <span className="d" /> Waiting on {r.waiting}
