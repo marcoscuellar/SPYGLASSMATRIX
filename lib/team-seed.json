@@ -1,6 +1,7 @@
 {
   "note": "Pre-loaded demo logins. Each is created once (only if the email doesn't already exist), with mustReset=true so the person sets their own password on first sign-in. Editing a person here won't overwrite an account that already exists.",
   "users": [
+    { "name": "Marcos Cuellar", "email": "mcuellar@spyglasspartners.com", "role": "admin", "tempPassword": "Spyglass2026" },
     { "name": "Scott Anderson", "email": "sandersen@spyglasspartners.com", "role": "member", "tempPassword": "Spyglass-4K9P" },
     { "name": "Michael Parisi", "email": "mike@spyglasspartners.com", "role": "member", "tempPassword": "Spyglass-7M2R" }
   ]
