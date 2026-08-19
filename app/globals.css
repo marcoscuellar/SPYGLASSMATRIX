@@ -322,11 +322,26 @@ code { font-family: var(--mono); }
 .mtx.candidate .cand-banner { display: block; }
 @media (max-width: 820px) { .mtx .layout { flex-direction: column; } .mtx .nav { position: static; width: 100%; } }
 @media (max-width: 680px) { .mtx .cols { grid-template-columns: 1fr; } .mtx .jd-hero-facts { grid-template-columns: 1fr 1fr; gap: 16px 0; } .mtx .jd-hero-facts .f { border-left: none; padding: 0; } }
+/* The live textarea only ever shows its own scrollport; paper needs the full text. */
+.mtx .notes-print { display: none; white-space: pre-wrap; }
 @media print {
   .mtx .nav, .mtx .actions, .mtx .toggle, .mtx .jd-toggle, .mtx .navnote { display: none !important; }
   .mtx .jd-more { max-height: none !important; overflow: visible !important; }
   .mtx .layout { display: block; max-width: none; }
-  .mtx section, .mtx .bar { box-shadow: none; border: 1px solid var(--line); break-inside: avoid; }
+  /* Sticky positioning makes the header float over — or repeat across — printed
+     pages, so pin everything back into the normal flow before paginating. */
+  .mtx .bar { position: static !important; top: auto !important; z-index: auto !important; }
+  .mtx section, .mtx .bar { box-shadow: none; border: 1px solid var(--line); }
+  /* Only keep small units whole. `break-inside: avoid` on a full section is what
+     was blanking/clipping the print: Screening Questions is taller than a sheet,
+     and an unbreakable block taller than the page gets dropped past its overflow. */
+  .mtx section { break-inside: auto; }
+  .mtx .q, .mtx .lf, .mtx .watch, .mtx .fitcard, .mtx .jd-hero, .mtx .jd-block { break-inside: avoid; }
+  .mtx .sec-label { break-after: avoid; }
+  .mtx .q textarea { display: none !important; }
+  .mtx .notes-print { display: block; border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font-size: 13px; min-height: 44px; color: var(--ink); }
+  .mtx .grade button:not(.sel) { display: none !important; }
+  .mtx .grade button.sel { border-color: transparent; }
 }
 
 
