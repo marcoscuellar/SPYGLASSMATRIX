@@ -22,7 +22,12 @@ builder → building → matrix → submitting → client
 2. **The Matrix** — the generated strategy document, with a Recruiter ⇄
    Candidate toggle. Internal sections (*What to look for*, *Search &
    watch-outs*, and each question's *why we ask*) are **removed from the DOM**
-   in the candidate copy, not merely hidden. Printable (`@media print`).
+   in the candidate copy, not merely hidden — so they cannot leak through
+   print, "view source", or an export. Take it out of the app four ways:
+   **Print** (`@media print`), **Copy all**, **Markdown**, and **Word doc**.
+   Exports are built from the Matrix data plus the live interview state, so
+   typed notes and selected grades come with them, and each export honours the
+   toggle — the candidate-safe copy contains no internal content at all.
 3. **Submit transition** — seals the internal notes and packages the
    candidate-safe dossiers.
 4. **Client Portal** — editorial shortlist → expanded dossier with an AI

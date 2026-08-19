@@ -3,8 +3,9 @@
    Spyglass Matrix — Stage 02: the OHMatrix workstation
    Navy sticky rail · JD hero · Recruiter ⇄ Candidate-safe toggle ·
    live grading + fit score · boolean copy · watch-outs · print/Word.
-   Wired to the app's Matrix data; internal sections hide in the
-   candidate-safe view (removed from the DOM, not just hidden).
+   Wired to the app's Matrix data; internal sections are removed from
+   the DOM in the candidate-safe view (not merely hidden), so they
+   cannot leak through print, "view source", or the Word export.
    ============================================================ */
 import React from 'react';
 import type { Matrix } from '@/lib/types';
@@ -21,16 +22,61 @@ const NAV: { id: string; label: string; internal: boolean }[] = [
   { id: 'watch', label: 'Watch-Outs', internal: true },
 ];
 
+/* ---------- extraction helpers ---------- */
+
+const esc = (s: unknown) =>
+  String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const escBr = (s: unknown) => esc(s).replace(/\n/g, '<br>');
+
+/** Copy that also works on plain http:// origins, where navigator.clipboard is undefined. */
+async function copyText(text: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch { /* fall through to the legacy path */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+/** Save a generated file. The anchor must be in the document for Firefox/Safari to honour it. */
+function download(filename: string, mime: string, content: string) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.rel = 'noopener';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
 export function MatrixView({ matrix: M }: { matrix: Matrix }) {
   const [mode, setMode] = React.useState<Mode>('recruiter');
   const [jdOpen, setJdOpen] = React.useState(false);
   const [grades, setGrades] = React.useState<Record<number, number>>({});
-  const [copied, setCopied] = React.useState(false);
+  const [notes, setNotes] = React.useState<Record<number, string>>({});
+  const [copied, setCopied] = React.useState('');
   const [active, setActive] = React.useState('jd');
-  const contentRef = React.useRef<HTMLDivElement>(null);
   const candidate = mode === 'candidate';
 
-  // Scrollspy: highlight the rail item for the section in view.
+  // Scrollspy: highlight the rail item for the section in view. Re-runs on mode
+  // change because the internal sections leave the DOM in candidate view.
   React.useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); }),
@@ -38,7 +84,7 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
     );
     NAV.forEach(({ id }) => { const el = document.getElementById(id); if (el) obs.observe(el); });
     return () => obs.disconnect();
-  }, []);
+  }, [candidate]);
 
   const fit = React.useMemo(() => {
     const keys = Object.keys(grades);
@@ -50,19 +96,8 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
   }, [grades, M.questions.length]);
 
   const goTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
-  const copyBool = () => {
-    try { navigator.clipboard?.writeText(M.boolean); } catch { /* noop */ }
-    setCopied(true); setTimeout(() => setCopied(false), 1200);
-  };
-  const exportDoc = () => {
-    const body = contentRef.current?.innerHTML || '';
-    const html = '<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"></head><body>' + body + '</body></html>';
-    const blob = new Blob(['﻿' + html], { type: 'application/msword' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'Spyglass-Matrix-' + (M.jd.title || 'Role').replace(/\s+/g, '-') + '.doc';
-    a.click();
-  };
+
+  const flash = (what: string) => { setCopied(what); setTimeout(() => setCopied(''), 1400); };
 
   const heroFacts = [
     { k: 'Client', v: M.client },
@@ -71,6 +106,142 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
     { k: 'Type', v: M.empType },
   ].filter((f) => !!f.v);
   const metaLine = [M.client, M.empType, M.salary, M.location].filter(Boolean).join(' · ').toUpperCase();
+  const slug = (M.jd.title || 'Role').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+  const fileBase = 'Spyglass-Matrix-' + slug + (candidate ? '-Candidate-Safe' : '-Recruiter');
+
+  /* ---------- exports: built from the Matrix data + live state, never scraped
+       from innerHTML (which loses typed notes and selected grades) ---------- */
+
+  const buildMarkdown = () => {
+    const L: string[] = [];
+    L.push('# ' + (M.jd.title || 'Role') + ' — Spyglass Matrix');
+    if (metaLine) L.push('', metaLine);
+    L.push('', candidate
+      ? '_Candidate-safe copy — internal strategy, screening rationale, and watch-outs are excluded._'
+      : '_Recruiter copy — CONFIDENTIAL. Contains internal strategy and screening rationale._');
+
+    L.push('', '## Job Description', '', M.jd.summary);
+    if (M.jd.summary2) L.push('', M.jd.summary2);
+    if (M.jd.mustHave.length) L.push('', '### Must have', ...M.jd.mustHave.map((x) => '- ' + x));
+    if (M.jd.niceToHave.length) L.push('', '### Nice to have', ...M.jd.niceToHave.map((x) => '- ' + x));
+
+    if (!candidate && M.lookFor.length) {
+      L.push('', '## What to Look For (internal)');
+      M.lookFor.forEach((l) => L.push('', '**' + l.signal + '** — ' + l.detail));
+    }
+
+    L.push('', '## Screening Questions');
+    if (!candidate && fit.has) L.push('', 'Live fit score: ' + fit.pct + '% — ' + fit.word + ' (' + fit.count + '/' + fit.n + ' graded)');
+    M.questions.forEach((q, i) => {
+      L.push('', (i + 1) + '. ' + q.q);
+      L.push('   - Surfaces: ' + q.surfaces);
+      if (!candidate) {
+        L.push('   - Why we ask: ' + q.internal);
+        if (grades[i] !== undefined) L.push('   - Grade: ' + GLABEL[grades[i]]);
+        if ((notes[i] || '').trim()) L.push('   - Notes: ' + notes[i].trim().replace(/\n/g, '\n     '));
+      }
+    });
+
+    if (!candidate) {
+      if (M.targetTitles.length) L.push('', '## Target Titles (internal)', '', M.targetTitles.join(' · '));
+      if (M.boolean) L.push('', '## Boolean Search (internal)', '', '```', M.boolean, '```');
+      if (M.watchOuts.length) {
+        L.push('', '## Watch-Outs (internal)');
+        M.watchOuts.forEach((w) => L.push('', '**' + w.flag + '** — ' + w.note));
+      }
+    }
+    return L.join('\n') + '\n';
+  };
+
+  const buildDocHtml = () => {
+    const S: string[] = [];
+    S.push('<div class="hero"><div class="kick">Job Description</div><h1>' + esc(M.jd.title) + '</h1>');
+    if (metaLine) S.push('<div class="meta">' + esc(metaLine) + '</div>');
+    S.push('</div>');
+    S.push('<p class="note">' + (candidate
+      ? 'Candidate-safe copy — internal strategy, screening rationale, and watch-outs are excluded from this document.'
+      : 'Recruiter copy — CONFIDENTIAL. Contains internal strategy and screening rationale. Do not forward to candidates.') + '</p>');
+
+    S.push('<h2>Overview</h2><p>' + escBr(M.jd.summary) + '</p>');
+    if (M.jd.summary2) S.push('<h2>More on the role</h2><p>' + escBr(M.jd.summary2) + '</p>');
+    if (M.jd.mustHave.length) S.push('<h2>Must have</h2><ul>' + M.jd.mustHave.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>');
+    if (M.jd.niceToHave.length) S.push('<h2>Nice to have</h2><ul>' + M.jd.niceToHave.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>');
+
+    if (!candidate && M.lookFor.length) {
+      S.push('<h2>What to Look For <span class="int">Internal</span></h2>');
+      S.push('<table>' + M.lookFor.map((l) =>
+        '<tr><th>' + esc(l.signal) + '</th><td>' + esc(l.detail) + '</td></tr>').join('') + '</table>');
+    }
+
+    S.push('<h2>Screening Questions</h2>');
+    if (!candidate && fit.has) {
+      S.push('<p class="fit"><b>Live fit score: ' + fit.pct + '%</b> — ' + esc(fit.word) +
+        ' (' + fit.count + ' / ' + fit.n + ' graded)</p>');
+    }
+    M.questions.forEach((q, i) => {
+      S.push('<div class="q"><p class="qt">' + (i + 1) + '. ' + esc(q.q) + '</p>');
+      S.push('<p class="surf"><b>Surfaces:</b> ' + esc(q.surfaces) + '</p>');
+      if (!candidate) {
+        S.push('<p class="why"><b>Why we ask:</b> ' + esc(q.internal) + '</p>');
+        if (grades[i] !== undefined) S.push('<p class="gr"><b>Grade:</b> ' + GLABEL[grades[i]] + '</p>');
+        S.push('<p class="nt"><b>Notes:</b> ' + (escBr(notes[i]) || '<i>&mdash;</i>') + '</p>');
+      }
+      S.push('</div>');
+    });
+
+    if (!candidate) {
+      if (M.targetTitles.length) {
+        S.push('<h2>Target Titles <span class="int">Internal</span></h2><p>' +
+          M.targetTitles.map((t) => esc(t)).join(' &middot; ') + '</p>');
+      }
+      if (M.boolean) S.push('<h2>Boolean Search <span class="int">Internal</span></h2><p class="bool">' + esc(M.boolean) + '</p>');
+      if (M.watchOuts.length) {
+        S.push('<h2>Watch-Outs <span class="int">Internal</span></h2>');
+        S.push('<table>' + M.watchOuts.map((w) =>
+          '<tr><th class="flag">' + esc(w.flag) + '</th><td>' + esc(w.note) + '</td></tr>').join('') + '</table>');
+      }
+    }
+
+    const css = [
+      'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1c2430;line-height:1.5}',
+      '.hero{border-bottom:3px solid #0E7C84;padding-bottom:10pt;margin-bottom:14pt}',
+      '.kick{font-size:8pt;letter-spacing:1.5pt;text-transform:uppercase;color:#0E7C84;font-weight:bold}',
+      'h1{font-size:20pt;color:#0A1F3D;margin:4pt 0}',
+      '.meta{font-size:8.5pt;letter-spacing:.6pt;color:#5b6777}',
+      'h2{font-size:12pt;color:#0A1F3D;margin:16pt 0 6pt;border-bottom:1px solid #dfe4ea;padding-bottom:3pt}',
+      '.int{font-size:7.5pt;background:#0A1F3D;color:#fff;padding:1pt 5pt;letter-spacing:.5pt}',
+      '.note{font-size:9pt;color:#8C2F3A;font-style:italic}',
+      '.fit{background:#0A1F3D;color:#fff;padding:6pt 10pt}',
+      '.q{border:1px solid #dfe4ea;padding:8pt 10pt;margin-bottom:8pt}',
+      '.qt{font-weight:bold;color:#0A1F3D;margin:0 0 4pt}',
+      '.surf,.why,.gr,.nt{margin:3pt 0;font-size:10pt}',
+      '.why{color:#0E7C84}.gr{color:#0A1F3D}',
+      '.bool{font-family:Consolas,monospace;font-size:9.5pt;background:#f5f6f7;padding:8pt;border:1px solid #dfe4ea}',
+      'table{border-collapse:collapse;width:100%}',
+      'th{text-align:left;vertical-align:top;width:26%;color:#0A1F3D;padding:5pt 8pt 5pt 0;border-bottom:1px solid #eceff2}',
+      'th.flag{color:#8C2F3A}',
+      'td{vertical-align:top;padding:5pt 0;border-bottom:1px solid #eceff2}',
+      'ul{margin:4pt 0 4pt 16pt}li{margin-bottom:3pt}',
+    ].join('');
+
+    return '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+      'xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+      '<head><meta charset="utf-8"><title>' + esc(M.jd.title) + ' — Spyglass Matrix</title>' +
+      '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]-->' +
+      '<style>' + css + '</style></head><body>' + S.join('') + '</body></html>';
+  };
+
+  const exportDoc = () => {
+    // The BOM is what makes Word open this as UTF-8 rather than mojibake.
+    download(fileBase + '.doc', 'application/msword', '﻿' + buildDocHtml());
+    flash('doc');
+  };
+  const exportMd = () => {
+    download(fileBase + '.md', 'text/markdown;charset=utf-8', buildMarkdown());
+    flash('md');
+  };
+  const copyAll = async () => { flash((await copyText(buildMarkdown())) ? 'all' : 'fail'); };
+  const copyBool = async () => { flash((await copyText(M.boolean)) ? 'bool' : 'fail'); };
 
   return (
     <div className={'mtx' + (candidate ? ' candidate' : '')}>
@@ -78,8 +249,8 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
         {/* ===== Sticky rail ===== */}
         <nav className="nav">
           <div className="brand"><SpyglassMark color="#fff" height={26} /><span className="t">Spyglass <span className="m-caps">Matrix</span></span></div>
-          {NAV.map((it) => (
-            <a key={it.id} className={(it.internal ? 'int-only ' : '') + (active === it.id ? 'on' : '')}
+          {NAV.filter((it) => !(candidate && it.internal)).map((it) => (
+            <a key={it.id} className={active === it.id ? 'on' : ''}
               role="button" tabIndex={0} onClick={() => goTo(it.id)}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') goTo(it.id); }}>
               <span className="dot" /> {it.label}
@@ -89,7 +260,7 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
         </nav>
 
         {/* ===== Content ===== */}
-        <div className="content" ref={contentRef}>
+        <div className="content">
           <div className="bar">
             <div>
               <div className="role">{M.jd.title} <span className="m-caps">Matrix</span></div>
@@ -101,7 +272,9 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
                 <button className={candidate ? 'active' : ''} onClick={() => setMode('candidate')}>Candidate-safe</button>
               </div>
               <button className="btn" onClick={() => window.print()}>Print</button>
-              <button className="btn teal" onClick={exportDoc}>Word doc</button>
+              <button className="btn" onClick={copyAll}>{copied === 'all' ? 'Copied' : copied === 'fail' ? 'Copy failed' : 'Copy all'}</button>
+              <button className="btn" onClick={exportMd}>{copied === 'md' ? 'Saved' : 'Markdown'}</button>
+              <button className="btn teal" onClick={exportDoc}>{copied === 'doc' ? 'Saved' : 'Word doc'}</button>
             </div>
           </div>
 
@@ -155,69 +328,90 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
             )}
           </section>
 
-          {/* ===== What to Look For (internal) ===== */}
-          <section id="look" className="int-only">
-            <div className="sec-label">What to Look For <span className="int">Internal</span></div>
-            {M.lookFor.map((l, i) => (
-              <div className="lf" key={i}><div className="sig">{l.signal}</div><div className="det">{l.detail}</div></div>
-            ))}
-          </section>
+          {/* ===== What to Look For (internal — omitted entirely in candidate view) ===== */}
+          {!candidate && (
+            <section id="look">
+              <div className="sec-label">What to Look For <span className="int">Internal</span></div>
+              {M.lookFor.map((l, i) => (
+                <div className="lf" key={i}><div className="sig">{l.signal}</div><div className="det">{l.detail}</div></div>
+              ))}
+            </section>
+          )}
 
           {/* ===== Screening Questions ===== */}
           <section id="questions">
             <div className="sec-label">Screening Questions</div>
             <h2 className="sec-h" style={{ fontSize: 19, marginBottom: 14 }}>Ask, grade, and type your notes live</h2>
 
-            <div className="fitcard int-only">
-              <div className="num">{fit.has ? fit.pct : '—'}<small>%</small></div>
-              <div className="mid">
-                <div className="lab">Live fit score</div>
-                <div className="gradeword">{fit.has ? fit.word : 'Grade the answers as you go'}</div>
-                <div className="bar"><span style={{ width: (fit.has ? fit.pct : 0) + '%' }} /></div>
+            {!candidate && (
+              <div className="fitcard">
+                <div className="num">{fit.has ? fit.pct : '—'}<small>%</small></div>
+                <div className="mid">
+                  <div className="lab">Live fit score</div>
+                  <div className="gradeword">{fit.has ? fit.word : 'Grade the answers as you go'}</div>
+                  <div className="bar"><span style={{ width: (fit.has ? fit.pct : 0) + '%' }} /></div>
+                </div>
+                <div className="cnt">{fit.count} / {fit.n} graded</div>
               </div>
-              <div className="cnt">{fit.count} / {fit.n} graded</div>
-            </div>
+            )}
 
             {M.questions.map((q, i) => (
               <div className="q" key={i}>
                 <div className="qt">{i + 1}. {q.q}</div>
                 <div className="surf">Surfaces: {q.surfaces}</div>
-                <div className="why int-only"><b>Why we ask</b>{q.internal}</div>
-                <div className="grade int-only">
-                  <span className="glabel">Grade</span>
-                  {[0, 1, 2, 3].map((g) => (
-                    <button key={g} data-g={g} className={grades[i] === g ? 'sel' : ''}
-                      onClick={() => setGrades((s) => ({ ...s, [i]: g }))}>{GLABEL[g]}</button>
-                  ))}
-                </div>
-                <div className="notes-wrap">
-                  <div className="lbl"><span className="live" /> Your notes — type while you talk</div>
-                  <textarea placeholder="Great speaking with you… jot the messy notes here. They go straight into the system." />
-                </div>
+                {!candidate && (
+                  <>
+                    <div className="why"><b>Why we ask</b>{q.internal}</div>
+                    <div className="grade">
+                      <span className="glabel">Grade</span>
+                      {[0, 1, 2, 3].map((g) => (
+                        <button key={g} data-g={g} className={grades[i] === g ? 'sel' : ''}
+                          onClick={() => setGrades((s) => ({ ...s, [i]: g }))}>{GLABEL[g]}</button>
+                      ))}
+                    </div>
+                    <div className="notes-wrap">
+                      <div className="lbl"><span className="live" /> Your notes — type while you talk</div>
+                      <textarea
+                        value={notes[i] || ''}
+                        onChange={(e) => setNotes((s) => ({ ...s, [i]: e.target.value }))}
+                        placeholder="Great speaking with you… jot the messy notes here. They go straight into the system." />
+                      {/* A textarea clips to its box on paper, so print from a plain div instead. */}
+                      <div className="notes-print">{notes[i] || '—'}</div>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </section>
 
           {/* ===== Target Titles (internal) ===== */}
-          <section id="titles" className="int-only">
-            <div className="sec-label">Target Titles <span className="int">Internal</span></div>
-            {M.targetTitles.map((t, i) => <span className="chip" key={i}>{t}</span>)}
-          </section>
+          {!candidate && (
+            <section id="titles">
+              <div className="sec-label">Target Titles <span className="int">Internal</span></div>
+              {M.targetTitles.map((t, i) => <span className="chip" key={i}>{t}</span>)}
+            </section>
+          )}
 
           {/* ===== Boolean Search (internal) ===== */}
-          <section id="boolean" className="int-only">
-            <div className="sec-label">Boolean Search <span className="int">Internal</span></div>
-            <div className="bool">{M.boolean}</div>
-            <button className="btn" style={{ marginTop: 12 }} onClick={copyBool}>{copied ? 'Copied' : 'Copy string'}</button>
-          </section>
+          {!candidate && (
+            <section id="boolean">
+              <div className="sec-label">Boolean Search <span className="int">Internal</span></div>
+              <div className="bool">{M.boolean}</div>
+              <button className="btn" style={{ marginTop: 12 }} onClick={copyBool}>
+                {copied === 'bool' ? 'Copied' : copied === 'fail' ? 'Copy failed' : 'Copy string'}
+              </button>
+            </section>
+          )}
 
           {/* ===== Watch-Outs (internal) ===== */}
-          <section id="watch" className="int-only">
-            <div className="sec-label">Watch-Outs <span className="int">Internal</span></div>
-            {M.watchOuts.map((w, i) => (
-              <div className="watch" key={i}><div className="fl">{w.flag}</div><div className="nt">{w.note}</div></div>
-            ))}
-          </section>
+          {!candidate && (
+            <section id="watch">
+              <div className="sec-label">Watch-Outs <span className="int">Internal</span></div>
+              {M.watchOuts.map((w, i) => (
+                <div className="watch" key={i}><div className="fl">{w.flag}</div><div className="nt">{w.note}</div></div>
+              ))}
+            </section>
+          )}
         </div>
       </div>
     </div>
