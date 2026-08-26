@@ -222,6 +222,8 @@ const memUsers: Map<string, UserRaw> = (globalThis as any).__spgUsers || ((globa
 
 // Pre-loaded demo logins (baked in): created once, only if the email is new.
 const TEAM_SEED = ((teamSeed as any).users || []) as { name: string; email: string; role: Role; tempPassword: string }[];
+// Revoked emails: deleted on boot and never recreated (e.g. clients who must lose access).
+const REVOKED_EMAILS = (((teamSeed as any).revoked || []) as string[]).map((e) => String(e).trim().toLowerCase());
 
 function newUserId(): string {
   return 'u_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
@@ -274,6 +276,10 @@ export async function ensureAdminSeed(): Promise<void> {
       const id = newUserId();
       memUsers.set(id, { id, email: em, name: u.name, role: (u.role as Role) || 'member', mustReset: true, createdAt: new Date().toISOString(), passwordHash: hashPassword(u.tempPassword) });
     }
+    // Revoked emails: delete any matching account so access is fully removed.
+    for (const em of REVOKED_EMAILS) {
+      for (const [id, x] of memUsers) if (x.email === em) memUsers.delete(id);
+    }
     adminSeedReady = true;
     return;
   }
@@ -292,6 +298,10 @@ export async function ensureAdminSeed(): Promise<void> {
     const data = { name: u.name, role: (u.role as Role) || 'member', mustReset: true, passwordHash: hashPassword(u.tempPassword) };
     await db()`INSERT INTO sm_users (id, email, data) VALUES (${id}, ${em}, ${JSON.stringify(data)}::jsonb)
       ON CONFLICT (email) DO NOTHING`;
+  }
+  // Revoked emails: delete any matching account so access is fully removed.
+  for (const em of REVOKED_EMAILS) {
+    await db()`DELETE FROM sm_users WHERE email = ${em}`;
   }
   adminSeedReady = true;
 }
@@ -366,4 +376,48 @@ export async function deleteUser(id: string): Promise<void> {
   if (!hasDb) { memUsers.delete(id); return; }
   await ensureUsersSchema();
   await db()`DELETE FROM sm_users WHERE id = ${id}`;
+}
+
+/* ============================================================
+   Board notes — shared, persistent notes per role on the Desk.
+   Keyed by a stable role slug so the whole team sees the same note.
+   ============================================================ */
+export type BoardNote = { note: string; by: string; at: string };
+
+const memNotes: Map<string, BoardNote> = (globalThis as any).__spgNotes || ((globalThis as any).__spgNotes = new Map());
+
+let notesSchemaReady = false;
+async function ensureNotesSchema() {
+  if (!hasDb || notesSchemaReady) return;
+  await db()`CREATE TABLE IF NOT EXISTS sm_board_notes (
+    key         TEXT PRIMARY KEY,
+    note        TEXT NOT NULL DEFAULT '',
+    updated_by  TEXT,
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+  )`;
+  notesSchemaReady = true;
+}
+
+export async function getBoardNotes(): Promise<Record<string, BoardNote>> {
+  if (!hasDb) {
+    const out: Record<string, BoardNote> = {};
+    for (const [k, v] of memNotes) out[k] = v;
+    return out;
+  }
+  await ensureNotesSchema();
+  const rows = (await db()`SELECT key, note, updated_by, updated_at FROM sm_board_notes`) as any[];
+  const out: Record<string, BoardNote> = {};
+  for (const r of rows) out[r.key] = { note: r.note || '', by: r.updated_by || '', at: new Date(r.updated_at).toISOString() };
+  return out;
+}
+
+export async function setBoardNote(key: string, note: string, by: string): Promise<BoardNote> {
+  const at = new Date().toISOString();
+  const entry: BoardNote = { note, by, at };
+  if (!hasDb) { memNotes.set(key, entry); return entry; }
+  await ensureNotesSchema();
+  await db()`INSERT INTO sm_board_notes (key, note, updated_by, updated_at)
+    VALUES (${key}, ${note}, ${by}, ${at})
+    ON CONFLICT (key) DO UPDATE SET note = ${note}, updated_by = ${by}, updated_at = ${at}`;
+  return entry;
 }
