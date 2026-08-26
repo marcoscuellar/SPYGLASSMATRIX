@@ -222,6 +222,8 @@ const memUsers: Map<string, UserRaw> = (globalThis as any).__spgUsers || ((globa
 
 // Pre-loaded demo logins (baked in): created once, only if the email is new.
 const TEAM_SEED = ((teamSeed as any).users || []) as { name: string; email: string; role: Role; tempPassword: string }[];
+// Revoked emails: deleted on boot and never recreated (e.g. clients who must lose access).
+const REVOKED_EMAILS = (((teamSeed as any).revoked || []) as string[]).map((e) => String(e).trim().toLowerCase());
 
 function newUserId(): string {
   return 'u_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
@@ -274,6 +276,10 @@ export async function ensureAdminSeed(): Promise<void> {
       const id = newUserId();
       memUsers.set(id, { id, email: em, name: u.name, role: (u.role as Role) || 'member', mustReset: true, createdAt: new Date().toISOString(), passwordHash: hashPassword(u.tempPassword) });
     }
+    // Revoked emails: delete any matching account so access is fully removed.
+    for (const em of REVOKED_EMAILS) {
+      for (const [id, x] of memUsers) if (x.email === em) memUsers.delete(id);
+    }
     adminSeedReady = true;
     return;
   }
@@ -292,6 +298,10 @@ export async function ensureAdminSeed(): Promise<void> {
     const data = { name: u.name, role: (u.role as Role) || 'member', mustReset: true, passwordHash: hashPassword(u.tempPassword) };
     await db()`INSERT INTO sm_users (id, email, data) VALUES (${id}, ${em}, ${JSON.stringify(data)}::jsonb)
       ON CONFLICT (email) DO NOTHING`;
+  }
+  // Revoked emails: delete any matching account so access is fully removed.
+  for (const em of REVOKED_EMAILS) {
+    await db()`DELETE FROM sm_users WHERE email = ${em}`;
   }
   adminSeedReady = true;
 }
