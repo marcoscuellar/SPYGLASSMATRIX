@@ -158,3 +158,20 @@ export type Session = {
   role: Role;
   exp: number;          // unix seconds
 };
+
+// ---- Recruiter workroom -----------------------------------------
+// A Matrix saved for the team to work on, plus the live interview
+// state (notes + grades) recruiters build up against it.
+export type MatrixWork = {
+  notes: Record<string, string>;   // question index -> notes
+  grades: Record<string, number>;  // question index -> 0..3
+  updatedAt: string | null;
+  updatedBy: string;               // free-text recruiter name, '' if unset
+};
+
+export type StoredMatrix = {
+  id: string;
+  createdAt: string;
+  matrix: Matrix;
+  work: MatrixWork;
+};

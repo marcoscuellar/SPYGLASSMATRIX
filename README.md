@@ -33,6 +33,38 @@ builder → building → matrix → submitting → client
 4. **Client Portal** — editorial shortlist → expanded dossier with an AI
    candidate brief + feedback panel → placement.
 
+## The recruiter workroom (`/workroom`)
+
+A second, lighter door beside the email+password login: one shared **access
+code** unlocks a workroom where recruiters open a saved Matrix and screen
+against it. Notes and grades **autosave** per role, so anyone on the team can
+pick up a screen someone else started.
+
+```
+/workroom            code gate → index of open searches
+/workroom/[id]       the Matrix, with autosaving notes + grades
+```
+
+Set the code in the environment (it falls back to `OLLIN-WORKROOM`, which is
+fine for a demo and **not** fine for real use):
+
+```
+WORKROOM_ACCESS_CODE=your-team-code
+AUTH_SECRET=<long random string>     # signs the pass; rotating it locks everyone out
+```
+
+- The pass lasts **7 days** per browser; *Lock this device* clears it early.
+- Unlock attempts are **throttled** (8 per 10 min per client) — a shared code is
+  short, so it should not be brute-forceable.
+- The gate covers the **write** endpoint too, not just the page, and a locked
+  visitor is redirected before any matrix lookup, so ids cannot be probed.
+- Saved roles live in `sm_matrices`; seeded from `lib/matrix-seed.json` with
+  `ON CONFLICT DO NOTHING`, so a redeploy never overwrites recruiters' work.
+
+> A shared code cannot tell you *who* opened a role and cannot be revoked for
+> one person. If you need that, move to per-recruiter codes or use the existing
+> account login for this route instead.
+
 ## Getting started
 
 ```bash

@@ -1,0 +1,71 @@
+{
+  "version": "1",
+  "matrices": [
+    {
+      "id": "m_payroll_procare",
+      "client": "Procare HR",
+      "empType": "Full-time",
+      "salary": "$26–$30/hr",
+      "location": "Remote",
+      "jd": {
+        "title": "Payroll Account Manager",
+        "summary": "Procare HR is hiring a Payroll Account Manager to own end-to-end payroll delivery for a multi-client book of business. This is a client-facing seat — you'll be the go-to person clients trust for accurate, on-time, compliant payroll across multiple entities.",
+        "summary2": "You'll process payroll for multiple clients with multiple EINs, resolve payroll issues with sound judgment, and build the kind of relationships that make clients stick around. Fully remote. $26–$30/hr, credit given for experience.",
+        "mustHave": [
+          "3+ years payroll administration experience.",
+          "3+ years processing payroll for multiple clients (multi-state a plus).",
+          "1+ year processing payroll across 8+ EINs.",
+          "2+ years with HRIS platforms (UKG Ready preferred).",
+          "Strong Microsoft Office skills, especially Excel."
+        ],
+        "niceToHave": [
+          "Associate's degree in Accounting, Business, HR, or Finance.",
+          "Prior PEO / HR Shared Services experience.",
+          "Multi-state payroll compliance exposure.",
+          "Comfortable owning client relationships, not just processing."
+        ]
+      },
+      "lookFor": [
+        { "signal": "True multi-EIN depth", "detail": "Has actually run payroll across 8+ EINs, not just \"supported a team that did.\" This is the rarest, most important filter." },
+        { "signal": "PEO/shared-services fluency", "detail": "Understands the operating model of serving many unrelated clients at once — different pay cycles, different rules, same week." },
+        { "signal": "Client-facing composure", "detail": "Title says \"Account Manager\" — they need to own the relationship, not just push numbers through a system quietly." },
+        { "signal": "System fluency, not just familiarity", "detail": "UKG Ready experience is a green flag, but any modern HRIS (ADP WFN, Paycom, Paylocity, iSolved) with real depth transfers fast." }
+      ],
+      "questions": [
+        {
+          "q": "Walk me through how many clients and EINs you've processed payroll for at once — what did that workflow actually look like?",
+          "surfaces": "Real multi-EIN, multi-client depth",
+          "internal": "This is the hardest filter to fill. Vague answers (\"I helped with a few clients\") usually mean single-EIN, in-house experience dressed up. Push for specifics — how many EINs, how they tracked deadlines across them."
+        },
+        {
+          "q": "Have you worked in a PEO or HR shared-services model? What was different about that versus in-house payroll?",
+          "surfaces": "PEO/shared-services fluency",
+          "internal": "PEO experience is \"nice to have\" on paper but it's actually a strong predictor of success here — the operating model is genuinely different from in-house payroll. Listen for real understanding, not just a resume line."
+        },
+        {
+          "q": "Tell me about a time a client had a payroll issue or dispute. How did you handle it?",
+          "surfaces": "Client-facing composure and judgment",
+          "internal": "This role is titled \"Account Manager\" for a reason — the client wants someone who owns the relationship under pressure, not just someone who's technically correct and disappears when it gets uncomfortable."
+        },
+        {
+          "q": "What HRIS platforms have you used, and how deep is your experience with UKG Ready specifically?",
+          "surfaces": "System fluency and learning curve",
+          "internal": "UKG Ready is preferred, not required — don't screen out a strong candidate on ADP/Paycom/Paylocity/iSolved experience. Listen for depth on any platform (built reports, ran multi-client processing) versus surface-level exposure."
+        }
+      ],
+      "targetTitles": [
+        "Payroll Account Manager",
+        "Payroll Specialist",
+        "Payroll Coordinator",
+        "PEO Payroll Analyst",
+        "HR Shared Services Payroll"
+      ],
+      "boolean": "(\"Payroll Account Manager\" OR \"Payroll Specialist\" OR \"Payroll Coordinator\" OR \"Payroll Analyst\") AND (\"multi-client\" OR \"multi-state\" OR PEO OR \"shared services\" OR \"multiple EINs\") AND (\"UKG\" OR \"UKG Ready\" OR \"UltiPro\" OR \"ADP Workforce Now\" OR Paycom OR Paylocity OR iSolved)",
+      "watchOuts": [
+        { "flag": "Single-EIN only", "note": "Strong in-house payroll admin with zero multi-client exposure will struggle with the volume and context-switching this role demands." },
+        { "flag": "Back-office only", "note": "Technically sharp but avoids client conversations — wrong shape for a role titled \"Account Manager.\"" },
+        { "flag": "Degree gatekeeping", "note": "Associate's degree is preferred, not required — don't auto-reject strong experience-only candidates." }
+      ]
+    }
+  ]
+}
