@@ -175,3 +175,33 @@ export type StoredMatrix = {
   matrix: Matrix;
   work: MatrixWork;
 };
+
+// ---- Recruiter submissions ("Submit to Marcos") -----------------
+// A recruiter's screen result, sent from the workroom to the internal
+// desk — never to the client.
+export type SubmissionRead = 'advance' | 'fence' | 'pass';
+
+export type SubmissionResume = {
+  filename: string;
+  mime: string;
+  size: number;
+  /** base64 of the original file, so the desk can hand it back verbatim. */
+  data: string;
+};
+
+export type Submission = {
+  id: string;
+  createdAt: string;
+  matrixId: string;
+  roleTitle: string;      // denormalised so the desk reads without a join
+  client: string;
+  recruiterName: string;
+  recruiterEmail: string;
+  candidateName: string;
+  read: SubmissionRead;
+  notes: string;
+  resume: SubmissionResume | null;
+  emailed: boolean;       // did the notification actually go out?
+};
+
+export type SubmissionInput = Omit<Submission, 'id' | 'createdAt' | 'emailed'>;

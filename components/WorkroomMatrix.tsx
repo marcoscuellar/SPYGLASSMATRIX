@@ -8,6 +8,7 @@
 import React from 'react';
 import type { StoredMatrix } from '@/lib/types';
 import { MatrixView, type MatrixWorkState } from './MatrixView';
+import { SubmitPanel } from './SubmitPanel';
 
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -74,6 +75,7 @@ export function WorkroomMatrix({ stored }: { stored: StoredMatrix }) {
         onWorkChange={onWorkChange}
         statusSlot={label ? <span className={'savechip print-hide ' + state}>{label}</span> : null}
       />
+      <SubmitPanel matrixId={stored.id} roleTitle={stored.matrix.jd.title} />
     </div>
   );
 }
