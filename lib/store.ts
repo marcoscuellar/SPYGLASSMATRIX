@@ -11,8 +11,9 @@
    ============================================================ */
 
 import { neon } from '@neondatabase/serverless';
-import type { Decision, PortalSettings, Role, StoredCandidate, StoredCandidateInput, User } from './types';
+import type { Decision, Matrix, MatrixWork, PortalSettings, Role, StoredCandidate, StoredCandidateInput, StoredMatrix, Submission, SubmissionInput, User } from './types';
 import portalSeed from './portal-seed.json';
+import matrixSeed from './matrix-seed.json';
 import teamSeed from './team-seed.json';
 import { hashPassword } from './auth';
 
@@ -420,4 +421,157 @@ export async function setBoardNote(key: string, note: string, by: string): Promi
     VALUES (${key}, ${note}, ${by}, ${at})
     ON CONFLICT (key) DO UPDATE SET note = ${note}, updated_by = ${by}, updated_at = ${at}`;
   return entry;
+}
+
+/* ============================================================
+   Recruiter workroom — saved matrices + live interview state
+   Matrices live in sm_matrices (JSONB payload holds the Matrix and
+   the accumulated notes/grades). Seeded once per MATRIX_SEED_VERSION
+   so a fresh deployment already has the team's roles to work on.
+   ============================================================ */
+
+const MATRIX_SEED_VERSION: string = (matrixSeed as any).version;
+const MATRIX_SEED = (matrixSeed as any).matrices as (Matrix & { id: string })[];
+
+const memMatrices: Map<string, StoredMatrix> =
+  (globalThis as any).__spgMatrices || ((globalThis as any).__spgMatrices = new Map());
+
+const emptyWork = (): MatrixWork => ({ notes: {}, grades: {}, updatedAt: null, updatedBy: '' });
+
+let matrixSchemaReady = false;
+async function ensureMatrixSchema(): Promise<void> {
+  if (matrixSchemaReady || !hasDb) return;
+  await db()`CREATE TABLE IF NOT EXISTS sm_matrices (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    data JSONB NOT NULL
+  )`;
+  matrixSchemaReady = true;
+}
+
+function rowToMatrix(id: string, createdAt: string, data: any): StoredMatrix {
+  const d = typeof data === 'string' ? JSON.parse(data) : (data || {});
+  return { id, createdAt, matrix: d.matrix, work: { ...emptyWork(), ...(d.work || {}) } };
+}
+
+let matrixSeedReady = false;
+async function ensureMatrixSeed(): Promise<void> {
+  if (matrixSeedReady) return;
+  const seed = (m: Matrix & { id: string }): StoredMatrix => {
+    const { id, ...rest } = m;
+    return { id, createdAt: new Date().toISOString(), matrix: rest as Matrix, work: emptyWork() };
+  };
+  if (!hasDb) {
+    // Seed only what is missing, so notes typed in this instance survive.
+    for (const m of MATRIX_SEED) if (!memMatrices.has(m.id)) memMatrices.set(m.id, seed(m));
+    matrixSeedReady = true;
+    return;
+  }
+  await ensureMatrixSchema();
+  for (const m of MATRIX_SEED) {
+    const s = seed(m);
+    // DO NOTHING on conflict: never clobber work a recruiter has already saved.
+    await db()`INSERT INTO sm_matrices (id, created_at, data)
+      VALUES (${s.id}, ${s.createdAt}, ${JSON.stringify({ matrix: s.matrix, work: s.work, seed: MATRIX_SEED_VERSION })}::jsonb)
+      ON CONFLICT (id) DO NOTHING`;
+  }
+  matrixSeedReady = true;
+}
+
+export async function listMatrices(): Promise<StoredMatrix[]> {
+  await ensureMatrixSeed();
+  if (!hasDb) return [...memMatrices.values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  const rows = (await db()`SELECT id, created_at, data FROM sm_matrices ORDER BY created_at ASC`) as any[];
+  return rows.map((r) => rowToMatrix(r.id, new Date(r.created_at).toISOString(), r.data));
+}
+
+export async function getMatrix(id: string): Promise<StoredMatrix | null> {
+  await ensureMatrixSeed();
+  if (!hasDb) return memMatrices.get(id) || null;
+  const rows = (await db()`SELECT id, created_at, data FROM sm_matrices WHERE id = ${id}`) as any[];
+  if (!rows.length) return null;
+  return rowToMatrix(rows[0].id, new Date(rows[0].created_at).toISOString(), rows[0].data);
+}
+
+export async function saveMatrixWork(id: string, work: Partial<MatrixWork>): Promise<MatrixWork | null> {
+  await ensureMatrixSeed();
+  const existing = await getMatrix(id);
+  if (!existing) return null;
+  const next: MatrixWork = {
+    notes: work.notes ?? existing.work.notes,
+    grades: work.grades ?? existing.work.grades,
+    updatedBy: work.updatedBy ?? existing.work.updatedBy,
+    updatedAt: new Date().toISOString(),
+  };
+  if (!hasDb) {
+    memMatrices.set(id, { ...existing, work: next });
+    return next;
+  }
+  await ensureMatrixSchema();
+  // Merge into the JSONB payload so the Matrix itself is never rewritten.
+  await db()`UPDATE sm_matrices SET data = data || ${JSON.stringify({ work: next })}::jsonb WHERE id = ${id}`;
+  return next;
+}
+
+
+/* ============================================================
+   Recruiter submissions — the workroom's "Submit to Marcos" step
+   Stored first, emailed second: a notification that fails to send
+   must never mean a lost candidate.
+   ============================================================ */
+
+const memSubs: Map<string, Submission> =
+  (globalThis as any).__spgSubs || ((globalThis as any).__spgSubs = new Map());
+
+let subSchemaReady = false;
+async function ensureSubSchema(): Promise<void> {
+  if (subSchemaReady || !hasDb) return;
+  await db()`CREATE TABLE IF NOT EXISTS sm_submissions (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    data JSONB NOT NULL
+  )`;
+  subSchemaReady = true;
+}
+
+function rowToSub(id: string, createdAt: string, data: any): Submission {
+  const d = typeof data === 'string' ? JSON.parse(data) : (data || {});
+  return { id, createdAt, ...d } as Submission;
+}
+
+export async function addSubmission(input: SubmissionInput): Promise<Submission> {
+  const id = 's_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+  const createdAt = new Date().toISOString();
+  const sub: Submission = { id, createdAt, ...input, emailed: false };
+  if (!hasDb) { memSubs.set(id, sub); return sub; }
+  await ensureSubSchema();
+  const { id: _i, createdAt: _c, ...rest } = sub;
+  await db()`INSERT INTO sm_submissions (id, created_at, data) VALUES (${id}, ${createdAt}, ${JSON.stringify(rest)}::jsonb)`;
+  return sub;
+}
+
+export async function markSubmissionEmailed(id: string, emailed: boolean): Promise<void> {
+  if (!hasDb) { const s = memSubs.get(id); if (s) s.emailed = emailed; return; }
+  await ensureSubSchema();
+  await db()`UPDATE sm_submissions SET data = data || ${JSON.stringify({ emailed })}::jsonb WHERE id = ${id}`;
+}
+
+/** The desk list. Résumé blobs are stripped — they are fetched one at a time. */
+export async function listSubmissions(): Promise<Submission[]> {
+  const strip = (s: Submission): Submission =>
+    ({ ...s, resume: s.resume ? { ...s.resume, data: '' } : null });
+  if (!hasDb) {
+    return [...memSubs.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(strip);
+  }
+  await ensureSubSchema();
+  const rows = (await db()`SELECT id, created_at, data FROM sm_submissions ORDER BY created_at DESC`) as any[];
+  return rows.map((r) => strip(rowToSub(r.id, new Date(r.created_at).toISOString(), r.data)));
+}
+
+export async function getSubmission(id: string): Promise<Submission | null> {
+  if (!hasDb) return memSubs.get(id) || null;
+  await ensureSubSchema();
+  const rows = (await db()`SELECT id, created_at, data FROM sm_submissions WHERE id = ${id}`) as any[];
+  if (!rows.length) return null;
+  return rowToSub(rows[0].id, new Date(rows[0].created_at).toISOString(), rows[0].data);
 }

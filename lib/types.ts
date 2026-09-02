@@ -158,3 +158,50 @@ export type Session = {
   role: Role;
   exp: number;          // unix seconds
 };
+
+// ---- Recruiter workroom -----------------------------------------
+// A Matrix saved for the team to work on, plus the live interview
+// state (notes + grades) recruiters build up against it.
+export type MatrixWork = {
+  notes: Record<string, string>;   // question index -> notes
+  grades: Record<string, number>;  // question index -> 0..3
+  updatedAt: string | null;
+  updatedBy: string;               // free-text recruiter name, '' if unset
+};
+
+export type StoredMatrix = {
+  id: string;
+  createdAt: string;
+  matrix: Matrix;
+  work: MatrixWork;
+};
+
+// ---- Recruiter submissions ("Submit to Marcos") -----------------
+// A recruiter's screen result, sent from the workroom to the internal
+// desk — never to the client.
+export type SubmissionRead = 'advance' | 'fence' | 'pass';
+
+export type SubmissionResume = {
+  filename: string;
+  mime: string;
+  size: number;
+  /** base64 of the original file, so the desk can hand it back verbatim. */
+  data: string;
+};
+
+export type Submission = {
+  id: string;
+  createdAt: string;
+  matrixId: string;
+  roleTitle: string;      // denormalised so the desk reads without a join
+  client: string;
+  recruiterName: string;
+  recruiterEmail: string;
+  candidateName: string;
+  read: SubmissionRead;
+  notes: string;
+  resume: SubmissionResume | null;
+  emailed: boolean;       // did the notification actually go out?
+};
+
+export type SubmissionInput = Omit<Submission, 'id' | 'createdAt' | 'emailed'>;

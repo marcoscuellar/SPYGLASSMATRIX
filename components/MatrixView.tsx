@@ -66,11 +66,34 @@ function download(filename: string, mime: string, content: string) {
   setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
 
-export function MatrixView({ matrix: M }: { matrix: Matrix }) {
+export type MatrixWorkState = { notes: Record<string, string>; grades: Record<string, number> };
+
+export function MatrixView({
+  matrix: M,
+  initialWork,
+  onWorkChange,
+  statusSlot,
+}: {
+  matrix: Matrix;
+  /** Notes/grades to resume from (the workroom loads these from the store). */
+  initialWork?: MatrixWorkState;
+  /** Fires whenever notes or grades change, so a host can persist them. */
+  onWorkChange?: (w: MatrixWorkState) => void;
+  /** Rendered in the action bar — e.g. the workroom's save indicator. */
+  statusSlot?: React.ReactNode;
+}) {
   const [mode, setMode] = React.useState<Mode>('recruiter');
   const [jdOpen, setJdOpen] = React.useState(false);
-  const [grades, setGrades] = React.useState<Record<number, number>>({});
-  const [notes, setNotes] = React.useState<Record<number, string>>({});
+  const [grades, setGrades] = React.useState<Record<number, number>>(() => {
+    const g: Record<number, number> = {};
+    for (const [k, v] of Object.entries(initialWork?.grades || {})) g[Number(k)] = v;
+    return g;
+  });
+  const [notes, setNotes] = React.useState<Record<number, string>>(() => {
+    const n: Record<number, string> = {};
+    for (const [k, v] of Object.entries(initialWork?.notes || {})) n[Number(k)] = v;
+    return n;
+  });
   const [copied, setCopied] = React.useState('');
   const [active, setActive] = React.useState('jd');
   const candidate = mode === 'candidate';
@@ -85,6 +108,19 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
     NAV.forEach(({ id }) => { const el = document.getElementById(id); if (el) obs.observe(el); });
     return () => obs.disconnect();
   }, [candidate]);
+
+  // Report notes/grades upward so a host can persist them. Skipped on mount so
+  // simply opening a matrix never writes back what it just read.
+  const mounted = React.useRef(false);
+  React.useEffect(() => {
+    if (!mounted.current) { mounted.current = true; return; }
+    onWorkChange?.({
+      notes: Object.fromEntries(Object.entries(notes).map(([k, v]) => [String(k), v])),
+      grades: Object.fromEntries(Object.entries(grades).map(([k, v]) => [String(k), v])),
+    });
+    // onWorkChange is a stable callback from the host; re-running on it would loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notes, grades]);
 
   const fit = React.useMemo(() => {
     const keys = Object.keys(grades);
@@ -275,6 +311,7 @@ export function MatrixView({ matrix: M }: { matrix: Matrix }) {
               <button className="btn" onClick={copyAll}>{copied === 'all' ? 'Copied' : copied === 'fail' ? 'Copy failed' : 'Copy all'}</button>
               <button className="btn" onClick={exportMd}>{copied === 'md' ? 'Saved' : 'Markdown'}</button>
               <button className="btn teal" onClick={exportDoc}>{copied === 'doc' ? 'Saved' : 'Word doc'}</button>
+              {statusSlot}
             </div>
           </div>
 

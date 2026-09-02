@@ -33,6 +33,62 @@ builder → building → matrix → submitting → client
 4. **Client Portal** — editorial shortlist → expanded dossier with an AI
    candidate brief + feedback panel → placement.
 
+## The recruiter workroom (`/workroom`)
+
+A second, lighter door beside the email+password login: one shared **access
+code** unlocks a workroom where recruiters open a saved Matrix and screen
+against it. Notes and grades **autosave** per role, so anyone on the team can
+pick up a screen someone else started.
+
+```
+/workroom            code gate → index of open searches
+/workroom/[id]       the Matrix, with autosaving notes + grades
+```
+
+Set the code in the environment (it falls back to `OLLIN-WORKROOM`, which is
+fine for a demo and **not** fine for real use):
+
+```
+WORKROOM_ACCESS_CODE=your-team-code
+AUTH_SECRET=<long random string>     # signs the pass; rotating it locks everyone out
+```
+
+- The pass lasts **7 days** per browser; *Lock this device* clears it early.
+- Unlock attempts are **throttled** (8 per 10 min per client) — a shared code is
+  short, so it should not be brute-forceable.
+- The gate covers the **write** endpoint too, not just the page, and a locked
+  visitor is redirected before any matrix lookup, so ids cannot be probed.
+- Saved roles live in `sm_matrices`; seeded from `lib/matrix-seed.json` with
+  `ON CONFLICT DO NOTHING`, so a redeploy never overwrites recruiters' work.
+
+> A shared code cannot tell you *who* opened a role and cannot be revoked for
+> one person. If you need that, move to per-recruiter codes or use the existing
+> account login for this route instead.
+
+## Submit to Marcos (`/submissions`)
+
+Section 05 of the recruiters' Matrix: at the foot of every workroom Matrix a
+recruiter files their read — name, email, candidate, **Advance / On the fence /
+Pass**, screening notes, and a résumé (PDF, Word, RTF or TXT, under 3MB).
+
+**Stored first, emailed second.** The submission is written to `sm_submissions`
+before any notification is attempted, so a mail outage is a missed email, never
+a lost candidate. It always appears at `/submissions`.
+
+To also get them in your inbox:
+
+```
+RESEND_API_KEY=...
+SUBMISSIONS_EMAIL_TO=you@example.com
+SUBMISSIONS_EMAIL_FROM="Spyglass Matrix <notify@yourdomain>"   # optional
+```
+
+The email's reply-to is the recruiter, so replying reaches them directly.
+
+Résumés are candidates' personal data, so they are held to the **internal
+login** — the workroom code opens the submit form but cannot read
+`/submissions` or download a résumé.
+
 ## Getting started
 
 ```bash
