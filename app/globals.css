@@ -785,8 +785,17 @@ code { font-family: var(--mono); }
      same product as the Desk, the workroom and the Matrix. */
   --a:var(--amber); --a2:var(--amber-d); --a-w:var(--amber-pale); --a-b:#c6e3e5;
   --dark:var(--navy);
-  --ink:var(--ink); --ink2:var(--ink-2); --ink3:var(--ink-3); --ink4:var(--ink-4);
-  --bg:var(--paper); --card:var(--bg-card); --line:var(--line); --line2:var(--line-soft);
+  /* --ink and --line are NOT redeclared here: `--ink:var(--ink)` is a
+     self-reference, which is invalid at computed-value time and silently
+     killed every `border:1px solid var(--line)` in this namespace. They
+     inherit from :root already. */
+  --ink2:var(--ink-2);
+  /* WCAG 2.1 AA: the global --ink-3 (2.5:1) and --ink-4 (1.5:1) fail as text.
+     Portal overrides clear 4.5:1 on both white and the paper ground. */
+  --ink3:#5F5F68; --ink4:#6E6E76;
+  /* Teal on paper is 4.47:1 — a hair under. Text on paper uses the dark teal. */
+  --a-text:var(--amber-d);
+  --bg:var(--paper); --card:var(--bg-card); --line2:var(--line-soft);
   --r:16px; --r2:10px;
   --sh:0 1px 2px rgba(20,20,23,.04), 0 4px 16px -8px rgba(20,20,23,.10);
   --sh2:0 2px 6px rgba(20,20,23,.06), 0 18px 36px -16px rgba(20,20,23,.20);
@@ -800,8 +809,8 @@ code { font-family: var(--mono); }
 .pv .brand{display:flex;align-items:center;gap:10px;padding:4px 8px 22px}
 .pv .logo{width:34px;height:34px;border-radius:9px;background:var(--dark);color:#fff;display:grid;place-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.04em;flex:none}
 .pv .bt{font-size:13.5px;font-weight:600;letter-spacing:-.01em;line-height:1.15}
-.pv .bt em{display:block;font-style:normal;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4);margin-top:3px}
-.pv .navlabel{font-family:var(--mono);font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink4);padding:14px 8px 7px}
+.pv .bt em{display:block;font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4);margin-top:3px}
+.pv .navlabel{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink4);padding:14px 8px 7px}
 .pv .navitem{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;border-radius:9px;padding:9px 10px;cursor:pointer;color:var(--ink2);font-size:13.5px;transition:.15s}
 .pv .navitem:hover{background:var(--bg);color:var(--ink)}
 .pv .navitem.on{background:var(--a);color:#fff;font-weight:500}
@@ -815,14 +824,14 @@ code { font-family: var(--mono); }
 .pv .topbar{background:var(--card);border-bottom:1px solid var(--line);padding:0 clamp(18px,3vw,34px);height:60px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20}
 .pv .topbar .ctx{font-size:13.5px;font-weight:500}
 .pv .topbar .grow{flex:1}
-.pv .topbar .conf{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.pv .topbar .conf{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
 .pv .chip{display:flex;align-items:center;gap:10px;padding-left:16px;border-left:1px solid var(--line)}
 .pv .chip .cn{text-align:right;font-size:13px;font-weight:700;line-height:1.2;color:var(--dark)}
 .pv .chip .cn em{display:block;font-style:normal;font-size:10.5px;font-weight:400;color:var(--ink4);margin-top:2px}
 .pv .cav{width:32px;height:32px;border-radius:50%;background:var(--a);color:#fff;display:grid;place-items:center;font-size:11.5px;font-weight:600;flex:none}
 
 .pv .body{padding:clamp(18px,2.6vw,30px) clamp(18px,3vw,34px) 64px;max-width:1400px;width:100%}
-.pv .crumb{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
+.pv .crumb{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
 .pv .crumb i{font-style:normal;padding:0 5px;color:var(--ink4)}
 .pv .crumb b{color:var(--a);font-weight:500}
 .pv .pagehd{margin-bottom:20px}
@@ -856,12 +865,12 @@ code { font-family: var(--mono); }
 .pv .av{width:40px;height:40px;border-radius:50%;background:var(--dark);color:#fff;display:grid;place-items:center;font-size:12.5px;font-weight:600;flex:none}
 .pv .pchd .nm{color:var(--dark);font-size:16.5px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
 .pv .pchd .rl{font-size:12px;color:var(--ink3);margin-top:2px}
-.pv .pchd .rk{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--ink4)}
+.pv .pchd .rk{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink4)}
 .pv .pc .hl{font-size:13.5px;line-height:1.55;color:var(--ink2);margin:0 0 14px;flex:1}
 .pv .pc .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
-.pv .tg{font-family:var(--mono);font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);background:var(--bg);border-radius:5px;padding:5px 8px}
+.pv .tg{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);background:var(--bg);border-radius:5px;padding:5px 8px}
 .pv .pcft{margin-top:auto;padding-top:14px;border-top:1px solid var(--line2);display:flex;align-items:center;justify-content:space-between;gap:10px}
-.pv .badge{font-family:var(--mono);font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;padding:5px 9px;border-radius:5px;background:var(--a);color:#fff}
+.pv .badge{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;padding:5px 9px;border-radius:5px;background:var(--a);color:#fff}
 .pv .badge.muted{background:var(--bg);color:var(--ink3)}
 .pv .badge.hold,.pv .badge.pass{background:var(--bg);color:var(--ink2)}
 .pv .pc .go{font-size:12px;font-weight:500;color:var(--ink3);transition:.15s}
@@ -875,19 +884,19 @@ code { font-family: var(--mono); }
 .pv .idc{padding:24px 20px;text-align:center}
 .pv .bigav{width:84px;height:84px;border-radius:50%;background:var(--dark);color:#fff;display:grid;place-items:center;font-size:26px;font-weight:600;margin:0 auto 14px}
 .pv .idc .nm{color:var(--dark);font-size:19px;font-weight:700;letter-spacing:-.028em}
-.pv .idc .rl{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--a);margin-top:6px}
+.pv .idc .rl{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--a-text);margin-top:6px}
 .pv .idc .co{font-size:12.5px;color:var(--ink3);margin-top:4px}
 .pv .facts{display:flex;flex-direction:column;gap:8px;margin-top:20px;text-align:left}
 .pv .fact{display:flex;align-items:center;gap:11px;background:var(--bg);border-radius:var(--r2);padding:11px 13px}
 .pv .fi{width:28px;height:28px;border-radius:8px;background:var(--card);display:grid;place-items:center;color:var(--a);flex:none}
-.pv .fact .k{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.pv .fact .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
 .pv .fact .v{font-size:13px;font-weight:500;margin-top:2px;line-height:1.35}
 
 .pv .resc{padding-bottom:20px}
 .pv .filebox{margin:16px 20px 0;border:1px dashed var(--line);border-radius:var(--r2);background:var(--bg);padding:24px 16px;text-align:center}
 .pv .fic{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:10px;background:var(--card);color:var(--a);margin-bottom:10px}
 .pv .fnm{font-size:12.5px;font-weight:500;word-break:break-all}
-.pv .fmeta{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);margin-top:6px}
+.pv .fmeta{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);margin-top:6px}
 .pv .resc .btn.wide{width:calc(100% - 40px);margin:12px 20px 0}
 
 /* ---- stat row ---- */
@@ -912,8 +921,8 @@ code { font-family: var(--mono); }
 .pv .who1{font-size:14px;font-weight:600;letter-spacing:-.012em;line-height:1.3}
 .pv .who1 em{display:block;font-style:normal;font-size:12.5px;font-weight:400;color:var(--ink3);margin-top:2px}
 .pv .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.pv .chip2{font-family:var(--mono);font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--a);background:var(--a-w);border:1px solid var(--a-b);border-radius:5px;padding:5px 8px}
-.pv .snapstate{display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line2);font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.pv .chip2{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--a-text);background:var(--a-w);border:1px solid var(--a-b);border-radius:5px;padding:5px 8px}
+.pv .snapstate{display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line2);font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
 .pv .sdot{width:8px;height:8px;border-radius:50%;background:var(--ink4);flex:none}
 .pv .sdot.advance{background:var(--a)}
 .pv .sdot.hold,.pv .sdot.pass{background:var(--ink3)}
@@ -924,7 +933,7 @@ code { font-family: var(--mono); }
 .pv ul.proof li{position:relative;padding:0 0 10px 22px;font-size:13.3px;line-height:1.55;color:var(--ink2);max-width:74ch}
 .pv ul.proof li:last-child{padding-bottom:0}
 .pv ul.proof li::before{content:'';position:absolute;left:0;top:8px;width:11px;height:2px;border-radius:2px;background:var(--a)}
-.pv .readmore{margin-top:16px;background:none;border:none;padding:0;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--a)}
+.pv .readmore{margin-top:16px;background:none;border:none;padding:0;cursor:pointer;font-size:13px;font-weight:600;color:var(--a-text);text-decoration:underline;text-underline-offset:3px}
 .pv .readmore:hover{text-decoration:underline}
 
 /* your-call card — what the client can do, in place of the weakest signals */
@@ -939,11 +948,11 @@ code { font-family: var(--mono); }
 .pv .opt.on .tick::after{content:'';position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(42deg)}
 .pv .opt .ot b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.01em}
 .pv .opt .ot em{display:block;font-style:normal;font-size:11.5px;color:var(--ink3);margin-top:2px}
-.pv .opt.on .ot b{color:var(--a)}
+.pv .opt.on .ot b{color:var(--a-text)}
 .pv .callfoot{margin:14px 20px 0;font-size:11.5px;line-height:1.5;color:var(--ink4)}
 .pv .sr{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:7px}
 .pv .sn{font-size:13px;font-weight:500}
-.pv .sv{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--a);flex:none}
+.pv .sv{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--a-text);flex:none}
 .pv .bar{height:7px;border-radius:4px;background:var(--bg);overflow:hidden}
 .pv .bar>span{display:block;height:100%;border-radius:4px;background:var(--a)}
 
@@ -956,12 +965,12 @@ code { font-family: var(--mono); }
 .pv .panel{padding:24px 22px 26px;min-height:300px}
 .pv .lede{color:var(--dark);font-size:20px;font-weight:700;letter-spacing:-.028em;line-height:1.28;margin:0 0 14px;max-width:42ch}
 .pv .intro{font-size:14px;line-height:1.65;color:var(--ink2);margin:0 0 14px;max-width:74ch}
-.pv .secline{font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);margin:24px 0 14px}
+.pv .secline{font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);margin:24px 0 14px}
 .pv ul.fits{list-style:none;margin:0;padding:0}
 .pv ul.fits li{position:relative;padding:0 0 13px 24px;font-size:13.8px;line-height:1.6;color:var(--ink2);max-width:76ch}
 .pv ul.fits li::before{content:'';position:absolute;left:0;top:9px;width:12px;height:2px;border-radius:2px;background:var(--a)}
   .pv .reco{margin-top:24px;background:var(--dark);color:#fff;border-radius:var(--r2);padding:20px 22px}
-.pv .reco .rl{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.5;margin-bottom:9px}
+.pv .reco .rl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;opacity:.5;margin-bottom:9px}
 .pv .reco p{margin:0;font-size:14.5px;font-weight:500;line-height:1.5;max-width:56ch}
 
 /* ---- experience timeline ---- */
@@ -971,8 +980,8 @@ code { font-family: var(--mono); }
 .pv .jb{min-width:0;flex:1;border-left:1px solid var(--line2);padding-left:16px;margin-left:-1px}
 .pv .job:last-child .jb{border-left-color:transparent}
 .pv .jt{color:var(--dark);font-size:15px;font-weight:700;letter-spacing:-.015em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.pv .cur{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;background:var(--a-w);color:var(--a);border-radius:4px;padding:3px 7px}
-.pv .jm{font-size:12.5px;color:var(--a);margin-top:4px}
+.pv .cur{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:var(--a-w);color:var(--a-text);border-radius:4px;padding:3px 7px}
+.pv .jm{font-size:12.5px;color:var(--a-text);margin-top:4px}
 .pv .job ul{list-style:none;margin:10px 0 0;padding:0}
 .pv .job li{position:relative;padding:0 0 5px 14px;font-size:13.3px;line-height:1.55;color:var(--ink2)}
 .pv .job li::before{content:'';position:absolute;left:0;top:9px;width:4px;height:4px;border-radius:50%;background:var(--ink4)}
@@ -981,7 +990,7 @@ code { font-family: var(--mono); }
 .pv .notes textarea{width:100%;min-height:190px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r2);background:var(--card);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.6;resize:vertical;display:block;margin-top:8px}
 .pv .notes textarea:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 3px rgba(14,124,132,.13)}
 .pv .noterow{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap}
-.pv .hint{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4)}
+.pv .hint{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4)}
 
 /* ---- hiring journey ---- */
 .pv .journey{padding-bottom:24px}
@@ -993,9 +1002,20 @@ code { font-family: var(--mono); }
 .pv .st .dot{position:absolute;top:0;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:var(--line);border:3px solid var(--card);box-shadow:0 0 0 2px var(--line)}
 .pv .st.done .dot{background:var(--a);box-shadow:0 0 0 2px var(--a)}
 .pv .st.cur .dot{background:var(--card);box-shadow:0 0 0 3px var(--a)}
-.pv .st .l{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4)}
+.pv .st .l{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4)}
 .pv .st.done .l,.pv .st.cur .l{color:var(--ink)}
 
+
+/* Keyboard focus: every interactive element in the portal is reachable and
+   visibly focused (nothing here relied on the UA outline we suppress). */
+/* Focus ring on :focus rather than :focus-visible — :focus-visible did not
+   resolve reliably here, and a ring that sometimes fails to draw is worse
+   than one that occasionally shows after a click. box-shadow, not outline:
+   outline-width was being flattened to 0 by the cascade. */
+.pv a:focus,.pv button:focus,.pv textarea:focus,.pv .navitem:focus{
+  outline:2px solid var(--a-text);outline-offset:2px;
+  box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--a-text) !important}
+.pv .notes textarea:focus{border-color:var(--a)}
 @media (max-width:1180px){ .pv .pgrid{grid-template-columns:270px 1fr} .pv .statrow{grid-template-columns:1fr} }
 @media (max-width:960px){
   .pv{grid-template-columns:1fr}
