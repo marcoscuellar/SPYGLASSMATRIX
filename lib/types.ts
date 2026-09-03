@@ -114,6 +114,7 @@ export type StoredCandidate = {
   location: string;
   compExp: string;
   avail: string;
+  workAuth: string;    // work authorisation / visa status, as stated by the source
   tags: string[];
   fit: number | null;
   headline: string;

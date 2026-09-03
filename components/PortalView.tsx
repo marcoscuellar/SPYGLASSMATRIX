@@ -40,6 +40,7 @@ const I = {
   clock: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20M12 6v6l4 2',
   cash: 'M2 6h20v12H2zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6',
   file: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6',
+  badge: 'M12 2 4 6v6c0 5 3.4 8.9 8 10 4.6-1.1 8-5 8-10V6zM9 12l2 2 4-4',
   down: 'M12 3v12m0 0 4-4m-4 4-4-4M4 19h16',
 };
 const Ico = ({ d, s = 14 }: { d: string; s?: number }) => (
@@ -177,6 +178,7 @@ function Profile({ c, role, onFeedback, canEdit, onSaved }: {
     { i: I.pin, k: 'Location', v: c.location },
     { i: I.clock, k: 'Availability', v: c.avail },
     { i: I.cash, k: 'Bill rate', v: c.compExp },
+    { i: I.badge, k: 'Work authorisation', v: c.workAuth },
     { i: I.cal, k: 'Experience', v: c.years ? `${c.years} years` : '' },
   ].filter((f) => f.v);
 
@@ -430,7 +432,7 @@ function Editor({ c, onDone }: { c: StoredCandidate; onDone: (c: StoredCandidate
   const [f, setF] = React.useState({
     name: c.name, role: c.role, company: c.company,
     years: c.years == null ? '' : String(c.years),
-    location: c.location, compExp: c.compExp, avail: c.avail,
+    location: c.location, compExp: c.compExp, avail: c.avail, workAuth: c.workAuth,
     tags: c.tags.join(', '),
     headline: c.headline, intro: c.intro,
     fitBullets: c.fitBullets.join('\n'),
@@ -483,6 +485,7 @@ function Editor({ c, onDone }: { c: StoredCandidate; onDone: (c: StoredCandidate
           {row('location', 'Location')}
           {row('avail', 'Availability')}
           {row('compExp', 'Bill rate')}
+          {row('workAuth', 'Work authorisation')}
           {row('resumeUrl', 'Résumé URL')}
           {row('fit', 'Sort rank', false, 'orders the shortlist; not shown')}
         </div>

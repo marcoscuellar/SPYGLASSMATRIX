@@ -79,6 +79,7 @@ function rowToCandidate(id: string, createdAt: string, data: any, decision: stri
     location: d.location || '',
     compExp: d.compExp || '',
     avail: d.avail || '',
+    workAuth: d.workAuth || '',
     tags: Array.isArray(d.tags) ? d.tags : [],
     fit: d.fit ?? null,
     headline: d.headline || '',
@@ -138,11 +139,17 @@ async function ensureSeed() {
   if (!hasDb) {
     // In-memory fallback: seed once per server process.
     if ((globalThis as any).__spgSeedV !== SEED_VERSION) {
-      mem.clear();
       const now = new Date().toISOString();
+      const keep = new Set(SEED_CANDIDATES.map((c) => c.id));
+      for (const id of [...mem.keys()]) if (!keep.has(id)) mem.delete(id);
       for (const c of SEED_CANDIDATES) {
         const { id, ...rest } = c;
-        mem.set(id, { id, createdAt: now, ...(rest as StoredCandidateInput), decision: null, note: null });
+        // Same rule as the database branch: refresh the copy, keep the answer.
+        const prev = mem.get(id);
+        mem.set(id, {
+          id, createdAt: prev?.createdAt || now, ...(rest as StoredCandidateInput),
+          decision: prev?.decision ?? null, note: prev?.note ?? null,
+        });
       }
       memSettings = { ...DEFAULT_SETTINGS, ...SEED_SETTINGS };
       (globalThis as any).__spgSettings = memSettings;
@@ -157,10 +164,15 @@ async function ensureSeed() {
   const cur = marker.length ? (typeof marker[0].data === 'string' ? JSON.parse(marker[0].data) : marker[0].data) : null;
   if (cur && cur.version === SEED_VERSION) { seedReady = true; return; }
 
-  // (Re)seed for this version: clear the old shortlist, insert the seed set
-  // with stable ids, set the header, and record the marker. Stable ids +
-  // upsert keep a rare cold-start race from producing duplicates.
-  await db()`DELETE FROM portal_candidates`;
+  // (Re)seed for this version. Deliberately NOT a DELETE-everything: decision
+  // and note live in their own columns, so wiping the table to reinsert would
+  // throw away the client's Advance/Hold/Pass answers and their notes every
+  // time we add a candidate to the shortlist. Instead, drop only the rows this
+  // seed no longer lists, then upsert the rest — the upsert rewrites `data`
+  // (the copy we ship) and leaves decision and note untouched.
+  const keep = SEED_CANDIDATES.map((c) => c.id);
+  if (keep.length) await db()`DELETE FROM portal_candidates WHERE id <> ALL(${keep})`;
+  else await db()`DELETE FROM portal_candidates`;
   for (const c of SEED_CANDIDATES) {
     const { id, ...rest } = c;
     await db()`INSERT INTO portal_candidates (id, data) VALUES (${id}, ${JSON.stringify(rest)}::jsonb)

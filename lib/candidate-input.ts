@@ -26,6 +26,7 @@ export function parseCandidateInput(body: any): StoredCandidateInput {
     location: String(body?.location || '').trim(),
     compExp: String(body?.compExp || '').trim(),
     avail: String(body?.avail || '').trim(),
+    workAuth: String(body?.workAuth || '').trim(),
     tags: (Array.isArray(body?.tags) ? body.tags : String(body?.tags || '').split(','))
       .map((s: string) => String(s).trim()).filter(Boolean),
     fit: toNum(body?.fit),

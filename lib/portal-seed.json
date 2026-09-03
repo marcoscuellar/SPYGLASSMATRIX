@@ -1,5 +1,5 @@
 {
-  "version": "procare-pam-2026-09-3",
+  "version": "procare-pam-2026-09-4",
   "settings": {
     "clientName": "Procare HR",
     "roleLabel": "Payroll Account Manager search"
@@ -108,7 +108,8 @@
           ]
         }
       ],
-      "resumeUrl": "/resumes/sahithi-regalla.docx"
+      "resumeUrl": "/resumes/sahithi-regalla.docx",
+      "workAuth": "H-4 EAD — authorised without employer sponsorship"
     },
     {
       "name": "Candle Meyers",
@@ -220,7 +221,145 @@
         }
       ],
       "resumeUrl": "/resumes/candle-meyers.docx",
-      "id": "c_candle_meyers"
+      "id": "c_candle_meyers",
+      "workAuth": "Not stated — to confirm"
+    },
+    {
+      "id": "c_bhargavi_ramasagaram",
+      "name": "Bhargavi Ramasagaram",
+      "role": "Payroll Specialist",
+      "company": "University of South Florida (contract via Robert Half)",
+      "years": 9,
+      "location": "Hillsborough, NJ · remote only",
+      "compExp": "To confirm",
+      "avail": "Two weeks’ notice",
+      "workAuth": "L2-EAD — valid US work authorisation, no sponsorship required",
+      "tags": [
+        "9 EINs at once",
+        "ADP Workforce Now",
+        "16,000-employee payroll",
+        "Multi-state + NRA tax",
+        "$1.2M recovered"
+      ],
+      "fit": 76,
+      "headline": "Nine corporate EINs run at once, a 16,000-employee payroll, and $1.2M in overpayments recovered.",
+      "intro": "Bhargavi has nine years in payroll and payroll accounting, most of it multi-state and multi-entity. She is currently at the University of South Florida on a Robert Half contract, running full-cycle payroll for 16,000+ faculty, staff and student employees in ADP Workforce Now and Oracle HR, where she recovered $1,206,506 in salary overpayments in ten months by building a tracking system, standard notification letters and automated paycheck adjustments. Before that she ran multi-state payroll at Alltech and at Hughes Systique across six jurisdictions, and spent over two years as payroll consultant to AGES Learning Solutions covering 450+ employees in five states. She is a Chartered Accountant (Inter) with a B.Com in Taxation and ADP Learning Academy certifications.",
+      "fitBullets": [
+        "Multi-EIN depth, which is the rarest filter on this search — she describes running end-to-end payroll across 9 distinct corporate EINs and 1,200+ multi-state employees at once, using staggered pay-period cutoffs, automated bulk tax deposits and cross-entity reconciliation before funding.",
+        "PEO / shared-services model — she reports working across multiple independent client companies with their own policies, benefits and multi-state tax structures, to client SLAs rather than a single company's internal calendar.",
+        "Volume and jurisdiction complexity — 16,000+ employees at USF today; earlier multi-state payroll across Maryland, New Jersey, New York, Pennsylvania, Tennessee and Bangalore, plus California and Utah at AGES.",
+        "Compliance range beyond standard payroll — non-resident alien tax and Form 1042-S treaty reporting, court-ordered garnishments, tax levies, FRS/ORP retirement contributions, W-2/W-2c and 1099, and year-end prior-year overpayment logic.",
+        "Client-facing under pressure. On an ADP-to-Oracle migration, a configuration mapping error overpaid a group of employees. She audited the period, quantified the amounts, worked with legal and HR against state wage-repayment law, contacted the affected employees and client stakeholders with repayment options and a direct contact line, recovered 95% of the funds without a grievance, and corrected the Oracle setup.",
+        "Systems: ADP Workforce Now, ADP GlobalView, ADP SmartCompliance, Oracle HCM, PeopleSoft, UKG Ready, QuickBooks, Central Reach, Jira Service Management. She describes her UKG Ready use as configuring pay rules, multi-state tax compliance, time and attendance workflows, multi-entity processing, custom reporting and open enrolment."
+      ],
+      "cta": "The multi-EIN and multi-state record here is the closest match to the must-haves we have seen, she is authorised to work without sponsorship, and she can start on two weeks’ notice.",
+      "signals": [
+        {
+          "signal": "Multi-EIN / multi-client depth",
+          "score": "strong"
+        },
+        {
+          "signal": "Multi-state payroll compliance",
+          "score": "strong"
+        },
+        {
+          "signal": "Payroll audit and reconciliation discipline",
+          "score": "strong"
+        },
+        {
+          "signal": "HRIS breadth and adaptability",
+          "score": "strong"
+        },
+        {
+          "signal": "Client-facing dispute ownership",
+          "score": "solid"
+        },
+        {
+          "signal": "PEO / shared-services experience",
+          "score": "solid"
+        },
+        {
+          "signal": "UKG Ready hands-on",
+          "score": "solid"
+        }
+      ],
+      "experience": [
+        {
+          "company": "University of South Florida (contract via Robert Half)",
+          "title": "Payroll Specialist",
+          "period": "Jul 2025 – Present",
+          "location": "Florida",
+          "points": [
+            "Full-cycle payroll for 16,000+ faculty, staff and student employees in ADP Workforce Now and Oracle HR, under Florida state regulation.",
+            "Recovered $1,206,506 in salary overpayments in ten months via a tracking system, standardised notification letters and automated paycheck adjustments.",
+            "Court-ordered garnishments, tax levies, health insurance premiums and FRS/ORP retirement contributions.",
+            "Tax treaty compliance and withholding for international employees (NRA tax) with Form 1042-S reporting.",
+            "Year-end adjustments, prior-year overpayment logic, tax claims and W-2 / W-2c issuance.",
+            "Internal payroll audits for FLSA compliance; resolves unissued paychecks, uncollected deductions and data anomalies.",
+            "Works with the Office of Sponsored Research on labor distribution and effort reporting for grant-funded roles.",
+            "Resolves high-volume pay discrepancies through Jira Service Management against SLAs."
+          ]
+        },
+        {
+          "company": "Alltech Inc. (contract via Robert Half)",
+          "title": "Payroll Specialist",
+          "period": "Feb 2025 – Jul 2025",
+          "location": "Multi-state",
+          "points": [
+            "Multi-state end-to-end payroll in ADP Workforce Now, covering onboarding, leave policies, HSA/401(k) matching and local tax accuracy.",
+            "Short-term disability, retro pay, manual checks, referral bonuses, commissions, tips and gross-ups.",
+            "Reconciled and remitted 401(k) contributions (Roth, catch-up, employer match) with funding summaries for finance.",
+            "Pre-payroll timecard audits for missing approvals, overlapping shifts and leave discrepancies.",
+            "Post-payroll reporting, union dues tracking, workers' compensation analysis and quarterly headcount compliance filings."
+          ]
+        },
+        {
+          "company": "Hughes Systique Corporation",
+          "title": "Payroll Specialist",
+          "period": "Jan 2024 – Sep 2024",
+          "location": "Multi-state",
+          "points": [
+            "Multi-state payroll, tax calculation and disbursement across Bangalore, Maryland, New Jersey, New York, Pennsylvania and Tennessee in ADP Workforce Now.",
+            "Quarterly and annual tax filings, remittances and reconciliations with federal, state and local authorities.",
+            "Monthly close: salary accruals, provisions, account reconciliations and weekly cash flow statements.",
+            "Annual W-2 and 1099 preparation and distribution within statutory deadlines."
+          ]
+        },
+        {
+          "company": "AGES Learning Solutions LLC",
+          "title": "Payroll Consultant",
+          "period": "Sep 2021 – Jan 2024",
+          "location": "Multi-state",
+          "points": [
+            "Multi-state payroll for 450+ employees across California, Utah, Florida, New Jersey and New York in ADP Workforce Now.",
+            "Federal, state and local tax calculation and compliance filing, with specialist oversight for California and Utah.",
+            "Administered health, dental, PTO accruals, FSA accounts and involuntary wage garnishments.",
+            "Post-payroll reporting to validate accuracy and support audit and compliance requirements."
+          ]
+        },
+        {
+          "company": "Powerup Cloud Technologies Pvt Ltd",
+          "title": "Payroll Manager",
+          "period": "Sep 2017 – Feb 2020",
+          "location": "India",
+          "points": [
+            "Led the full implementation of ADP Workforce Now, including system workflows and processing efficiency.",
+            "Owned the payroll lifecycle plus accounts payable and receivable, cash flow tracking and vendor reconciliations."
+          ]
+        },
+        {
+          "company": "Ken Private Ltd",
+          "title": "Accounts Analyst",
+          "period": "May 2016 – Sep 2017",
+          "location": "India",
+          "points": [
+            "Processed payroll for client accounts including Veritas, Facebook, Symantec and Goldman Sachs plus five further entities, over 1,200 employees in total.",
+            "Calculated and remitted statutory deductions under local and federal law.",
+            "Post-payroll reporting and resolution of high-volume pay discrepancies through Jira Service Management."
+          ]
+        }
+      ],
+      "resumeUrl": "/resumes/bhargavi-ramasagaram.docx"
     }
   ]
 }
