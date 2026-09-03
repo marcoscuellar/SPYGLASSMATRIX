@@ -20,6 +20,11 @@ const SIGNAL_META: Record<ScoreKey, { pct: number; label: string }> = {
 };
 
 const DECIDED: Record<Decision, string> = { advance: 'Advanced', hold: 'On hold', pass: 'Passed' };
+const CHOICES: { k: Decision; label: string; sub: string }[] = [
+  { k: 'advance', label: 'Advance to interview', sub: 'Bring them in to meet the team' },
+  { k: 'hold', label: 'Hold for now', sub: 'Interested, but not yet' },
+  { k: 'pass', label: 'Pass', sub: 'Not the right fit for this seat' },
+];
 const STATUS: Record<Decision, string> = {
   advance: 'We’re setting up the interview and will confirm times with you.',
   hold: 'Kept warm. Tell us when you want to revisit.',
@@ -145,7 +150,7 @@ function Shortlist({ cands, client, role, onOpen }: { cands: StoredCandidate[]; 
 
 /* ---------- profile detail ---------- */
 
-type Tab = 'brief' | 'experience' | 'notes';
+type Tab = 'brief' | 'experience' | 'signal' | 'notes';
 
 function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; onFeedback: (id: string, d: Decision | null, n: string) => void }) {
   const [tab, setTab] = React.useState<Tab>('brief');
@@ -245,25 +250,31 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
               <p className="statline">{decision ? STATUS[decision] : 'Read the brief, then advance, hold or pass.'}</p>
             </div>
 
-            {visibleSignals.length > 0 && (
-              <div className="card skills">
-                <div className="cardhd"><span>Signal breakdown</span><em>How {first} maps to your brief</em></div>
-                {visibleSignals.map((s, i) => {
-                  const m = SIGNAL_META[s.score];
-                  return (
-                    <div className="skill" key={i}>
-                      <div className="sr"><span className="sn">{s.signal}</span><span className="sv">{m.label}</span></div>
-                      <div className="bar"><span style={{ width: `${m.pct}%` }} /></div>
-                    </div>
-                  );
-                })}
+            <div className="card callc">
+              <div className="cardhd"><span>Your call</span><em>Routes straight back to the recruiter</em></div>
+              <div className="opts">
+                {CHOICES.map((d) => (
+                  <button key={d.k} className={'opt ' + d.k + (decision === d.k ? ' on' : '')}
+                    disabled={busy === 'd'} onClick={() => send(d.k, note)}>
+                    <span className="tick" />
+                    <span className="ot">
+                      <b>{d.label}</b>
+                      <em>{d.sub}</em>
+                    </span>
+                  </button>
+                ))}
               </div>
-            )}
+              <p className="callfoot">
+                {decision
+                  ? 'You can change this at any time — we act on your latest answer.'
+                  : `Nothing is sent until you choose. Leave a note first if you’d rather ask us something.`}
+              </p>
+            </div>
           </div>
 
           <div className="card tabc">
             <div className="tabbar" role="tablist">
-              {([['brief', 'The brief'], ['experience', 'Experience'], ['notes', 'Your notes']] as [Tab, string][]).map(([k, l]) => (
+              {([['brief', 'The brief'], ['experience', 'Experience'], ['signal', 'Signal read'], ['notes', 'Your notes']] as [Tab, string][]).map(([k, l]) => (
                 <button key={k} role="tab" aria-selected={tab === k} className={'tb' + (tab === k ? ' on' : '')} onClick={() => setTab(k)}>
                   {l}{k === 'notes' && savedNote.trim() ? ' •' : ''}
                 </button>
@@ -300,6 +311,25 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
                     ))}
                   </div>
                 ) : <p className="intro">No employment history recorded yet.</p>
+              )}
+
+              {tab === 'signal' && (
+                visibleSignals.length > 0 ? (
+                  <>
+                    <p className="intro">How {first} maps to each thing this search is built around.</p>
+                    <div className="skills-in">
+                      {visibleSignals.map((s, i) => {
+                        const m = SIGNAL_META[s.score];
+                        return (
+                          <div className="skill" key={i}>
+                            <div className="sr"><span className="sn">{s.signal}</span><span className="sv">{m.label}</span></div>
+                            <div className="bar"><span style={{ width: `${m.pct}%` }} /></div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : <p className="intro">No signal read recorded yet.</p>
               )}
 
               {tab === 'notes' && (

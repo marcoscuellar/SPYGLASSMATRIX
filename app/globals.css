@@ -901,6 +901,23 @@ code { font-family: var(--mono); }
 
 .pv .skills{padding-bottom:18px}
 .pv .skill{padding:12px 20px 0}
+.pv .skills-in .skill{padding:0 0 18px}
+.pv .skills-in{margin-top:20px}
+
+/* your-call card — what the client can do, in place of the weakest signals */
+.pv .callc{display:flex;flex-direction:column}
+.pv .opts{display:flex;flex-direction:column;gap:8px;padding:16px 20px 0}
+.pv .opt{display:flex;align-items:flex-start;gap:11px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r2);padding:12px 14px;cursor:pointer;transition:.15s}
+.pv .opt:hover:not(:disabled){border-color:var(--a);background:var(--a-w)}
+.pv .opt:disabled{opacity:.6;cursor:wait}
+.pv .opt .tick{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line);flex:none;margin-top:2px;position:relative;transition:.15s}
+.pv .opt.on{border-color:var(--a);background:var(--a-w)}
+.pv .opt.on .tick{border-color:var(--a);background:var(--a)}
+.pv .opt.on .tick::after{content:'';position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(42deg)}
+.pv .opt .ot b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+.pv .opt .ot em{display:block;font-style:normal;font-size:11.5px;color:var(--ink3);margin-top:2px}
+.pv .opt.on .ot b{color:var(--a)}
+.pv .callfoot{margin:14px 20px 0;font-size:11.5px;line-height:1.5;color:var(--ink4)}
 .pv .sr{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:7px}
 .pv .sn{font-size:13px;font-weight:500}
 .pv .sv{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--a);flex:none}
