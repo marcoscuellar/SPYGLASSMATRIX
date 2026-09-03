@@ -776,12 +776,12 @@ code { font-family: var(--mono); }
 
 
 /* ============================================================
-   Client portal — application shell (ATS layout, maroon accent)
+   Client portal — application shell (ATS layout, teal accent)
    Sidebar + top bar + profile column + stat cards + tabbed panel
    + hiring journey. Namespaced .pv; internal surfaces untouched.
    ============================================================ */
 .pv{
-  --a:#6E1F2A; --a2:#8C2F3A; --a-w:#F7EFF0; --a-b:#E9D7D9;
+  --a:#0E7C84; --a2:#0A626A; --a-w:#E6F3F4; --a-b:#C3E2E4;
   --ink:#141417; --ink2:#4A4A52; --ink3:#8B8B94; --ink4:#B6B6BE;
   --bg:#F4F4F6; --card:#fff; --line:#E7E7EB; --line2:#F1F1F4;
   --r:16px; --r2:10px;
@@ -939,7 +939,7 @@ code { font-family: var(--mono); }
 
 /* ---- notes ---- */
 .pv .notes textarea{width:100%;min-height:190px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r2);background:var(--card);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.6;resize:vertical;display:block;margin-top:8px}
-.pv .notes textarea:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 3px rgba(110,31,42,.10)}
+.pv .notes textarea:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 3px rgba(14,124,132,.13)}
 .pv .noterow{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap}
 .pv .hint{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4)}
 
