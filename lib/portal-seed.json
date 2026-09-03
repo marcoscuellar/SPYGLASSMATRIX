@@ -1,5 +1,5 @@
 {
-  "version": "procare-pam-2026-09-4",
+  "version": "procare-pam-2026-09-6",
   "settings": {
     "clientName": "Procare HR",
     "roleLabel": "Payroll Account Manager search"
@@ -12,7 +12,7 @@
       "company": "Baltimore Police Department",
       "years": 8,
       "location": "Hanover, MD · remote",
-      "compExp": "To confirm",
+      "compExp": "$50/hr",
       "avail": "Employed — notice to confirm",
       "tags": [
         "UKG Ready",
@@ -117,7 +117,7 @@
       "company": "Dreamfields Brands",
       "years": 25,
       "location": "Remote (US)",
-      "compExp": "To confirm — has held Director-level HR/payroll roles",
+      "compExp": "$55/hr",
       "avail": "Available now",
       "tags": [
         "1,400+ employee payrolls",
@@ -222,7 +222,7 @@
       ],
       "resumeUrl": "/resumes/candle-meyers.docx",
       "id": "c_candle_meyers",
-      "workAuth": "Not stated — to confirm"
+      "workAuth": ""
     },
     {
       "id": "c_bhargavi_ramasagaram",
@@ -231,7 +231,7 @@
       "company": "University of South Florida (contract via Robert Half)",
       "years": 9,
       "location": "Hillsborough, NJ · remote only",
-      "compExp": "To confirm",
+      "compExp": "$54/hr",
       "avail": "Two weeks’ notice",
       "workAuth": "L2-EAD — valid US work authorisation, no sponsorship required",
       "tags": [
