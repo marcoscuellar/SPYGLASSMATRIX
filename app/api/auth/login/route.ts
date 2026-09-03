@@ -1,10 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getUserByEmail } from '@/lib/store';
-import { verifyPassword, sessionCookieValue } from '@/lib/auth';
+import { verifyPassword, sessionCookieValue, authReady } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
+  // Fail closed rather than hand out sessions signed with a secret that is in
+  // the source tree. Says what to fix without confirming any account exists.
+  if (!authReady()) {
+    return NextResponse.json(
+      { error: 'Sign-in is disabled until AUTH_SECRET is set on this deployment.' },
+      { status: 503 },
+    );
+  }
   const body = await req.json().catch(() => ({}));
   const email = String(body?.email || '').trim();
   const password = String(body?.password || '');

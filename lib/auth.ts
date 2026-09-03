@@ -14,10 +14,24 @@ import type { Role, Session } from './types';
 export const SESSION_COOKIE = 'sm_session';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
-// A signing secret is required for real security. In production set
-// AUTH_SECRET in the environment; the fallback only keeps local/preview
-// runnable (rotating it just invalidates existing sessions).
-const SECRET = process.env.AUTH_SECRET || 'spyglass-matrix-dev-secret-change-me';
+// The session cookie is only as good as this secret: anyone who knows it can
+// mint a cookie that says role "admin" and walk in. The fallback below is a
+// fixed string living in the source tree, so it is not a secret at all — it
+// keeps local development runnable and nothing more.
+//
+// So in production we fail CLOSED. With no AUTH_SECRET set, authReady() is
+// false, no session is issued and no session is accepted: the login door is
+// shut for everyone, including anyone holding the source. That is the safe
+// direction to fail — the alternative is an admin account the whole internet
+// can forge its way into. The public client portal does not use sessions and
+// is unaffected.
+const DEV_SECRET = 'spyglass-matrix-dev-secret-change-me';
+const SECRET = process.env.AUTH_SECRET || DEV_SECRET;
+
+/** False when running in production on the built-in fallback secret. */
+export function authReady(): boolean {
+  return !!process.env.AUTH_SECRET || process.env.NODE_ENV !== 'production';
+}
 
 // ---- Password hashing (scrypt) ---------------------------------
 export function hashPassword(password: string): string {
@@ -44,12 +58,15 @@ function sign(body: string): string {
 }
 
 export function createSessionToken(payload: Omit<Session, 'exp'>): string {
+  if (!authReady()) throw new Error('AUTH_SECRET is not set; refusing to issue a session.');
   const full: Session = { ...payload, exp: Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS };
   const body = b64url(Buffer.from(JSON.stringify(full)));
   return `${body}.${sign(body)}`;
 }
 
 export function verifySessionToken(token: string | undefined | null): Session | null {
+  // A forged cookie signed with the published fallback must never be accepted.
+  if (!authReady()) return null;
   if (!token || token.indexOf('.') === -1) return null;
   const [body, sig] = token.split('.');
   if (!body || !sig) return null;

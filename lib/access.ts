@@ -23,6 +23,16 @@ export function usingDefaultCode(): boolean {
   return !process.env.WORKROOM_ACCESS_CODE;
 }
 
+// Same reasoning as AUTH_SECRET in lib/auth.ts: the default code and the
+// fallback signing secret both sit in the source tree, so in production
+// without WORKROOM_ACCESS_CODE and AUTH_SECRET the door is not a door. Fail
+// closed — no code is accepted and no existing pass is honoured — rather than
+// leave the recruiters' internal search strategy open to anyone with the URL.
+export function workroomReady(): boolean {
+  if (process.env.NODE_ENV !== 'production') return true;
+  return !!process.env.WORKROOM_ACCESS_CODE && !!process.env.AUTH_SECRET;
+}
+
 function b64url(buf: Buffer): string {
   return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
@@ -38,6 +48,7 @@ function eq(a: string, b: string): boolean {
 
 /** Case- and whitespace-insensitive: recruiters retype these by hand. */
 export function checkCode(input: string): boolean {
+  if (!workroomReady()) return false;
   const given = String(input || '').trim().toUpperCase();
   if (!given) return false;
   return eq(given, accessCode().trim().toUpperCase());
@@ -49,6 +60,7 @@ export function createPass(): string {
 }
 
 export function verifyPass(token: string | undefined | null): boolean {
+  if (!workroomReady()) return false;
   if (!token || token.indexOf('.') === -1) return false;
   const [body, sig] = token.split('.');
   if (!body || !sig) return false;

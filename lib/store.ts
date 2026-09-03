@@ -10,6 +10,7 @@
    so it works regardless of how the provider names it.
    ============================================================ */
 
+import { randomBytes } from 'crypto';
 import { neon } from '@neondatabase/serverless';
 import type { Decision, Matrix, MatrixWork, PortalSettings, Role, StoredCandidate, StoredCandidateInput, StoredMatrix, Submission, SubmissionInput, User } from './types';
 import portalSeed from './portal-seed.json';
@@ -327,13 +328,29 @@ function rowToUserRaw(id: string, email: string, createdAt: string, data: any): 
   };
 }
 
+// The temp password for a pre-loaded login. In production it must come from
+// the environment (SEED_TEMP_PASSWORD) — the value in lib/team-seed.json is a
+// convenience for local work, and a password committed to the repo is not a
+// password. Absent that, the account is created with a random secret nobody
+// holds, so it cannot be signed into until a password is set on purpose.
+function seedPasswordFor(u: { email: string; tempPassword?: string }): string {
+  if (process.env.NODE_ENV !== 'production') return u.tempPassword || 'ChangeMe-Spyglass';
+  return process.env.SEED_TEMP_PASSWORD || randomBytes(32).toString('hex');
+}
+
 const publicUser = (u: UserRaw): User => ({ id: u.id, email: u.email, name: u.name, role: u.role, mustReset: u.mustReset, createdAt: u.createdAt });
 
 let adminSeedReady = false;
 export async function ensureAdminSeed(): Promise<void> {
   if (adminSeedReady) return;
   const email = (process.env.ADMIN_EMAIL || 'admin@spyglassmatrix.app').toLowerCase();
-  const password = process.env.ADMIN_PASSWORD || 'ChangeMe-Spyglass';
+  // No fallback password in production. A default written in the source is a
+  // password every reader of the repo already knows, and it was seeding a live
+  // admin account. Off the default, we mint a random one nobody holds — the
+  // account exists but cannot be signed into until a password is set
+  // deliberately, which is the safe state for an account nobody asked for.
+  const password = process.env.ADMIN_PASSWORD
+    || (process.env.NODE_ENV === 'production' ? randomBytes(32).toString('hex') : 'ChangeMe-Spyglass');
 
   if (!hasDb) {
     if (memUsers.size === 0) {
@@ -347,7 +364,7 @@ export async function ensureAdminSeed(): Promise<void> {
       for (const x of memUsers.values()) if (x.email === em) { present = true; break; }
       if (present) continue;
       const id = newUserId();
-      memUsers.set(id, { id, email: em, name: u.name, role: (u.role as Role) || 'member', mustReset: true, createdAt: new Date().toISOString(), passwordHash: hashPassword(u.tempPassword) });
+      memUsers.set(id, { id, email: em, name: u.name, role: (u.role as Role) || 'member', mustReset: true, createdAt: new Date().toISOString(), passwordHash: hashPassword(seedPasswordFor(u)) });
     }
     // Revoked emails: delete any matching account so access is fully removed.
     for (const em of REVOKED_EMAILS) {
@@ -368,7 +385,7 @@ export async function ensureAdminSeed(): Promise<void> {
   for (const u of TEAM_SEED) {
     const em = u.email.trim().toLowerCase();
     const id = newUserId();
-    const data = { name: u.name, role: (u.role as Role) || 'member', mustReset: true, passwordHash: hashPassword(u.tempPassword) };
+    const data = { name: u.name, role: (u.role as Role) || 'member', mustReset: true, passwordHash: hashPassword(seedPasswordFor(u)) };
     await db()`INSERT INTO sm_users (id, email, data) VALUES (${id}, ${em}, ${JSON.stringify(data)}::jsonb)
       ON CONFLICT (email) DO NOTHING`;
   }
