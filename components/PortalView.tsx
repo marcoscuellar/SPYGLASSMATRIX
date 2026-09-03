@@ -141,7 +141,6 @@ function Dossier({ c, roleLabel, onBack, onFeedback }: {
   const first = c.name.split(' ')[0];
 
   const meta = [
-    { l: 'Current', v: [c.role, c.company].filter(Boolean).join(', ') },
     { l: 'Experience', v: c.years ? `${c.years} years` : '' },
     { l: 'Location', v: c.location },
     { l: 'Compensation', v: c.compExp },
@@ -184,7 +183,13 @@ function Dossier({ c, roleLabel, onBack, onFeedback }: {
           <div className="who">
             <button className="back" onClick={onBack}>← Shortlist</button>
             <div className="crumb">Candidates › {roleLabel || 'Shortlist'} › Profile</div>
-            <h1>{c.name}</h1>
+            <div className="nameline">
+              <h1>{c.name}</h1>
+              <span className={'pill' + (decision ? ' ' + decision : '')}>
+                {decision ? STATUS[decision].word : 'Awaiting your call'}
+              </span>
+            </div>
+            <div className="subline">{[c.role, c.company].filter(Boolean).join(' · ')}</div>
           </div>
           <div className="acts">
             {decisions.map((d) => (
@@ -216,7 +221,7 @@ function Dossier({ c, roleLabel, onBack, onFeedback }: {
 
           {c.resumeUrl && (
             <div className="resblock">
-              <div className="kick"><span className="bar" /><span className="t">Résumé</span></div>
+              <div className="cardhd"><span className="t">Résumé</span></div>
               <a className="res" href={c.resumeUrl} target="_blank" rel="noopener noreferrer" download>
                 Download {first}’s résumé <span className="x">↓</span>
               </a>
@@ -227,15 +232,12 @@ function Dossier({ c, roleLabel, onBack, onFeedback }: {
         {/* working column */}
         <main className="dmain">
           <div className="tiles">
-            <div className="tile status">
-              <div className="kick"><span className="bar" /><span className="t">Where this stands</span></div>
-              <div className="word">{decision ? STATUS[decision].word : 'Awaiting your call'}</div>
-              <p>{decision ? STATUS[decision].line : 'Read the brief, then advance, hold, or pass using the buttons above.'}</p>
-            </div>
-
             {visibleSignals.length > 0 && (
               <div className="tile signals">
-                <div className="kick"><span className="bar" /><span className="t">Signal read</span></div>
+                <div className="cardhd">
+                  <span className="t">Signal read</span>
+                  <span className="hint">{decision ? STATUS[decision].line : 'How she maps to your brief'}</span>
+                </div>
                 {visibleSignals.map((s, i) => {
                   const m = SIGNAL_META[s.score];
                   return (
@@ -250,6 +252,7 @@ function Dossier({ c, roleLabel, onBack, onFeedback }: {
             )}
           </div>
 
+          <div className="tabcard">
           <div className="tabbar" role="tablist">
             {([['brief', 'The brief'], ['experience', 'Experience'], ['notes', 'Your notes']] as [Tab, string][]).map(([k, l]) => (
               <button key={k} role="tab" aria-selected={tab === k} className={'tb' + (tab === k ? ' on' : '')} onClick={() => setTab(k)}>
@@ -265,11 +268,11 @@ function Dossier({ c, roleLabel, onBack, onFeedback }: {
                 {c.intro && <p className="intro">{c.intro}</p>}
                 {c.fitBullets.length > 0 && (
                   <>
-                    <div className="kick sub"><span className="bar" /><span className="t">Why {first} fits the brief</span></div>
+                    <div className="secline">Why {first} fits the brief</div>
                     <ul className="fits">{c.fitBullets.map((b, i) => <li key={i}>{b}</li>)}</ul>
                   </>
                 )}
-                {c.cta && <div className="reco"><div className="kick"><span className="bar" /><span className="t">Our recommendation</span></div><p>{c.cta}</p></div>}
+                {c.cta && <div className="reco"><div className="rl">Our recommendation</div><p>{c.cta}</p></div>}
               </>
             )}
 
@@ -305,9 +308,10 @@ function Dossier({ c, roleLabel, onBack, onFeedback }: {
               </div>
             )}
           </div>
+          </div>
 
           <div className="journey">
-            <div className="kick"><span className="bar" /><span className="t">Where {first} is</span></div>
+            <div className="cardhd"><span className="t">Where {first} is</span></div>
             <div className="track">
               {stages.map((s, i) => (
                 <div className={'st' + (s.done ? ' done' : '')} key={i}>
