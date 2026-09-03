@@ -201,14 +201,20 @@ export async function deleteCandidate(id: string): Promise<void> {
   await db()`DELETE FROM portal_candidates WHERE id = ${id}`;
 }
 
-export async function setFeedback(id: string, decision: Decision, note: string): Promise<void> {
+// A null decision saves the note alone — the client's notepad should not
+// force them to decide before they can write anything down.
+export async function setFeedback(id: string, decision: Decision | null, note: string): Promise<void> {
   if (!hasDb) {
     const c = mem.get(id);
-    if (c) { c.decision = decision; c.note = note; }
+    if (c) { if (decision) c.decision = decision; c.note = note; }
     return;
   }
   await ensureSchema();
-  await db()`UPDATE portal_candidates SET decision = ${decision}, note = ${note} WHERE id = ${id}`;
+  if (decision) {
+    await db()`UPDATE portal_candidates SET decision = ${decision}, note = ${note} WHERE id = ${id}`;
+  } else {
+    await db()`UPDATE portal_candidates SET note = ${note} WHERE id = ${id}`;
+  }
 }
 
 /* ============================================================

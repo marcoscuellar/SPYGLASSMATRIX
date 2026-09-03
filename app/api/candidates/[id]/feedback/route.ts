@@ -14,10 +14,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
-  const decision = body?.decision as Decision;
-  if (!DECISIONS.includes(decision)) {
+
+  // The client's notepad saves on its own; a decision is optional. Anything
+  // that is neither a valid decision nor absent is still rejected.
+  const raw = body?.decision;
+  const decision: Decision | null = raw == null || raw === '' ? null : (raw as Decision);
+  if (decision !== null && !DECISIONS.includes(decision)) {
     return NextResponse.json({ error: 'decision must be advance | hold | pass' }, { status: 422 });
   }
-  await setFeedback(params.id, decision, String(body?.note || ''));
+
+  await setFeedback(params.id, decision, String(body?.note || '').slice(0, 20000));
   return NextResponse.json({ ok: true });
 }
