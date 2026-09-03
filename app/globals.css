@@ -790,9 +790,9 @@ code { font-family: var(--mono); }
      killed every `border:1px solid var(--line)` in this namespace. They
      inherit from :root already. */
   --ink2:var(--ink-2);
-  /* WCAG 2.1 AA: the global --ink-3 (2.5:1) and --ink-4 (1.5:1) fail as text.
-     Portal overrides clear 4.5:1 on both white and the paper ground. */
-  --ink3:#5F5F68; --ink4:#6E6E76;
+  /* The global --ink-3 (2.5:1) and --ink-4 (1.5:1) fail WCAG AA as text.
+     Pure black here: 21:1 on white, 18.9:1 on the paper ground. */
+  --ink3:#000; --ink4:#000;
   /* Teal on paper is 4.47:1 — a hair under. Text on paper uses the dark teal. */
   --a-text:var(--amber-d);
   --bg:var(--paper); --card:var(--bg-card); --line2:var(--line-soft);
