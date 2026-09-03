@@ -242,33 +242,31 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
         {/* right column */}
         <div className="colR">
           <div className="statrow">
-            <div className="card stat">
-              <div className="cardhd"><span>Where this stands</span></div>
-              <div className={'ring ' + (decision || 'none')}>
-                <span>{decision ? DECIDED[decision] : 'In review'}</span>
+            <div className="card snap">
+              <div className="cardhd"><span>Snapshot</span></div>
+              <div className="snapbody">
+                <div className="who1">{c.role}{c.company && <em>{c.company}</em>}</div>
+                {c.tags.length > 0 && (
+                  <div className="chips">{c.tags.map((t, i) => <span className="chip2" key={i}>{t}</span>)}</div>
+                )}
+                <div className="snapstate">
+                  <span className={'sdot ' + (decision || 'none')} />
+                  {decision ? DECIDED[decision] : 'Awaiting your call'}
+                </div>
               </div>
-              <p className="statline">{decision ? STATUS[decision] : 'Read the brief, then advance, hold or pass.'}</p>
             </div>
 
-            <div className="card callc">
-              <div className="cardhd"><span>Your call</span><em>Routes straight back to the recruiter</em></div>
-              <div className="opts">
-                {CHOICES.map((d) => (
-                  <button key={d.k} className={'opt ' + d.k + (decision === d.k ? ' on' : '')}
-                    disabled={busy === 'd'} onClick={() => send(d.k, note)}>
-                    <span className="tick" />
-                    <span className="ot">
-                      <b>{d.label}</b>
-                      <em>{d.sub}</em>
-                    </span>
-                  </button>
-                ))}
+            <div className="card pitch">
+              <div className="cardhd"><span>Quick pitch</span><em>Why we put {first} in front of you</em></div>
+              <div className="pitchbody">
+                {c.headline && <p className="pline">{c.headline}</p>}
+                {c.fitBullets.length > 0 && (
+                  <ul className="proof">
+                    {c.fitBullets.slice(0, 2).map((b, i) => <li key={i}>{b}</li>)}
+                  </ul>
+                )}
+                <button className="readmore" onClick={() => setTab('brief')}>Read the full brief →</button>
               </div>
-              <p className="callfoot">
-                {decision
-                  ? 'You can change this at any time — we act on your latest answer.'
-                  : `Nothing is sent until you choose. Leave a note first if you’d rather ask us something.`}
-              </p>
             </div>
           </div>
 
@@ -345,6 +343,27 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="card callc">
+            <div className="cardhd"><span>Your call</span><em>Routes straight back to the recruiter</em></div>
+            <div className="opts">
+              {CHOICES.map((d) => (
+                <button key={d.k} className={'opt ' + d.k + (decision === d.k ? ' on' : '')}
+                  disabled={busy === 'd'} onClick={() => send(d.k, note)}>
+                  <span className="tick" />
+                  <span className="ot">
+                    <b>{d.label}</b>
+                    <em>{d.sub}</em>
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="callfoot">
+              {decision
+                ? `${STATUS[decision]} You can change this at any time — we act on your latest answer.`
+                : 'Nothing is sent until you choose. Leave a note first if you’d rather ask us something.'}
+            </p>
           </div>
 
           <div className="card journey">
