@@ -116,11 +116,7 @@ function PortalCard({ c, rank, onOpen }: { c: StoredCandidate; rank: number; onO
       )}
 
       <div className="ft">
-        {c.decision
-          ? <span className="said">{DECIDED[c.decision]}</span>
-          : c.fit != null
-            ? <span className="fit"><span className="n">{c.fit}</span><span className="of">Fit</span></span>
-            : <span className="of" />}
+        {c.decision ? <span className="said">{DECIDED[c.decision]}</span> : <span />}
         <span className="go">Open dossier →</span>
       </div>
     </button>
@@ -180,10 +176,6 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
 
           <div className="hr" />
 
-          {c.fit != null && (
-            <div className="bigfit"><span className="n">{c.fit}</span><span className="of">Fit</span></div>
-          )}
-
           {meta.length > 0 && (
             <div className="meta">
               {meta.map((it, i) => (
@@ -203,14 +195,14 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
 
           {c.fitBullets.length > 0 && (
             <section>
-              <div className="sec-h"><span className="n">01</span><h2>Why {first} fits the brief</h2></div>
+              <div className="kick sec"><span className="bar" /><span className="t">01 · Why {first} fits the brief</span></div>
               <ul className="fits">{c.fitBullets.map((b, i) => <li key={i}>{b}</li>)}</ul>
             </section>
           )}
 
           {visibleSignals.length > 0 && (
             <section>
-              <div className="sec-h"><span className="n">02</span><h2>How {first} maps to your brief</h2></div>
+              <div className="kick sec"><span className="bar" /><span className="t">02 · How {first} maps to your brief</span></div>
               {visibleSignals.map((s, i) => {
                 const m = SIGNAL_META[s.score];
                 return (
@@ -226,7 +218,7 @@ function ExpandedDossier({ c, onBack, onFeedback }: { c: StoredCandidate; onBack
 
           {c.experience.length > 0 && (
             <section>
-              <div className="sec-h"><span className="n">03</span><h2>Employment history</h2></div>
+              <div className="kick sec"><span className="bar" /><span className="t">03 · Employment history</span></div>
               {c.experience.map((e, i) => (
                 <div className="job" key={i}>
                   <div className="jh">

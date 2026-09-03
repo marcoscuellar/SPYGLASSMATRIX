@@ -816,10 +816,7 @@ code { font-family: var(--mono); }
 .pv .pc .hl{font-size:16px;line-height:1.55;color:var(--pv-ink-2);margin:0 0 18px;flex:1}
 .pv .pc .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
 .pv .pc .tg{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--pv-ink-3);border:1px solid var(--pv-rule);padding:4px 9px}
-.pv .pc .ft{margin-top:auto;padding-top:16px;border-top:1px solid var(--pv-rule-soft);display:flex;align-items:baseline;justify-content:space-between;gap:12px}
-.pv .pc .fit{display:flex;align-items:baseline;gap:7px}
-.pv .pc .fit .n{font-size:27px;font-weight:600;letter-spacing:-.04em;color:var(--pv-maroon);font-variant-numeric:tabular-nums;line-height:1}
-.pv .pc .fit .of{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--pv-ink-3)}
+.pv .pc .ft{margin-top:auto;padding-top:16px;border-top:1px solid var(--pv-rule-soft);display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px}
 .pv .pc .said{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pv-ink);border-bottom:1px solid var(--pv-maroon);padding-bottom:2px}
 .pv .pc .go{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pv-ink-3);transition:color .2s}
 .pv .pc:hover .go{color:var(--pv-maroon)}
@@ -835,10 +832,7 @@ code { font-family: var(--mono); }
 .pv .rail h1{font-size:34px;font-weight:600;letter-spacing:-.04em;line-height:1.02;margin:0 0 10px}
 .pv .rail .at{font-size:13.5px;color:var(--pv-ink-2)}
 .pv .hr{height:1px;background:var(--pv-rule);margin:28px 0}
-.pv .bigfit{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
-.pv .bigfit .n{font-size:54px;font-weight:600;letter-spacing:-.05em;line-height:.86;color:var(--pv-maroon);font-variant-numeric:tabular-nums}
-.pv .bigfit .of{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--pv-ink-3)}
-.pv .meta{margin-top:26px;display:flex;flex-direction:column;gap:16px}
+.pv .meta{margin-top:0;display:flex;flex-direction:column;gap:16px}
 .pv .meta .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--pv-ink-3);margin-bottom:3px}
 .pv .meta .v{font-size:14px;line-height:1.4}
 .pv .rail .status{margin-top:30px;padding-top:22px;border-top:1px solid var(--pv-ink);font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--pv-maroon)}
@@ -847,9 +841,7 @@ code { font-family: var(--mono); }
 .pv .lede{font-size:clamp(25px,2.9vw,33px);font-weight:600;letter-spacing:-.032em;line-height:1.17;margin:0 0 26px;max-width:30ch}
 .pv .intro{font-size:17px;line-height:1.68;color:var(--pv-ink-2);margin:0 0 16px}
 .pv .read section{margin-top:clamp(44px,6vw,68px)}
-.pv .sec-h{display:flex;align-items:baseline;gap:14px;padding-bottom:13px;border-bottom:1px solid var(--pv-ink);margin-bottom:24px}
-.pv .sec-h .n{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--pv-maroon)}
-.pv .sec-h h2{font-size:14.5px;font-weight:600;letter-spacing:.01em;margin:0}
+.pv .kick.sec{margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--pv-rule)}
 .pv ul.fits{list-style:none;margin:0;padding:0}
 .pv ul.fits li{position:relative;padding:0 0 19px 34px;font-size:15.5px;line-height:1.6;color:var(--pv-ink-2)}
 .pv ul.fits li:last-child{padding-bottom:0}
