@@ -44,9 +44,19 @@ export function isPersistent(): boolean {
 }
 
 // Lazily-created Neon HTTP client (one per server instance).
+//
+// fetchOptions.cache = 'no-store' is not optional. The Neon driver talks to the
+// database over HTTP, and Next.js patches global fetch so that server-side
+// requests are cached — to disk, under .next/cache/fetch-cache, where they
+// outlive a restart. Without this the cache swallows the database: SELECTs
+// return whatever the first render saw, so a recruiter's edit or a client's
+// decision never shows up, and INSERTs are served from cache and never reach
+// Postgres at all. Verified against a real Postgres: with it off, cached
+// SELECT/INSERT/CREATE entries appeared on disk and the portal served stale
+// candidates indefinitely.
 let _sql: ReturnType<typeof neon> | null = null;
 function db() {
-  if (!_sql) _sql = neon(CONN);
+  if (!_sql) _sql = neon(CONN, { fetchOptions: { cache: 'no-store' } });
   return _sql;
 }
 
@@ -83,20 +93,36 @@ function rowToCandidate(id: string, createdAt: string, data: any, decision: stri
   };
 }
 
+// `CREATE TABLE IF NOT EXISTS` is not race-safe in Postgres: two connections
+// running it at the same instant against an empty database both pass the
+// existence check, and the loser fails on a system-catalogue unique index. The
+// first request after a deploy is exactly that case — several lambdas hitting a
+// cold database at once — so without this the portal 500s on the very first
+// visit and then works forever after, which is the worst way to find out.
+// Either outcome leaves the table in place, so these two codes mean success.
+async function ensureTable(create: () => Promise<unknown>) {
+  try {
+    await create();
+  } catch (e: any) {
+    const code = e?.code ?? e?.sourceError?.code;
+    if (code !== '23505' && code !== '42P07') throw e; // unique_violation, duplicate_table
+  }
+}
+
 let schemaReady = false;
 async function ensureSchema() {
   if (!hasDb || schemaReady) return;
-  await db()`CREATE TABLE IF NOT EXISTS portal_candidates (
+  await ensureTable(() => db()`CREATE TABLE IF NOT EXISTS portal_candidates (
     id          TEXT PRIMARY KEY,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     data        JSONB NOT NULL,
     decision    TEXT,
     note        TEXT
-  )`;
-  await db()`CREATE TABLE IF NOT EXISTS portal_settings (
+  )`);
+  await ensureTable(() => db()`CREATE TABLE IF NOT EXISTS portal_settings (
     id    TEXT PRIMARY KEY,
     data  JSONB NOT NULL
-  )`;
+  )`);
   schemaReady = true;
 }
 
@@ -259,12 +285,12 @@ function newUserId(): string {
 let usersSchemaReady = false;
 async function ensureUsersSchema() {
   if (!hasDb || usersSchemaReady) return;
-  await db()`CREATE TABLE IF NOT EXISTS sm_users (
+  await ensureTable(() => db()`CREATE TABLE IF NOT EXISTS sm_users (
     id          TEXT PRIMARY KEY,
     email       TEXT UNIQUE NOT NULL,
     data        JSONB NOT NULL,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
-  )`;
+  )`);
   usersSchemaReady = true;
 }
 
@@ -416,12 +442,12 @@ const memNotes: Map<string, BoardNote> = (globalThis as any).__spgNotes || ((glo
 let notesSchemaReady = false;
 async function ensureNotesSchema() {
   if (!hasDb || notesSchemaReady) return;
-  await db()`CREATE TABLE IF NOT EXISTS sm_board_notes (
+  await ensureTable(() => db()`CREATE TABLE IF NOT EXISTS sm_board_notes (
     key         TEXT PRIMARY KEY,
     note        TEXT NOT NULL DEFAULT '',
     updated_by  TEXT,
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
-  )`;
+  )`);
   notesSchemaReady = true;
 }
 
@@ -467,11 +493,11 @@ const emptyWork = (): MatrixWork => ({ notes: {}, grades: {}, updatedAt: null, u
 let matrixSchemaReady = false;
 async function ensureMatrixSchema(): Promise<void> {
   if (matrixSchemaReady || !hasDb) return;
-  await db()`CREATE TABLE IF NOT EXISTS sm_matrices (
+  await ensureTable(() => db()`CREATE TABLE IF NOT EXISTS sm_matrices (
     id TEXT PRIMARY KEY,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     data JSONB NOT NULL
-  )`;
+  )`);
   matrixSchemaReady = true;
 }
 
@@ -552,11 +578,11 @@ const memSubs: Map<string, Submission> =
 let subSchemaReady = false;
 async function ensureSubSchema(): Promise<void> {
   if (subSchemaReady || !hasDb) return;
-  await db()`CREATE TABLE IF NOT EXISTS sm_submissions (
+  await ensureTable(() => db()`CREATE TABLE IF NOT EXISTS sm_submissions (
     id TEXT PRIMARY KEY,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     data JSONB NOT NULL
-  )`;
+  )`);
   subSchemaReady = true;
 }
 
