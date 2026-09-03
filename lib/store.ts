@@ -195,6 +195,17 @@ export async function addCandidate(input: StoredCandidateInput): Promise<StoredC
   return { id, createdAt, ...input, decision: null, note: null };
 }
 
+export async function updateCandidate(id: string, input: StoredCandidateInput): Promise<StoredCandidate | null> {
+  const existing = await getCandidate(id);
+  if (!existing) return null;
+  const next: StoredCandidate = { ...existing, ...input };
+  if (!hasDb) { mem.set(id, next); return next; }
+  await ensureSchema();
+  const { id: _i, createdAt: _c, decision: _d, note: _n, ...data } = next;
+  await db()`UPDATE portal_candidates SET data = ${JSON.stringify(data)}::jsonb WHERE id = ${id}`;
+  return next;
+}
+
 export async function deleteCandidate(id: string): Promise<void> {
   if (!hasDb) { mem.delete(id); return; }
   await ensureSchema();

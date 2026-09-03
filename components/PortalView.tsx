@@ -47,7 +47,7 @@ const Ico = ({ d, s = 14 }: { d: string; s?: number }) => (
     strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
 );
 
-export function PortalView({ initial, settings }: { initial: StoredCandidate[]; settings: PortalSettings }) {
+export function PortalView({ initial, settings, canEdit = false }: { initial: StoredCandidate[]; settings: PortalSettings; canEdit?: boolean }) {
   const [cands, setCands] = React.useState<StoredCandidate[]>(initial);
   const sorted = React.useMemo(() => [...cands].sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0)), [cands]);
   const [openId, setOpenId] = React.useState<string | null>(null);
@@ -99,7 +99,11 @@ export function PortalView({ initial, settings }: { initial: StoredCandidate[]; 
 
         <div className="body">
           {open
-            ? <Profile c={open} role={role} onFeedback={applyFeedback} />
+            // Keyed by id on purpose: without it, switching candidates keeps the
+            // previous person's editor form and note in state, and a save would
+            // write one candidate's copy onto another.
+            ? <Profile key={open.id} c={open} role={role} onFeedback={applyFeedback} canEdit={canEdit}
+                onSaved={(u) => setCands((l) => l.map((x) => (x.id === u.id ? u : x)))} />
             : <Shortlist cands={sorted} client={client} role={role} onOpen={(id) => { setOpenId(id); window.scrollTo(0, 0); }} />}
         </div>
       </div>
@@ -152,7 +156,12 @@ function Shortlist({ cands, client, role, onOpen }: { cands: StoredCandidate[]; 
 
 type Tab = 'brief' | 'experience' | 'signal' | 'notes';
 
-function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; onFeedback: (id: string, d: Decision | null, n: string, clear?: boolean) => void }) {
+function Profile({ c, role, onFeedback, canEdit, onSaved }: {
+  c: StoredCandidate; role: string;
+  onFeedback: (id: string, d: Decision | null, n: string, clear?: boolean) => void;
+  canEdit: boolean; onSaved: (c: StoredCandidate) => void;
+}) {
+  const [editing, setEditing] = React.useState(false);
   const [tab, setTab] = React.useState<Tab>('brief');
   const [decision, setDecision] = React.useState<Decision | null>(c.decision);
   const [note, setNote] = React.useState(c.note || '');
@@ -167,7 +176,7 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
   const facts = [
     { i: I.pin, k: 'Location', v: c.location },
     { i: I.clock, k: 'Availability', v: c.avail },
-    { i: I.cash, k: 'Compensation', v: c.compExp },
+    { i: I.cash, k: 'Bill rate', v: c.compExp },
     { i: I.cal, k: 'Experience', v: c.years ? `${c.years} years` : '' },
   ].filter((f) => f.v);
 
@@ -214,6 +223,15 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
           ))}
         </div>
       </div>
+
+      {canEdit && (
+        <div className="editbar">
+          <span className="only">Only you can see this — the client sees the published copy</span>
+          <button className="btn" onClick={() => setEditing((v) => !v)}>{editing ? 'Close editor' : 'Edit this profile'}</button>
+        </div>
+      )}
+
+      {canEdit && editing && <Editor c={c} onDone={(u) => { if (u) onSaved(u); setEditing(false); }} />}
 
       <div className="pgrid">
         {/* left column */}
@@ -395,5 +413,91 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
         </div>
       </div>
     </>
+  );
+}
+
+
+/* ---------- edit layer (login only; never rendered for the client) ---------- */
+
+// Size a textarea to what is actually in it, so a long list of bullets is all
+// on screen rather than hidden behind a scrollbar while you edit it.
+function rowsFor(v: string): number {
+  const lines = v.split('\n').reduce((n, l) => n + Math.max(1, Math.ceil(l.length / 92)), 0);
+  return Math.min(20, Math.max(3, lines + 1));
+}
+
+function Editor({ c, onDone }: { c: StoredCandidate; onDone: (c: StoredCandidate | null) => void }) {
+  const [f, setF] = React.useState({
+    name: c.name, role: c.role, company: c.company,
+    years: c.years == null ? '' : String(c.years),
+    location: c.location, compExp: c.compExp, avail: c.avail,
+    tags: c.tags.join(', '),
+    headline: c.headline, intro: c.intro,
+    fitBullets: c.fitBullets.join('\n'),
+    cta: c.cta,
+    signals: c.signals.map((s) => `${s.signal} | ${s.score}`).join('\n'),
+    resumeUrl: c.resumeUrl,
+    fit: c.fit == null ? '' : String(c.fit),
+  });
+  const [busy, setBusy] = React.useState(false);
+  const [err, setErr] = React.useState('');
+  const set = (k: keyof typeof f, v: string) => setF((x) => ({ ...x, [k]: v }));
+
+  const save = async () => {
+    setBusy(true); setErr('');
+    const signals = f.signals.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
+      const [sig, sc] = l.split('|').map((x) => (x || '').trim());
+      return { signal: sig, score: (['strong', 'solid', 'partial', 'gap'].includes(sc) ? sc : 'solid') };
+    });
+    const res = await fetch(`/api/candidates/${c.id}`, {
+      method: 'PUT', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ...f, signals, experience: c.experience }),
+    }).catch(() => null);
+    setBusy(false);
+    if (!res || !res.ok) { setErr((await res?.json().catch(() => ({})))?.error || 'Could not save.'); return; }
+    const { candidate } = await res.json();
+    onDone(candidate);
+  };
+
+  // Deliberately a plain function, not a component: a component declared inside
+  // Editor gets a fresh identity every render, so React would tear down and
+  // rebuild each field on every keystroke and the caret would jump out.
+  const row = (k: keyof typeof f, label: string, area = false, hint?: string) => (
+    <label className="ef" key={k}>
+      <span>{label}{hint && <em>{hint}</em>}</span>
+      {area
+        ? <textarea value={f[k]} onChange={(e) => set(k, e.target.value)} rows={rowsFor(f[k])} />
+        : <input value={f[k]} onChange={(e) => set(k, e.target.value)} />}
+    </label>
+  );
+
+  return (
+    <div className="card editor">
+      <div className="cardhd"><span>Edit the client-facing copy</span><em>Saves to the portal immediately</em></div>
+      <div className="ebody">
+        <div className="ecols">
+          {row('name', 'Name')}
+          {row('role', 'Current title')}
+          {row('company', 'Company')}
+          {row('years', 'Years of experience')}
+          {row('location', 'Location')}
+          {row('avail', 'Availability')}
+          {row('compExp', 'Bill rate')}
+          {row('resumeUrl', 'Résumé URL')}
+          {row('fit', 'Sort rank', false, 'orders the shortlist; not shown')}
+        </div>
+        {row('tags', 'Snapshot chips', true, 'comma separated')}
+        {row('headline', 'Headline / quick pitch', true)}
+        {row('intro', 'Opening paragraph', true)}
+        {row('fitBullets', 'Why they fit', true, 'one per line')}
+        {row('cta', 'Our recommendation', true)}
+        {row('signals', 'Signal read', true, 'one per line — Label | strong / solid / partial / gap')}
+        {err && <div className="eerr">{err}</div>}
+        <div className="erow">
+          <button className="btn go" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save and publish'}</button>
+          <button className="btn" disabled={busy} onClick={() => onDone(null)}>Cancel</button>
+        </div>
+      </div>
+    </div>
   );
 }

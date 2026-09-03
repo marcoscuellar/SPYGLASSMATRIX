@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth';
 import { getSettings, setSettings } from '@/lib/store';
 
 export const runtime = 'nodejs';
@@ -10,6 +11,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!getSession()) return NextResponse.json({ error: 'Not authorised.' }, { status: 401 });
   let body: any;
   try {
     body = await req.json();

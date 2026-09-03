@@ -1024,6 +1024,32 @@ code { font-family: var(--mono); }
 .pv .st .l{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4)}
 .pv .st.done .l,.pv .st.cur .l{color:var(--ink)}
 
+/* ---- edit layer: rendered only for a logged-in session, never for the client ---- */
+.pv .editbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  margin:0 0 18px;padding:10px 14px 10px 16px;border-radius:var(--r2);
+  background:var(--a-w);border:1px solid var(--a-b);box-shadow:var(--sh-xs)}
+.pv .editbar .only{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--a-text)}
+.pv .editor{margin:0 0 22px;box-shadow:var(--sh2)}
+.pv .ebody{padding:18px 20px 20px}
+.pv .ecols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 16px;margin-bottom:16px}
+.pv .ef{display:block;margin-bottom:14px}
+.pv .ecols .ef{margin-bottom:0}
+.pv .ef>span{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink);margin-bottom:6px}
+.pv .ef>span em{font-style:normal;letter-spacing:.04em;text-transform:none;color:var(--ink4)}
+.pv .ef input,.pv .ef textarea{width:100%;display:block;padding:9px 12px;
+  border:1px solid var(--line);border-radius:var(--r2);background:var(--card);color:var(--ink);
+  font-family:var(--font);font-size:13.5px;line-height:1.55;resize:vertical}
+.pv .ef textarea{line-height:1.6}
+.pv .ef input:focus,.pv .ef textarea:focus{border-color:var(--a)}
+.pv .eerr{margin:0 0 12px;padding:10px 12px;border-radius:var(--r2);
+  background:#fdeceb;border:1px solid #f3c6c2;color:#7d1c16;font-size:13px}
+.pv .erow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding-top:14px;border-top:1px solid var(--line2)}
+@media (max-width:1180px){ .pv .ecols{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:700px){ .pv .ecols{grid-template-columns:1fr} }
+
 
 /* Keyboard focus: every interactive element in the portal is reachable and
    visibly focused (nothing here relied on the UA outline we suppress). */
@@ -1031,7 +1057,7 @@ code { font-family: var(--mono); }
    resolve reliably here, and a ring that sometimes fails to draw is worse
    than one that occasionally shows after a click. box-shadow, not outline:
    outline-width was being flattened to 0 by the cascade. */
-.pv a:focus,.pv button:focus,.pv textarea:focus,.pv .navitem:focus{
+.pv a:focus,.pv button:focus,.pv textarea:focus,.pv input:focus,.pv .navitem:focus{
   outline:2px solid var(--a-text);outline-offset:2px;
   box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--a-text) !important}
 .pv .notes textarea:focus{border-color:var(--a)}
