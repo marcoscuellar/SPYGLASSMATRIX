@@ -1,5 +1,5 @@
 {
-  "version": "procare-pam-2026-09-6",
+  "version": "procare-pam-2026-09-7",
   "settings": {
     "clientName": "Procare HR",
     "roleLabel": "Payroll Account Manager search"
@@ -361,5 +361,8 @@
       ],
       "resumeUrl": "/resumes/bhargavi-ramasagaram.docx"
     }
+  ],
+  "resetDecisions": [
+    "c_candle_meyers"
   ]
 }

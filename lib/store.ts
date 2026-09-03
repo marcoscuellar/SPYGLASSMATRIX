@@ -28,6 +28,11 @@ import { hashPassword } from './auth';
 const SEED_VERSION: string = (portalSeed as any).version;
 const SEED_SETTINGS = (portalSeed as any).settings as PortalSettings;
 const SEED_CANDIDATES = (portalSeed as any).candidates as (StoredCandidateInput & { id: string })[];
+// Candidate ids whose decision and note are wiped on the next re-seed. The
+// seed otherwise never touches those columns, so this is the one deliberate
+// way to take back a decision recorded by mistake. Fires once, when the seed
+// version changes; clear the list afterwards so it cannot fire again.
+const SEED_RESET_DECISIONS: string[] = (portalSeed as any).resetDecisions || [];
 
 const CONN =
   process.env.POSTGRES_URL ||
@@ -145,9 +150,9 @@ async function ensureSeed() {
       for (const c of SEED_CANDIDATES) {
         const { id, ...rest } = c;
         // Same rule as the database branch: refresh the copy, keep the answer.
-        const prev = mem.get(id);
+        const prev = SEED_RESET_DECISIONS.includes(id) ? undefined : mem.get(id);
         mem.set(id, {
-          id, createdAt: prev?.createdAt || now, ...(rest as StoredCandidateInput),
+          id, createdAt: mem.get(id)?.createdAt || now, ...(rest as StoredCandidateInput),
           decision: prev?.decision ?? null, note: prev?.note ?? null,
         });
       }
@@ -177,6 +182,9 @@ async function ensureSeed() {
     const { id, ...rest } = c;
     await db()`INSERT INTO portal_candidates (id, data) VALUES (${id}, ${JSON.stringify(rest)}::jsonb)
       ON CONFLICT (id) DO UPDATE SET data = ${JSON.stringify(rest)}::jsonb`;
+  }
+  if (SEED_RESET_DECISIONS.length) {
+    await db()`UPDATE portal_candidates SET decision = NULL, note = NULL WHERE id = ANY(${SEED_RESET_DECISIONS})`;
   }
   await db()`INSERT INTO portal_settings (id, data) VALUES ('default', ${JSON.stringify(SEED_SETTINGS)}::jsonb)
     ON CONFLICT (id) DO UPDATE SET data = ${JSON.stringify(SEED_SETTINGS)}::jsonb`;
