@@ -1,5 +1,5 @@
 {
-  "version": "procare-pam-2026-09-7",
+  "version": "procare-pam-2026-09-8",
   "settings": {
     "clientName": "Procare HR",
     "roleLabel": "Payroll Account Manager search"
@@ -108,7 +108,7 @@
           ]
         }
       ],
-      "resumeUrl": "/resumes/sahithi-regalla.docx",
+      "resumeUrl": "/api/resume/sahithi-regalla.docx",
       "workAuth": "H-4 EAD — authorised without employer sponsorship"
     },
     {
@@ -220,7 +220,7 @@
           ]
         }
       ],
-      "resumeUrl": "/resumes/candle-meyers.docx",
+      "resumeUrl": "/api/resume/candle-meyers.docx",
       "id": "c_candle_meyers",
       "workAuth": ""
     },
@@ -359,7 +359,7 @@
           ]
         }
       ],
-      "resumeUrl": "/resumes/bhargavi-ramasagaram.docx"
+      "resumeUrl": "/api/resume/bhargavi-ramasagaram.docx"
     }
   ],
   "resetDecisions": []

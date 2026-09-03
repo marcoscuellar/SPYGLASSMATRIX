@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // The résumés live outside /public now, so Next's tracing cannot infer them
+  // from an import — they are read by filename at request time. Ship them with
+  // the route that serves them, or it 404s in production and works locally.
+  experimental: {
+    outputFileTracingIncludes: {
+      '/api/resume/[file]': ['./private/resumes/**'],
+    },
+  },
   async headers() {
     return [
       {

@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { addCandidate, listCandidates } from '@/lib/store';
 import { getSession } from '@/lib/auth';
 import { parseCandidateInput } from '@/lib/candidate-input';
+import { hasPortalAccess } from '@/lib/portal-access';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  // Behind the same door as the portal page. Without this the gate is theatre:
+  // the whole shortlist would still be one fetch away.
+  if (!hasPortalAccess()) return NextResponse.json({ error: 'Not authorised.' }, { status: 401 });
   const candidates = await listCandidates();
   return NextResponse.json({ candidates });
 }

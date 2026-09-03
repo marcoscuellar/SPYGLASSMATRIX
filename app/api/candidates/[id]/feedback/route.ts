@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { setFeedback } from '@/lib/store';
 import type { Decision } from '@/lib/types';
+import { hasPortalAccess } from '@/lib/portal-access';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -8,6 +9,8 @@ export const dynamic = 'force-dynamic';
 const DECISIONS: Decision[] = ['advance', 'hold', 'pass'];
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+  // Only someone through the door may record a decision or leave a note.
+  if (!hasPortalAccess()) return NextResponse.json({ error: 'Not authorised.' }, { status: 401 });
   let body: any;
   try {
     body = await req.json();

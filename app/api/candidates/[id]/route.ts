@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { deleteCandidate, getCandidate, updateCandidate } from '@/lib/store';
 import { getSession } from '@/lib/auth';
 import { parseCandidateInput } from '@/lib/candidate-input';
+import { hasPortalAccess } from '@/lib/portal-access';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+  if (!hasPortalAccess()) return NextResponse.json({ error: 'Not authorised.' }, { status: 401 });
   const candidate = await getCandidate(params.id);
   if (!candidate) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   return NextResponse.json({ candidate });
