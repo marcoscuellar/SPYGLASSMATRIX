@@ -1,10 +1,115 @@
 {
-  "version": "procare-pam-2026-09-1",
+  "version": "procare-pam-2026-09-2",
   "settings": {
     "clientName": "Procare HR",
     "roleLabel": "Payroll Account Manager search"
   },
   "candidates": [
+    {
+      "id": "c_sahithi_regalla",
+      "name": "Sahithi Regalla",
+      "role": "Payroll Specialist",
+      "company": "Baltimore Police Department",
+      "years": 8,
+      "location": "Hanover, MD · remote",
+      "compExp": "To confirm",
+      "avail": "Employed — notice to confirm",
+      "tags": [
+        "UKG Ready",
+        "Multi-client payroll",
+        "HR shared services",
+        "Workday + ADP",
+        "CPP candidate 2026"
+      ],
+      "fit": 74,
+      "headline": "Hands-on UKG Ready in a multi-client payroll seat — the closest match on the systems and the operating model.",
+      "intro": "Sahithi has eight years across payroll, HR operations and accounting, with the last three in US payroll. The part that matters for this seat sits in the middle of her history: at Red Leaf IT Systems she ran payroll administration in UKG Ready and produced multi-client payroll and year-end reporting, and before that she spent two years inside an HR Shared Services model at Harsco's global service centre — payroll audits, reconciliations, year-end, and employee lifecycle transactions alongside HR business partners. She is currently at Baltimore Police Department handling bi-weekly payroll, timekeeping and FLSA compliance in Workday, and is a Certified Payroll Professional candidate for 2026.",
+      "fitBullets": [
+        "Actual UKG Ready, not an adjacent product — used for payroll processing, W-2 and 1099 work and data validation at Red Leaf. This is the platform Procare named, and the only candidate so far who has touched it.",
+        "Multi-client exposure — generated multi-client payroll and year-end reports from HRIS data, and worked payroll disputes for worksite employees while placed through Robert Half.",
+        "Shared-services operating model — two years inside Harsco's HRSS centre, which is the closest thing on her record to serving many payroll populations to a service standard.",
+        "The strongest client-facing answer we have had. On a missing-overtime dispute she validated the data, identified it as a client transmission error, walked the client through the correction, ran an emergency off-cycle batch with same-day deposits, then built an automated validation checklist so it could not recur. That is ownership, not just processing.",
+        "Worth testing: her screen answers claim four years in a PEO with multiple unions and thousands of worksite employees. Her résumé does not name a PEO, gives no EIN count and no headcount, and the shared-services work was a single company's captive centre. The underlying experience is real; the framing runs ahead of it. One call with specifics settles it.",
+        "Authorised to work in the US without employer sponsorship."
+      ],
+      "cta": "The systems and the model line up better here than anywhere else we have looked. Before an interview we want one call to put numbers on it — how many separate client companies and EINs, and over what period.",
+      "signals": [
+        {
+          "signal": "UKG Ready hands-on",
+          "score": "solid"
+        },
+        {
+          "signal": "Client-facing dispute ownership",
+          "score": "solid"
+        },
+        {
+          "signal": "Multi-state payroll compliance",
+          "score": "solid"
+        },
+        {
+          "signal": "Payroll audit and reconciliation discipline",
+          "score": "strong"
+        },
+        {
+          "signal": "Multi-EIN / multi-client depth",
+          "score": "partial"
+        },
+        {
+          "signal": "PEO experience",
+          "score": "partial"
+        }
+      ],
+      "experience": [
+        {
+          "company": "Baltimore Police Department",
+          "title": "OSS III",
+          "period": "Jun 2026 – Present",
+          "location": "Baltimore, MD",
+          "points": [
+            "Bi-weekly payroll processing in Workday, reducing payment delays and corrections.",
+            "Audits electronic timesheets and resolves discrepancies in hours, leave and overtime.",
+            "Owns end-to-end timekeeping with FLSA compliance; administers FMLA, PTO and sick leave.",
+            "Primary liaison for employee payroll and timecard queries; produces monthly payroll and expense reporting for department leadership."
+          ]
+        },
+        {
+          "company": "Robert Half (contract)",
+          "title": "Payroll Specialist",
+          "period": "Nov 2024 – Jun 2026",
+          "location": "Maryland",
+          "points": [
+            "Bi-weekly payroll in Workday; verified hours, overtime and deductions.",
+            "Resolved complex payroll disputes for worksite employees.",
+            "Maintained payroll records and databases; supported separations and offboarding with HR."
+          ]
+        },
+        {
+          "company": "Red Leaf IT Systems LLC",
+          "title": "Payroll Administrator & HR Coordinator",
+          "period": "Mar 2023 – Sep 2024",
+          "location": "Pennsylvania",
+          "points": [
+            "Payroll processing in UKG Ready, including W-2 and 1099 processing with data validation.",
+            "Generated multi-client payroll and year-end reports from HRIS data.",
+            "Administered garnishments under federal and state requirements.",
+            "Ran payroll reconciliations and investigated variances pre-processing; supported the annual 401(k) audit."
+          ]
+        },
+        {
+          "company": "Harsco Global Service Center",
+          "title": "HRSS / Payroll Analyst",
+          "period": "Mar 2020 – Mar 2022",
+          "location": "India",
+          "points": [
+            "Monthly payroll inside an HR Shared Services model.",
+            "Supported payroll audits, reconciliations and year-end activity.",
+            "Partnered with HR Business Partners on new hires, promotions, transfers, salary changes, bonuses and terminations.",
+            "Built a centralised HR dashboard used by 10+ HR professionals for real-time workforce reporting."
+          ]
+        }
+      ],
+      "resumeUrl": "/resumes/sahithi-regalla.docx"
+    },
     {
       "name": "Candle Meyers",
       "role": "Senior Payroll Specialist",
