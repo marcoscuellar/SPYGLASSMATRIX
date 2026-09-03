@@ -821,14 +821,15 @@ code { font-family: var(--mono); }
 
 /* ---- top bar ---- */
 .pv .main{min-width:0;display:flex;flex-direction:column}
-.pv .topbar{background:var(--card);border-bottom:1px solid var(--line);padding:0 clamp(18px,3vw,34px);height:60px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20}
-.pv .topbar .ctx{font-size:13.5px;font-weight:500}
+/* Solid navy bar. White on #0A1F3D is 16.45:1. */
+.pv .topbar{background:var(--dark);border-bottom:1px solid var(--dark);padding:0 clamp(18px,3vw,34px);height:60px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20}
+.pv .topbar .ctx{font-size:13.5px;font-weight:600;color:#fff}
 .pv .topbar .grow{flex:1}
-.pv .topbar .conf{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
-.pv .chip{display:flex;align-items:center;gap:10px;padding-left:16px;border-left:1px solid var(--line)}
-.pv .chip .cn{text-align:right;font-size:13px;font-weight:700;line-height:1.2;color:var(--dark)}
-.pv .chip .cn em{display:block;font-style:normal;font-size:10.5px;font-weight:400;color:var(--ink4);margin-top:2px}
-.pv .cav{width:32px;height:32px;border-radius:50%;background:var(--a);color:#fff;display:grid;place-items:center;font-size:11.5px;font-weight:600;flex:none}
+.pv .topbar .conf{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#C8D2DE}
+.pv .chip{display:flex;align-items:center;gap:10px;padding-left:16px;border-left:1px solid rgba(255,255,255,.22)}
+.pv .chip .cn{text-align:right;font-size:13px;font-weight:700;line-height:1.2;color:#fff}
+.pv .chip .cn em{display:block;font-style:normal;font-size:10.5px;font-weight:400;color:#C8D2DE;margin-top:2px}
+.pv .cav{width:32px;height:32px;border-radius:50%;background:var(--a);color:#fff;display:grid;place-items:center;font-size:11.5px;font-weight:600;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
 
 .pv .body{padding:clamp(18px,2.6vw,30px) clamp(18px,3vw,34px) 64px;max-width:1400px;width:100%}
 .pv .crumb{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
@@ -949,6 +950,11 @@ code { font-family: var(--mono); }
 .pv .opt .ot b{display:block;font-size:13.5px;font-weight:600;letter-spacing:-.01em}
 .pv .opt .ot em{display:block;font-style:normal;font-size:11.5px;color:var(--ink3);margin-top:2px}
 .pv .opt.on .ot b{color:var(--a-text)}
+.pv .undo{margin:4px 20px 0;background:none;border:none;padding:8px 0;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--a-text);text-decoration:underline;text-underline-offset:3px;display:block;text-align:left}
+.pv .undo:hover:not(:disabled){color:var(--ink)}
+.pv .undo:disabled{opacity:.5;cursor:wait}
+.pv .btn.picked{background:var(--a);border-color:var(--a);color:#fff}
+.pv .btn.picked:hover:not(:disabled){background:var(--dark);border-color:var(--dark)}
 .pv .callfoot{margin:14px 20px 0;font-size:11.5px;line-height:1.5;color:var(--ink4)}
 .pv .sr{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:7px}
 .pv .sn{font-size:13px;font-weight:500}

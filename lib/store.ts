@@ -201,16 +201,25 @@ export async function deleteCandidate(id: string): Promise<void> {
   await db()`DELETE FROM portal_candidates WHERE id = ${id}`;
 }
 
-// A null decision saves the note alone — the client's notepad should not
-// force them to decide before they can write anything down.
-export async function setFeedback(id: string, decision: Decision | null, note: string): Promise<void> {
+// Three cases, deliberately distinct:
+//   decision set        -> record it
+//   decision null       -> save the note only, leave any decision alone
+//   clear = true        -> take the decision back to undecided
+// The client must be able to undo an answer they gave by mistake.
+export async function setFeedback(id: string, decision: Decision | null, note: string, clear = false): Promise<void> {
   if (!hasDb) {
     const c = mem.get(id);
-    if (c) { if (decision) c.decision = decision; c.note = note; }
+    if (c) {
+      if (clear) c.decision = null;
+      else if (decision) c.decision = decision;
+      c.note = note;
+    }
     return;
   }
   await ensureSchema();
-  if (decision) {
+  if (clear) {
+    await db()`UPDATE portal_candidates SET decision = NULL, note = ${note} WHERE id = ${id}`;
+  } else if (decision) {
     await db()`UPDATE portal_candidates SET decision = ${decision}, note = ${note} WHERE id = ${id}`;
   } else {
     await db()`UPDATE portal_candidates SET note = ${note} WHERE id = ${id}`;

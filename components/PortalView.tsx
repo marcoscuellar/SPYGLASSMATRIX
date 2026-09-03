@@ -53,8 +53,8 @@ export function PortalView({ initial, settings }: { initial: StoredCandidate[]; 
   const [openId, setOpenId] = React.useState<string | null>(null);
   const open = sorted.find((c) => c.id === openId) || null;
 
-  const applyFeedback = (id: string, decision: Decision | null, note: string) =>
-    setCands((l) => l.map((c) => (c.id === id ? { ...c, decision: decision ?? c.decision, note } : c)));
+  const applyFeedback = (id: string, decision: Decision | null, note: string, clear = false) =>
+    setCands((l) => l.map((c) => (c.id === id ? { ...c, decision: clear ? null : (decision ?? c.decision), note } : c)));
 
   const client = settings.clientName.trim();
   const role = settings.roleLabel.trim();
@@ -152,7 +152,7 @@ function Shortlist({ cands, client, role, onOpen }: { cands: StoredCandidate[]; 
 
 type Tab = 'brief' | 'experience' | 'signal' | 'notes';
 
-function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; onFeedback: (id: string, d: Decision | null, n: string) => void }) {
+function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; onFeedback: (id: string, d: Decision | null, n: string, clear?: boolean) => void }) {
   const [tab, setTab] = React.useState<Tab>('brief');
   const [decision, setDecision] = React.useState<Decision | null>(c.decision);
   const [note, setNote] = React.useState(c.note || '');
@@ -174,17 +174,21 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
   const visibleSignals = c.signals.filter((s) => s.score !== 'gap');
   const noteDirty = note !== savedNote;
 
-  const send = async (d: Decision | null, n: string) => {
-    setBusy(d ? 'd' : 'n');
+  const send = async (d: Decision | null, n: string, clear = false) => {
+    setBusy(d || clear ? 'd' : 'n');
     await fetch(`/api/candidates/${c.id}/feedback`, {
       method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ decision: d, note: n }),
+      body: JSON.stringify({ decision: d, note: n, clear }),
     }).catch(() => {});
     setBusy('');
-    if (d) setDecision(d);
+    if (clear) setDecision(null);
+    else if (d) setDecision(d);
     setSavedNote(n);
-    onFeedback(c.id, d, n);
+    onFeedback(c.id, clear ? null : d, n, clear);
   };
+
+  // Clicking the answer you already gave takes it back.
+  const choose = (d: Decision) => (decision === d ? send(null, note, true) : send(d, note));
 
   const steps = [
     { l: 'Submitted', s: 'done' },
@@ -200,9 +204,14 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
       <div className="pagehd row">
         <h1>{c.name}</h1>
         <div className="acts">
-          <button className="btn" disabled={busy === 'd'} onClick={() => send('pass', note)}>Pass</button>
-          <button className="btn ghost" disabled={busy === 'd'} onClick={() => send('hold', note)}>Hold for now</button>
-          <button className="btn go" disabled={busy === 'd'} onClick={() => send('advance', note)}>Advance to interview</button>
+          {CHOICES.slice().reverse().map((d) => (
+            <button key={d.k}
+              className={'btn' + (d.k === 'hold' ? ' ghost' : d.k === 'advance' ? ' go' : '') + (decision === d.k ? ' picked' : '')}
+              disabled={busy === 'd'} onClick={() => choose(d.k)}
+              title={decision === d.k ? 'Click again to undo' : undefined}>
+              {decision === d.k ? '✓ ' : ''}{d.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -350,7 +359,8 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
             <div className="opts">
               {CHOICES.map((d) => (
                 <button key={d.k} className={'opt ' + d.k + (decision === d.k ? ' on' : '')}
-                  disabled={busy === 'd'} onClick={() => send(d.k, note)}>
+                  disabled={busy === 'd'} onClick={() => choose(d.k)}
+                  title={decision === d.k ? 'Click again to undo' : undefined}>
                   <span className="tick" />
                   <span className="ot">
                     <b>{d.label}</b>
@@ -361,9 +371,14 @@ function Profile({ c, role, onFeedback }: { c: StoredCandidate; role: string; on
             </div>
             <p className="callfoot">
               {decision
-                ? `${STATUS[decision]} You can change this at any time — we act on your latest answer.`
+                ? `${STATUS[decision]} Change it any time — we act on your latest answer.`
                 : 'Nothing is sent until you choose. Leave a note first if you’d rather ask us something.'}
             </p>
+            {decision && (
+              <button className="undo" disabled={busy === 'd'} onClick={() => send(null, note, true)}>
+                ← Undo — put {first} back to undecided
+              </button>
+            )}
           </div>
 
           <div className="card journey">

@@ -23,6 +23,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'decision must be advance | hold | pass' }, { status: 422 });
   }
 
-  await setFeedback(params.id, decision, String(body?.note || '').slice(0, 20000));
+  // `clear: true` takes the candidate back to undecided.
+  const clear = body?.clear === true;
+  await setFeedback(params.id, decision, String(body?.note || '').slice(0, 20000), clear);
   return NextResponse.json({ ok: true });
 }
