@@ -1,8 +1,24 @@
 {
-  "version": "procare-pam-2026-09-8",
+  "version": "procare-pam-2026-09-9",
   "settings": {
     "clientName": "Procare HR",
-    "roleLabel": "Payroll Account Manager search"
+    "roleLabel": "Payroll Account Manager search",
+    "lookingFor": {
+      "intro": "A client-facing payroll owner for a multi-client book of business — accurate, on-time, compliant payroll across multiple entities, and the relationship that goes with it. Fully remote, contract.",
+      "mustHave": [
+        "3+ years payroll administration experience.",
+        "3+ years processing payroll for multiple clients (multi-state a plus).",
+        "1+ year processing payroll across 8+ EINs.",
+        "2+ years with HRIS platforms (UKG Ready preferred).",
+        "Strong Microsoft Office skills, especially Excel."
+      ],
+      "niceToHave": [
+        "Associate's degree in Accounting, Business, HR, or Finance.",
+        "Prior PEO / HR shared-services experience.",
+        "Multi-state payroll compliance exposure.",
+        "Comfortable owning client relationships, not just processing."
+      ]
+    }
   },
   "candidates": [
     {

@@ -135,6 +135,13 @@ export type StoredCandidateInput = Omit<StoredCandidate, 'id' | 'createdAt' | 'd
 export type PortalSettings = {
   clientName: string;   // e.g. "Procare HR"
   roleLabel: string;    // e.g. "Director of Human Resources search"
+  // What the search is built around, shown above the shortlist so the client
+  // reads the candidates against the brief rather than from memory.
+  lookingFor?: {
+    intro?: string;
+    mustHave?: string[];
+    niceToHave?: string[];
+  };
 };
 
 // ---- Accounts / auth --------------------------------------------

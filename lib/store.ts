@@ -204,7 +204,16 @@ export async function getSettings(): Promise<PortalSettings> {
 }
 
 export async function setSettings(s: PortalSettings): Promise<void> {
-  const clean: PortalSettings = { clientName: String(s.clientName || ''), roleLabel: String(s.roleLabel || '') };
+  const arr = (v: any): string[] => (Array.isArray(v) ? v.map(String).map((x) => x.trim()).filter(Boolean) : []);
+  const clean: PortalSettings = {
+    clientName: String(s.clientName || ''),
+    roleLabel: String(s.roleLabel || ''),
+    lookingFor: {
+      intro: String(s.lookingFor?.intro || '').trim(),
+      mustHave: arr(s.lookingFor?.mustHave),
+      niceToHave: arr(s.lookingFor?.niceToHave),
+    },
+  };
   if (!hasDb) { memSettings = clean; (globalThis as any).__spgSettings = clean; return; }
   await ensureSchema();
   await db()`INSERT INTO portal_settings (id, data) VALUES ('default', ${JSON.stringify(clean)}::jsonb)

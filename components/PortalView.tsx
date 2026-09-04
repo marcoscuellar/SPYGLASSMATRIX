@@ -105,7 +105,8 @@ export function PortalView({ initial, settings, canEdit = false }: { initial: St
             // write one candidate's copy onto another.
             ? <Profile key={open.id} c={open} role={role} onFeedback={applyFeedback} canEdit={canEdit}
                 onSaved={(u) => setCands((l) => l.map((x) => (x.id === u.id ? u : x)))} />
-            : <Shortlist cands={sorted} client={client} role={role} onOpen={(id) => { setOpenId(id); window.scrollTo(0, 0); }} />}
+            : <Shortlist cands={sorted} client={client} role={role} lookingFor={settings.lookingFor}
+                onOpen={(id) => { setOpenId(id); window.scrollTo(0, 0); }} />}
         </div>
       </div>
     </div>
@@ -114,7 +115,9 @@ export function PortalView({ initial, settings, canEdit = false }: { initial: St
 
 /* ---------- shortlist ---------- */
 
-function Shortlist({ cands, client, role, onOpen }: { cands: StoredCandidate[]; client: string; role: string; onOpen: (id: string) => void }) {
+function Shortlist({ cands, client, role, lookingFor, onOpen }: { cands: StoredCandidate[]; client: string; role: string; lookingFor?: PortalSettings['lookingFor']; onOpen: (id: string) => void }) {
+  const lf = lookingFor;
+  const hasLf = !!(lf && (lf.intro || lf.mustHave?.length || lf.niceToHave?.length));
   return (
     <>
       <div className="crumb">Shortlist{role && <> <i>›</i> {role}</>}</div>
@@ -124,6 +127,29 @@ function Shortlist({ cands, client, role, onOpen }: { cands: StoredCandidate[]; 
           ? `${cands.length} candidate${cands.length === 1 ? '' : 's'} presented${client ? ` to ${client}` : ''}. Open one to read the brief, work through their experience, and leave your notes.`
           : 'Your shortlist is being prepared. Candidates will appear here as soon as they’re ready.'}</p>
       </div>
+
+      {hasLf && (
+        <div className="card lookfor">
+          <div className="cardhd"><span>What we’re looking for</span><em>The brief these candidates are measured against</em></div>
+          <div className="lfbody">
+            {lf!.intro && <p className="lfintro">{lf!.intro}</p>}
+            <div className="lfcols">
+              {!!lf!.mustHave?.length && (
+                <div>
+                  <div className="secline">Must have</div>
+                  <ul className="fits">{lf!.mustHave!.map((x, i) => <li key={i}>{x}</li>)}</ul>
+                </div>
+              )}
+              {!!lf!.niceToHave?.length && (
+                <div>
+                  <div className="secline">Nice to have</div>
+                  <ul className="fits soft">{lf!.niceToHave!.map((x, i) => <li key={i}>{x}</li>)}</ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {cands.length === 0 ? (
         <div className="card empty">No candidates presented yet.</div>
