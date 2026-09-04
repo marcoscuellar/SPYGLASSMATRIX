@@ -833,7 +833,7 @@ code { font-family: var(--mono); }
 /* ---- top bar ---- */
 .pv .main{min-width:0;display:flex;flex-direction:column}
 /* Solid navy bar. White on #0A1F3D is 16.45:1. */
-.pv .topbar{box-shadow:0 1px 2px rgba(10,31,61,.20), 0 8px 22px -8px rgba(10,31,61,.32);background:var(--dark);border-bottom:1px solid var(--dark);padding:0 clamp(18px,3vw,34px);height:60px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20}
+.pv .topbar{box-shadow:0 1px 2px rgba(10,31,61,.20), 0 8px 22px -8px rgba(10,31,61,.32);background:var(--dark);border-bottom:1px solid var(--dark);padding:0 clamp(24px,4.2vw,56px);height:60px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20}
 .pv .topbar .ctx{font-size:13.5px;font-weight:600;color:#fff}
 .pv .topbar .grow{flex:1}
 .pv .topbar .conf{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#C8D2DE}
@@ -842,7 +842,7 @@ code { font-family: var(--mono); }
 .pv .chip .cn em{display:block;font-style:normal;font-size:10.5px;font-weight:400;color:#C8D2DE;margin-top:2px}
 .pv .cav{width:32px;height:32px;border-radius:50%;background:var(--a);color:#fff;display:grid;place-items:center;font-size:11.5px;font-weight:600;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
 
-.pv .body{padding:clamp(18px,2.6vw,30px) clamp(18px,3vw,34px) 64px;max-width:1400px;width:100%}
+.pv .body{padding:clamp(20px,2.6vw,32px) clamp(24px,4.2vw,56px) 64px;max-width:1400px;width:100%}
 .pv .crumb{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px}
 .pv .crumb i{font-style:normal;padding:0 5px;color:var(--ink4)}
 .pv .crumb b{color:var(--a);font-weight:500}
