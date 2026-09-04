@@ -1,10 +1,10 @@
 {
-  "version": "procare-pam-2026-09-9",
+  "version": "procare-pam-2026-09-10",
   "settings": {
     "clientName": "Procare HR",
     "roleLabel": "Payroll Account Manager search",
     "lookingFor": {
-      "intro": "A client-facing payroll owner for a multi-client book of business — accurate, on-time, compliant payroll across multiple entities, and the relationship that goes with it. Fully remote, contract.",
+      "intro": "A Payroll Account Manager who will own end-to-end payroll delivery for a multi-client book of business — running payroll across multiple client companies and multiple EINs, keeping it accurate, on time and compliant in every state those employees sit in, resolving issues with sound judgment before they reach the client, and owning the relationship rather than just the processing. Fully remote, contract.",
       "mustHave": [
         "3+ years payroll administration experience.",
         "3+ years processing payroll for multiple clients (multi-state a plus).",
