@@ -1,5 +1,5 @@
 {
-  "version": "procare-pam-2026-09-10",
+  "version": "procare-pam-2026-09-11",
   "settings": {
     "clientName": "Procare HR",
     "roleLabel": "Payroll Account Manager search",
@@ -376,6 +376,121 @@
         }
       ],
       "resumeUrl": "/api/resume/bhargavi-ramasagaram.docx"
+    },
+    {
+      "id": "c_audrey_baray",
+      "name": "Audrey Baray",
+      "role": "Service Operations Supervisor — PEO payroll",
+      "company": "Vensure",
+      "years": 8,
+      "location": "Canutillo, TX · remote only",
+      "compExp": "$52/hr",
+      "avail": "Two weeks’ notice",
+      "workAuth": "US citizen — no sponsorship required",
+      "tags": [
+        "Working in a PEO today",
+        "PrismHR",
+        "UKG Ready / Kronos ~3 yrs",
+        "Multi-EIN, multi-state",
+        "Supervises processors"
+      ],
+      "fit": 82,
+      "headline": "Doing this exact job inside a PEO right now — multi-client, multi-EIN payroll in PrismHR, and the escalation point when it goes wrong.",
+      "intro": "Audrey has eight-plus years in payroll and HR operations, and she is currently a Service Operations Supervisor at Vensure — a PEO — where she runs full-cycle multistate payroll for multiple client companies and is the named payroll contact for the clients assigned to her. She handles SUI and multistate/local tax setup, PEO-sponsored benefit deductions across medical, dental, vision, FSA/HSA and 401(k), garnishments, job costing and labour allocations, and she trains clients on payroll process and system navigation. Before Vensure she ran weekly multistate payroll at W. Silver in EmPath and filed federal, state and local taxes, and before that spent six years as HR & Payroll Coordinator at DA Inc running full-cycle payroll for 100–125 employees. She holds an Associate of Arts in Business Administration and Management.",
+      "fitBullets": [
+        "She is in a PEO today, not adjacent to one. At Vensure she processes full-cycle multistate payroll for multiple PEO client companies, each with its own tax setup, benefit structure, pay rules and reporting — and she describes the contrast with single-EIN in-house payroll first-hand, having done both.",
+        "Multi-EIN as a routine, not a one-off — she describes scheduling multi-EIN payroll cycles, auditing time and deductions, running the cycle, resolving escalations and delivering post-processing reports, while maintaining compliance across jurisdictions.",
+        "Named client contact and escalation point for taxation, garnishments, benefit discrepancies and system errors in PrismHR. She also trains clients on payroll process, system navigation and regulatory requirements.",
+        "UKG Ready specifically — roughly three years running full-cycle payroll on it (from its Kronos era): importing hours, auditing timecards, managing deductions, multi-state processing and off-cycle runs. Later used it for timekeeping at Saputo. She also brings ADP, EmPath and PrismHR.",
+        "Client-facing under pressure. On a disputed payroll with missing hours and wrong overtime, she pulled the time files and rebuilt the payroll in Excel with pivot tables and VLOOKUPs, traced it to a sync failure between the client's timekeeping system and their import, reprocessed the same day so employees were paid correctly, then walked the client through the cause and how to prevent it.",
+        "Supervises the work as well as doing it — three pod members handling 30–40 payrolls each, and currently one processor alongside five complex clients of her own.",
+        "Meets the education preference: Associate of Arts in Business Administration and Management."
+      ],
+      "cta": "She is doing this job, in a PEO, today — the operating model, the multi-EIN volume, the client ownership and UKG Ready all come from the same seat rather than assembled from different ones. The closest match on the shortlist.",
+      "signals": [
+        {
+          "signal": "PEO / shared-services experience",
+          "score": "strong"
+        },
+        {
+          "signal": "Multi-EIN / multi-client depth",
+          "score": "strong"
+        },
+        {
+          "signal": "Client-facing dispute ownership",
+          "score": "strong"
+        },
+        {
+          "signal": "Multi-state payroll compliance",
+          "score": "strong"
+        },
+        {
+          "signal": "UKG Ready hands-on",
+          "score": "strong"
+        },
+        {
+          "signal": "HRIS breadth and adaptability",
+          "score": "solid"
+        },
+        {
+          "signal": "Payroll audit and reconciliation discipline",
+          "score": "solid"
+        }
+      ],
+      "experience": [
+        {
+          "company": "Vensure",
+          "title": "Service Operations Supervisor — PEO",
+          "period": "Nov 2025 – Present",
+          "location": "El Paso, TX",
+          "points": [
+            "Full-cycle multistate payroll for multiple PEO client companies — wages, deductions, garnishments and tax compliance.",
+            "Payroll setup including SUI and multistate/local tax configuration, with internal tax teams for timely filings.",
+            "PEO-sponsored benefit deductions across medical, dental, vision, FSA/HSA and 401(k), with ongoing maintenance and reconciliation.",
+            "Primary payroll contact for assigned clients; resolves escalated taxation, garnishment, benefit and system issues in PrismHR.",
+            "Maintains client demographic changes, benefit plan deductions, labour reports and payroll schedules to PEO guidelines.",
+            "Trains clients on payroll process, system navigation and regulatory requirements.",
+            "Supports job costing by validating labour allocations and project-related payroll data."
+          ]
+        },
+        {
+          "company": "W. Silver Inc.",
+          "title": "Payroll Specialist",
+          "period": "Oct 2023 – Nov 2025",
+          "location": "Vinton, TX",
+          "points": [
+            "Weekly payroll in EmPath — gross pay, reimbursements, advances and deductions.",
+            "Filed federal, state and local taxes for multistate agencies; prepared quarterly and annual tax forms.",
+            "Processed new hires, terminations, pay adjustments and employee changes.",
+            "Monthly payroll reconciliations validating wage, tax and deduction accuracy across systems.",
+            "Maintained confidential payroll records and supported internal and external audits."
+          ]
+        },
+        {
+          "company": "Saputo",
+          "title": "Financial Coordinator",
+          "period": "Mar 2023 – Oct 2023",
+          "location": "Las Cruces, NM",
+          "points": [
+            "Reduced A/P aging from 365 days to 90 days, improving vendor relations and cash flow.",
+            "Produced financial and labour reports supporting production and leadership decisions.",
+            "Used UKG to process bi-weekly timesheets and ensure accurate labour reporting."
+          ]
+        },
+        {
+          "company": "DA Inc.",
+          "title": "HR & Payroll Coordinator",
+          "period": "Jan 2017 – Oct 2023",
+          "location": "Santa Teresa, NM",
+          "points": [
+            "Full-cycle payroll for 100–125 hourly and salaried employees — wage calculations, garnishments and pay statements.",
+            "Onboarding, I-9 verification, benefits enrolment and employee records.",
+            "HR operations including employee relations, attendance tracking and policy compliance.",
+            "Payroll reconciliations and confidential employee file maintenance."
+          ]
+        }
+      ],
+      "resumeUrl": "/api/resume/audrey-baray.docx"
     }
   ],
   "resetDecisions": []
