@@ -1,5 +1,5 @@
 {
-  "version": "1",
+  "version": "2",
   "matrices": [
     {
       "id": "m_payroll_procare",
@@ -66,6 +66,56 @@
         { "flag": "Back-office only", "note": "Technically sharp but avoids client conversations — wrong shape for a role titled \"Account Manager.\"" },
         { "flag": "Degree gatekeeping", "note": "Associate's degree is preferred, not required — don't auto-reject strong experience-only candidates." }
       ]
+    },
+    {
+      "id": "m_loa_procare",
+      "client": "Procare HR",
+      "empType": "Contract",
+      "salary": "$30/hr",
+      "location": "Remote",
+      "jd": {
+        "title": "Leave of Absence Specialist",
+        "summary": "Procare HR is hiring a Leave of Absence Specialist to administer leave and accommodations across a multi-client PEO book — FMLA, ADA, state and local leave law, and short- and long-term disability. This seat owns each case from the employee's first notice through return to work.",
+        "summary2": "Sits in HR Admin and Compliance, reporting to the Leave & Disability Accommodations Manager. Fully remote, Monday–Friday 8AM–5PM in the employee's own time zone. Beyond casework you'll advise managers where leave law collides with PTO, workers' comp and disability benefits, run weekly LOA status reporting, audit leave data for compliance, and mentor other LOA staff. $30/hr, contract.",
+        "mustHave": [
+          "3+ years administering leave of absence and FMLA in a multi-state organization.",
+          "Working knowledge of FMLA, ADA, workers' compensation, STD, LTD and state paid-leave programs.",
+          "Has owned the full FMLA lifecycle — eligibility, designation, certification, intermittent tracking, return to work.",
+          "HRIS and leave-management system experience, tracking cases including pay and attendance.",
+          "Strong Excel — the seat carries weekly LOA reporting and recurring compliance audits."
+        ],
+        "niceToHave": [
+          "PEO or HR shared-services experience (the PD calls this highly desirable).",
+          "ADA interactive process and reasonable-accommodation casework.",
+          "General OSHA regulation and benefit-plan knowledge.",
+          "Has mentored or advised other LOA team members."
+        ]
+      },
+      "lookFor": [
+      {"signal": "Concurrent multi-state depth", "detail": "Running FMLA alongside state paid-leave programs — CA CFRA/PFL, NY PFL, WA PFML, CO FAMLI — across multiple client companies. This is the rarest, most important filter. Ask which states, not how many."},
+      {"signal": "PEO / shared-services fluency", "detail": "Serving many unrelated employers at once is a different job from one in-house population: different policies, different accruals, different managers to chase, same week."},
+      {"signal": "Case ownership, not support", "detail": "Look for eligibility determinations and designation notices they issued themselves. \"I handled FMLA\" often means they filed paperwork someone else adjudicated."},
+      {"signal": "Composure on medical calls", "detail": "This person calls employees during the worst week of their year, and still has to hold a line. Warmth without the ability to say no is a risk, not a strength."}
+    ],
+      "questions": [
+      {"q": "Walk me through one FMLA case you owned from the employee's initial notice through return to work. What was your role at each step?", "surfaces": "Real lifecycle ownership", "internal": "Listen for the unglamorous middle — the certification request, the designation notice, the recertification clock. People who only supported a leave team skip from \"they called out\" straight to \"they came back.\""},
+      {"q": "Which state paid-leave programs have you administered alongside federal FMLA, and across how many states and client companies at once?", "surfaces": "Concurrent multi-state load", "internal": "The hardest filter in the search. A case count with no states behind it is a soft answer — push once: \"which states?\" If the follow-up stays vague, this is single-employer experience dressed up."},
+      {"q": "Tell me about a medical certification that came back incomplete, or an employee whose protected leave ran out. How did you handle it with them and with their manager?", "surfaces": "Judgment under legal exposure", "internal": "Where the role gets hard and where Procare carries risk. Good answers show process — written notice, a cure period, a documented decision. Weak answers show improvisation, or handing it straight to legal."},
+      {"q": "What leave-management and HRIS systems have you used, and how deep does that go — intake, tracking, reporting, or all three?", "surfaces": "System depth", "internal": "Any modern HRIS transfers. What does not transfer is having only ever read a dashboard someone else built. Push for what they configured or reported out of it."}
+    ],
+      "targetTitles": [
+        "Leave of Absence Specialist",
+        "LOA Specialist",
+        "Leave Administrator",
+        "Absence Management Specialist",
+        "Disability & Leave Specialist"
+      ],
+      "boolean": "(\"Leave of Absence Specialist\" OR \"LOA Specialist\" OR \"Leave Administrator\" OR \"Absence Management\" OR \"Disability and Leave\" OR \"FMLA Coordinator\") AND (FMLA AND (ADA OR \"short-term disability\" OR STD OR LTD OR \"workers compensation\")) AND (\"multi-state\" OR multistate OR PEO OR \"shared services\" OR \"multiple clients\" OR CFRA OR PFML OR FAMLI)",
+      "watchOuts": [
+      {"flag": "Generalist FMLA", "note": "Every HR Generalist lists FMLA because they sat near it. Filter for who carried the case load, not who supported someone who did."},
+      {"flag": "Benefits admin only", "note": "Open enrollment and carrier feeds are a different muscle from adjudicating eligibility and issuing designation notices."},
+      {"flag": "Submitted it to our TPA", "note": "If a third party made the eligibility call, the candidate coordinated leave — they did not administer it."}
+    ]
     }
   ]
 }
