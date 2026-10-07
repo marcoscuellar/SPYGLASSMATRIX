@@ -591,6 +591,34 @@ export async function getMatrix(id: string): Promise<StoredMatrix | null> {
   return rowToMatrix(rows[0].id, new Date(rows[0].created_at).toISOString(), rows[0].data);
 }
 
+function newMatrixId(): string {
+  return 'm_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+}
+
+/**
+ * File a freshly built Matrix so it becomes a real search.
+ * Until this existed the builder's output lived only in React state: the
+ * workroom could read matrices but nothing could create one, so the seed
+ * file was the only way in.
+ */
+export async function createMatrix(matrix: Matrix): Promise<StoredMatrix> {
+  await ensureMatrixSeed();
+  const row: StoredMatrix = {
+    id: newMatrixId(),
+    createdAt: new Date().toISOString(),
+    matrix,
+    work: emptyWork(),
+  };
+  if (!hasDb) {
+    memMatrices.set(row.id, row);
+    return row;
+  }
+  await ensureMatrixSchema();
+  await db()`INSERT INTO sm_matrices (id, created_at, data)
+    VALUES (${row.id}, ${row.createdAt}, ${JSON.stringify({ matrix: row.matrix, work: row.work })}::jsonb)`;
+  return row;
+}
+
 export async function saveMatrixWork(id: string, work: Partial<MatrixWork>): Promise<MatrixWork | null> {
   await ensureMatrixSeed();
   const existing = await getMatrix(id);
